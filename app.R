@@ -93,13 +93,16 @@ ui <- shinyUI(fluidPage(
 
 server <- function(input, output, session) {
   
-  v <- reactiveValues(plot = FALSE, fit = FALSE, gmwm = NULL, form = NULL, freq = 100, first_gmwm = NULL)
+  v <- reactiveValues(plot = FALSE, fit = FALSE, gmwm = NULL, 
+                      form = NULL, freq = 100, first_gmwm = NULL,
+                      n = NULL)
   
   observeEvent(input$fit1, {
     v$plot = TRUE
     v$fit = FALSE
     my_data = get(input$imu_obj)
     Xt = my_data[, input$sensors]
+    v$n = length(Xt)
     v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust"))
     v$freq = attr(my_data, 'freq')
     updateNavbarPage(session, "tabs", selected = "Select Sensor")
@@ -116,6 +119,7 @@ server <- function(input, output, session) {
     sensor_axis = paste(input$sensor, input$axis)
     
     Xt = my_data[, input$sensors]
+    v$n = length(Xt)
     first = TRUE
     counter_model_size = 0
     
@@ -207,6 +211,7 @@ server <- function(input, output, session) {
     sensor_axis = paste(input$sensor, input$axis)
     
     Xt = my_data[, input$sensors]
+    v$n = length(Xt)
     first = TRUE
     counter_model_size = 0
     
@@ -304,12 +309,15 @@ server <- function(input, output, session) {
       a = v$form
       freq = v$freq
       a$scales = a$scales/freq
+      duration = v$n/(freq*60*60)
+      title = paste("Haar Wavelet Variance of Dataset: ", input$imu_obj, " (", input$sensors,
+                    ") - Duration: ", round(duration,1), "(h) @", freq, "(Hz)", sep = "")
       if (v$plot){
-        plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")))
+        plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
       }else{
         plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), 
              process.decomp = "process_decomp" %in% input$option_plot, 
-             CI = "ci" %in% input$option_plot)
+             CI = "ci" %in% input$option_plot, title = title)
       }
     }else{
       plot(NA)
