@@ -16,7 +16,7 @@ data("ln200.gyro")
 
 ui <- shinyUI(fluidPage(
   
-  title = "Diamonds Explorer",
+  title = "GMWM GUI",
   tabsetPanel(id = "tabs",
               tabPanel("IMU", plotOutput(outputId = "plot", height = "500px")), 
               tabPanel("Select Sensor", plotOutput(outputId = "plot2", height = "500px")),
@@ -123,13 +123,15 @@ server <- function(input, output, session) {
     first = TRUE
     counter_model_size = 0
     
-    if ("QN" %in% input$model){
-      counter_model_size = counter_model_size + 1
-      if (first == TRUE){
-        model = QN()
-        first = FALSE
-      }else{
-        model = model + QN()
+    if ("GM" %in% input$model){
+      for (i in 1:input$gm_nb){
+        counter_model_size = counter_model_size + 1
+        if (first == TRUE){
+          model = GM()
+          first = FALSE
+        }else{
+          model = model + GM()
+        }
       }
     }
     
@@ -143,17 +145,16 @@ server <- function(input, output, session) {
       }
     }  
     
-    if ("GM" %in% input$model){
-      for (i in 1:input$gm_nb){
-        counter_model_size = counter_model_size + 1
-        if (first == TRUE){
-          model = GM()
-          first = FALSE
-        }else{
-          model = model + GM()
-        }
+    if ("QN" %in% input$model){
+      counter_model_size = counter_model_size + 1
+      if (first == TRUE){
+        model = QN()
+        first = FALSE
+      }else{
+        model = model + QN()
       }
     }
+    
     
     if ("RW" %in% input$model){
       counter_model_size = counter_model_size + 1
@@ -214,14 +215,17 @@ server <- function(input, output, session) {
     v$n = length(Xt)
     first = TRUE
     counter_model_size = 0
+  
     
-    if ("QN" %in% input$model){
-      counter_model_size = counter_model_size + 1
-      if (first == TRUE){
-        model = QN()
-        first = FALSE
-      }else{
-        model = model + QN()
+    if ("GM" %in% input$model){
+      for (i in 1:input$gm_nb){
+        counter_model_size = counter_model_size + 1
+        if (first == TRUE){
+          model = GM()
+          first = FALSE
+        }else{
+          model = model + GM()
+        }
       }
     }
     
@@ -235,15 +239,13 @@ server <- function(input, output, session) {
       }
     }  
     
-    if ("GM" %in% input$model){
-      for (i in 1:input$gm_nb){
-        counter_model_size = counter_model_size + 1
-        if (first == TRUE){
-          model = GM()
-          first = FALSE
-        }else{
-          model = model + GM()
-        }
+    if ("QN" %in% input$model){
+      counter_model_size = counter_model_size + 1
+      if (first == TRUE){
+        model = QN()
+        first = FALSE
+      }else{
+        model = model + QN()
       }
     }
     
