@@ -14,19 +14,37 @@ imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis =
 data("imar.gyro")
 data("ln200.gyro")
 
+deg_h__2__rad_s = pi / ( 180 * 3600 )
+
 ui <- shinyUI(fluidPage(
   
   title = "GMWM GUI",
   tabsetPanel(id = "tabs",
-              tabPanel("IMU", plotOutput(outputId = "plot", height = "500px")), 
-              tabPanel("Select Sensor", plotOutput(outputId = "plot2", height = "500px")),
-              tabPanel("Summary", verbatimTextOutput(outputId = "summ", 
-                                                     placeholder = TRUE))
+              tabPanel("Datasheet", plotOutput(outputId = "plot_datasheet", height = "500px")), 
+              tabPanel("Model Data", plotOutput(outputId = "plot", height = "500px")), 
+              tabPanel("Selected Sensor", plotOutput(outputId = "plot2", height = "500px")),
+              tabPanel("Summary", verbatimTextOutput(outputId = "summ", placeholder = TRUE))
   ),
   
   hr(),
   
   fluidRow(
+    column(4,
+           h3("Datasheet values"),
+           br(),
+
+           numericInput("dsv_wn", label = "Noise Density (rms) in  [deg/h]", value = 200), # value of white noise in [deg/h]
+           numericInput("dsv_frequency", label = "Frequency", value = 250), # frequency defined by the user
+           numericInput("no_of_samples", label = "Number of datapoints", value = 10^5), # not sure to let it here, as we could plot the WV from directly from the formula, so there would be no need to generate and the to WV this generated data, no?
+           fluidRow(
+             column(5,
+                    br(),
+                    actionButton("fit0", label = "Plot Datasheet WV"))
+           )
+           # ,
+           # uiOutput("choose_columns")
+    ),
+    
     column(4,
            h3("Data"),
            br(),
@@ -97,6 +115,26 @@ server <- function(input, output, session) {
                       form = NULL, freq = 100, first_gmwm = NULL,
                       n = NULL)
   
+  # if one wants to plot  the datasheet-vw
+  observeEvent(input$fit0, {
+    v$plot = TRUE
+    v$fit = FALSE
+    
+    # Specify model
+    m = WN(sigma2 = (input$dsv_wn * deg_h__2__rad_s)^2) # here would be the white noise value the user supplied
+    
+    # Generate Data
+    Xt = gen_gts(input$no_of_samples, m) # the number of samples defined by the user
+    
+    v$n = length(Xt)
+
+    v$form = wvar(as.numeric(Xt), robust = FALSE) # OR USE HERE DIRECTLY THE FORMULAS FROM THE HOMEPAGE, I WAS NOT ABLE TO FIND THEM THOUGH
+    
+    v$freq = input$dsv_frequency # the frequence defined by the user
+    
+    updateNavbarPage(session, "tabs", selected = "Datasheet")
+  })
+  
   observeEvent(input$fit1, {
     v$plot = TRUE
     v$fit = FALSE
@@ -105,7 +143,7 @@ server <- function(input, output, session) {
     v$n = length(Xt)
     v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust"))
     v$freq = attr(my_data, 'freq')
-    updateNavbarPage(session, "tabs", selected = "Select Sensor")
+    updateNavbarPage(session, "tabs", selected = "Selected Sensor")
   })
   
   observeEvent(input$fit3, {
@@ -196,7 +234,7 @@ server <- function(input, output, session) {
     #  v$form = update(v$gmwm, model) 
     #}
     
-    updateNavbarPage(session, "tabs", selected = "Select Sensor")
+    updateNavbarPage(session, "tabs", selected = "Selected Sensor")
     
   })
   
@@ -276,7 +314,7 @@ server <- function(input, output, session) {
     a = auto_imu(Xt, model = model)
     v$form = a[[1]][[2]]
     
-    updateNavbarPage(session, "tabs", selected = "Select Sensor")
+    updateNavbarPage(session, "tabs", selected = "Selected Sensor")
   })
   
   
@@ -299,11 +337,39 @@ server <- function(input, output, session) {
     cb_options[ dsnames] <- dsnames
     
     updateSelectInput(session, "sensors",
-                      label = "Select sensor",
+                      label = "Selected sensor",
                       choices = cb_options,
                       selected = "")
     
   })
+  
+  
+  
+  output$plot_datasheet <- renderPlot({
+    
+    if (v$fit || v$plot){
+      a = v$form
+      freq = v$freq
+      a$scales = a$scales/freq
+      duration = v$n/(freq*60*60)
+      title = paste("Haar Wavelet Variance of Dataset: ", input$imu_obj, " (", input$sensors,
+                    ") - Duration: ", round(duration,1), "(h) @", freq, "(Hz)", sep = "")
+      if (v$plot){
+        plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
+      }else{
+        plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), 
+             process.decomp = "process_decomp" %in% input$option_plot, 
+             CI = "ci" %in% input$option_plot, title = title)
+      }
+    }else{
+      plot(NA)
+    }
+    
+  })
+  
+  
+  
+  
   
   output$plot2 <- renderPlot({
     
