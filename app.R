@@ -29,23 +29,61 @@ ui <- shinyUI(fluidPage(
   hr(),
   
   fluidRow(
-    column(4,
+    column(3,
            h3("Datasheet values"),
            br(),
-
-           numericInput("dsv_wn", label = "Noise Density (rms) in  [deg/h]", value = 200), # value of white noise in [deg/h]
+           
+           # radioButtons("imu_type_choice", "Select IMU type:", choices = c("Gyroscope" = "gyro", "Accelerometer" = "accel")),
+           # 
+           # conditionalPanel(
+           #   condition = "input.imu_type_choice == 'accel'",
+           #  
+           #   sliderInput("gm_nb", "Number of Gauss-Markov Processes", 1, 5, 2)
+           # ),
+           
            numericInput("dsv_frequency", label = "Frequency", value = 250), # frequency defined by the user
-           numericInput("no_of_samples", label = "Number of datapoints", value = 10^5), # not sure to let it here, as we could plot the WV from directly from the formula, so there would be no need to generate and the to WV this generated data, no?
+           
+           numericInput("no_of_samples", label = "Number of datapoints", value = 10^6), # not sure to let it here, as we could plot the WV from directly from the formula, so there would be no need to generate and the to WV this generated data, no?
+           
+           checkboxGroupInput("model_from_datasheet", "Select Model from datasheet",
+                              c("Quantization Noise" = "QN",
+                                "White Noise" = "WN",
+                                "Gauss-Markov" = "GM"
+                                # "Random Walk" = "RW",
+                                # "Drift" = "DR"
+                                )
+                              # ,selected = "WN"
+                              ),
+           
+           br(),
+           
+           conditionalPanel(
+             condition = "input.model_from_datasheet.indexOf('QN') > -1",
+             numericInput("dsv_qn", label = "QN value [(rad/s)^2]", value = 1.95e-6) 
+             
+           ),
+           
+           conditionalPanel(
+             condition = "input.model_from_datasheet.indexOf('WN') > -1",
+             numericInput("dsv_wn", label = "WN value [(rad/s)^2]", value = 4.13e-7) 
+
+           ),
+           
+           conditionalPanel(
+             condition = "input.model_from_datasheet.indexOf('GM') > -1",
+             numericInput("dsv_gm_beta", label = "GM beta [1/s]", value = 1.85e-3),
+             numericInput("dsv_gm", label = "GM value [(rad/s)^2]", value = 6.4e-9)
+             
+           ),
+           
            fluidRow(
              column(5,
                     br(),
-                    actionButton("fit0", label = "Plot Datasheet WV"))
+                    actionButton("fit0", label = "Update Datasheet WV plot"))
            )
-           # ,
-           # uiOutput("choose_columns")
     ),
     
-    column(4,
+    column(2,
            h3("Data"),
            br(),
            
@@ -55,16 +93,19 @@ ui <- shinyUI(fluidPage(
                          "LN-200" = "ln200.gyro",
                          "IMAR" = "imar.gyro"), selected = 1),
            selectInput("sensors", "Select sensor", c("1"="1","2"="2", selected = 1)),
-           fluidRow(
-             column(7, radioButtons("robust", "Select estimator:", choices = c("Classic WV" = "classic", "Robust WV" = "robust"))),
-             column(5, 
-                    br(),
-                    actionButton("fit1", label = "Plot WV"))
-           ),
+
+          column(7, radioButtons("robust", "Select estimator:", choices = c("Classic WV" = "classic", "Robust WV" = "robust"))),
+             
+           checkboxInput("overlay_datasheet", "Overlay Datasheet WV", FALSE),
+           
+           br(),
+           actionButton("fit1", label = "Plot / Update WV"),
+
+           
            uiOutput("choose_columns")
     ),
     
-    column(4,
+    column(3,
            h3("GMWM Modelling"),
            br(),
            checkboxGroupInput("model", "Select Model",
@@ -111,33 +152,78 @@ ui <- shinyUI(fluidPage(
 
 server <- function(input, output, session) {
   
-  v <- reactiveValues(plot = FALSE, fit = FALSE, gmwm = NULL, 
+  w <- reactiveValues(plot = FALSE, fit = FALSE, gmwm = NULL, 
                       form = NULL, freq = 100, first_gmwm = NULL,
                       n = NULL)
   
-  # if one wants to plot  the datasheet-vw
+  v <- reactiveValues(plot = FALSE, fit = FALSE, gmwm = NULL, 
+                      form = NULL, freq = 100, first_gmwm = NULL,
+                      n = NULL, overlap_datasheet = FALSE)
+  
+  # PUSHING ON BUTTON "Update Datasheet WV plot"
   observeEvent(input$fit0, {
-    v$plot = TRUE
-    v$fit = FALSE
+    w$plot = TRUE
+    w$fit = FALSE
     
-    # Specify model
-    m = WN(sigma2 = (input$dsv_wn * deg_h__2__rad_s)^2) # here would be the white noise value the user supplied
-    
+    if ("WN" %in% input$model_from_datasheet){
+      if ("QN" %in% input$model_from_datasheet){
+        if ("GM" %in% input$model_from_datasheet){
+          m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+        } else{
+          m = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+        }
+      }else{
+        if ("GM" %in% input$model_from_datasheet){
+          m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn))
+        } else {
+          m = WN(sigma2 = (input$dsv_wn))
+        }
+      }
+    }else{
+      if ("QN" %in% input$model_from_datasheet){
+        if ("GM" %in% input$model_from_datasheet){
+          m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + QN(q2 = (input$dsv_qn))
+        } else {
+          m = QN(q2 = (input$dsv_qn))
+        }
+      } else{
+        if ("GM" %in% input$model_from_datasheet){
+          m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta)
+        } else {
+          m = WN(sigma2 = 0)
+          w$plot = FALSE
+        }
+      }
+    }
+
+    # if ("WN" %in% input$model_from_datasheet){
+    #   if("QN" %in% input$model_from_datasheet){
+    #     m = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+    #   } else{
+    #     m = WN(sigma2 = (input$dsv_wn))
+    #   }
+    # } else{
+    #   if("QN" %in% input$model_from_datasheet){
+    #     m = QN(q2 = (input$dsv_qn))
+    #   } else{
+    #     m = WN(sigma2 = 0)
+    #     w$plot = FALSE
+    #   }
+    # }
+  
     # Generate Data
     Xt = gen_gts(input$no_of_samples, m) # the number of samples defined by the user
-    
-    v$n = length(Xt)
-
-    v$form = wvar(as.numeric(Xt), robust = FALSE) # OR USE HERE DIRECTLY THE FORMULAS FROM THE HOMEPAGE, I WAS NOT ABLE TO FIND THEM THOUGH
-    
-    v$freq = input$dsv_frequency # the frequence defined by the user
-    
+    w$n = length(Xt)
+    w$form = wvar(as.numeric(Xt), robust = FALSE) # OR USE HERE DIRECTLY THE FORMULAS FROM THE HOMEPAGE, I WAS NOT ABLE TO FIND THEM THOUGH
+    w$freq = input$dsv_frequency # the frequence defined by the user
     updateNavbarPage(session, "tabs", selected = "Datasheet")
   })
   
+  # PUSHING ON BUTTON "Plot WV"
   observeEvent(input$fit1, {
     v$plot = TRUE
     v$fit = FALSE
+    v$overlap_datasheet = input$overlay_datasheet
     my_data = get(input$imu_obj)
     Xt = my_data[, input$sensors]
     v$n = length(Xt)
@@ -347,41 +433,41 @@ server <- function(input, output, session) {
   
   output$plot_datasheet <- renderPlot({
     
-    if (v$fit || v$plot){
-      a = v$form
-      freq = v$freq
+    if (w$plot){
+      a = w$form
+      freq = w$freq
       a$scales = a$scales/freq
-      duration = v$n/(freq*60*60)
-      title = paste("Haar Wavelet Variance of Dataset: ", input$imu_obj, " (", input$sensors,
-                    ") - Duration: ", round(duration,1), "(h) @", freq, "(Hz)", sep = "")
-      if (v$plot){
-        plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
-      }else{
-        plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), 
-             process.decomp = "process_decomp" %in% input$option_plot, 
-             CI = "ci" %in% input$option_plot, title = title)
-      }
+      duration = w$n/(freq*60*60)
+      title = paste("Haar Wavelet Variance of DATASHEET, Duration: ", round(duration,1), "(h) @", freq, "(Hz)", sep = "")
+      plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title, CI = FALSE)
     }else{
       plot(NA)
     }
     
   })
   
-  
-  
-  
-  
+  # calc a specific VW and plot it in the tab "Selected Sensor"
   output$plot2 <- renderPlot({
     
     if (v$fit || v$plot){
       a = v$form
       freq = v$freq
       a$scales = a$scales/freq
-      duration = v$n/(freq*60*60)
-      title = paste("Haar Wavelet Variance of Dataset: ", input$imu_obj, " (", input$sensors,
-                    ") - Duration: ", round(duration,1), "(h) @", freq, "(Hz)", sep = "")
+      duration_a = v$n/(freq*60*60)
+      
+      b = w$form
+      freq = w$freq
+      b$scales = b$scales/freq
+      duration_b = w$n/(freq*60*60)
+      
+      title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,
+                    ") - Duration: ", round(duration_a,1), "(h) @", freq, "(Hz)", sep = "")
       if (v$plot){
-        plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
+        if (w$plot && v$overlap_datasheet) {
+        compare_wvar(a, b, split = FALSE, CI = FALSE, legend.label = c('dataset','datasheet'), auto.label.wvar = FALSE)
+        } else{
+          plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
+        }
       }else{
         plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), 
              process.decomp = "process_decomp" %in% input$option_plot, 
@@ -391,14 +477,21 @@ server <- function(input, output, session) {
       plot(NA)
     }
     
+    # if (w$plot){
+    #  compare_wvar(v$form, w$form, split = FALSE)# , axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
+    # }
+    
+    
   })
   
+  # calc the 6 WV from the dataset and plot it in the tab "Model Data"
   output$plot <- renderPlot({
     
     plot(wvar(get(input$imu_obj)))
     
   })
   
+  # print the summary in the summary-tab
   output$summ <- renderPrint({ 
     if (v$fit && "sum" %in% input$summary_plot){
       summary(v$form, inference = "ci" %in% input$summary_plot)
