@@ -16,6 +16,8 @@ data("ln200.gyro")
 
 deg_h__2__rad_s = pi / ( 180 * 3600 )
 
+options(shiny.maxRequestSize=100*1024^2) # increses file limit from default-5MB to 100MB
+
 ui <- shinyUI(fluidPage(
   
   title = "GMWM GUI",
@@ -83,25 +85,49 @@ ui <- shinyUI(fluidPage(
            )
     ),
     
-    column(2,
+    column(3,
            h3("Data"),
            br(),
            
-           selectInput("imu_obj", "Select IMU object:",
-                       c("MTi-G" = "imu6",
-                         "Navchip" = "navchip",
-                         "LN-200" = "ln200.gyro",
-                         "IMAR" = "imar.gyro"), selected = 1),
-           selectInput("sensors", "Select sensor", c("1"="1","2"="2", selected = 1)),
+           radioButtons("data_input_choice", "Select data input:", choices = c("from library" = "library", "custom" = "custom")),
 
-          column(7, radioButtons("robust", "Select estimator:", choices = c("Classic WV" = "classic", "Robust WV" = "robust"))),
+           conditionalPanel(
+             condition = "input.data_input_choice == 'library'",
+
+             selectInput("imu_obj", "Select IMU file:",
+                         c("MTi-G" = "imu6",
+                           "Navchip" = "navchip",
+                           "LN-200" = "ln200.gyro",
+                           "IMAR" = "imar.gyro"),
+                         selected = 1),
+             
+             
+             selectInput("sensors", "Select sensor", c("1"="1","2"="2", selected = 1))
+           ),
+           
+           conditionalPanel(
+             condition = "input.data_input_choice == 'custom'",
+             
+             fileInput("user_defined_txt_file", "Select TXT file:",
+                       accept = c(
+                         "text/txt",
+                         "text/comma-separated-values,text/plain",
+                         ".txt", 
+                         placeholder = "No file selected")
+             ),
+             sliderInput("user_defined_txt_file_column", "Select Column number:", 
+                         min=1, max=6, value=1),
+             numericInput("user_defined_txt_frequency", label = "Select Frequency", value = 250) # frequency defined by the user
+             
+           ),
+
+           column(7, radioButtons("robust", "Select estimator:", choices = c("Classic WV" = "classic", "Robust WV" = "robust"))),
              
            checkboxInput("overlay_datasheet", "Overlay Datasheet WV", FALSE),
            
            br(),
            actionButton("fit1", label = "Plot / Update WV"),
 
-           
            uiOutput("choose_columns")
     ),
     
@@ -126,7 +152,7 @@ ui <- shinyUI(fluidPage(
            )
     ),
     
-    column(4,
+    column(3,
            h3("Options"),
            br(),
            
@@ -152,13 +178,29 @@ ui <- shinyUI(fluidPage(
 
 server <- function(input, output, session) {
   
-  w <- reactiveValues(plot = FALSE, fit = FALSE, gmwm = NULL, 
-                      form = NULL, freq = 100, first_gmwm = NULL,
+  # data created by the datasheet
+  w <- reactiveValues(plot = FALSE,
+                      fit = FALSE,
+                      gmwm = NULL, 
+                      form = NULL,
+                      freq = 100,
+                      first_gmwm = NULL,
                       n = NULL)
   
-  v <- reactiveValues(plot = FALSE, fit = FALSE, gmwm = NULL, 
-                      form = NULL, freq = 100, first_gmwm = NULL,
-                      n = NULL, overlap_datasheet = FALSE)
+  # library or custom dataset
+  v <- reactiveValues(plot = FALSE,
+                      fit = FALSE,
+                      gmwm = NULL, 
+                      form = NULL,
+                      freq = 100,
+                      first_gmwm = NULL,
+                      n = NULL,
+                      overlap_datasheet = FALSE,
+                      custom_data = FALSE, 
+                      custom_data_name = NULL,
+                      custom_data_type = NULL,
+                      custom_data_size = NULL, 
+                      custom_data_tot_colums = NULL)
   
   # PUSHING ON BUTTON "Update Datasheet WV plot"
   observeEvent(input$fit0, {
@@ -212,26 +254,59 @@ server <- function(input, output, session) {
     # }
   
     # Generate Data
-    Xt = gen_gts(input$no_of_samples, m) # the number of samples defined by the user
-    w$n = length(Xt)
-    w$form = wvar(as.numeric(Xt), robust = FALSE) # OR USE HERE DIRECTLY THE FORMULAS FROM THE HOMEPAGE, I WAS NOT ABLE TO FIND THEM THOUGH
     w$freq = input$dsv_frequency # the frequence defined by the user
+    w$n = input$no_of_samples # numbers of samples
+    Xt = gen_gts(n = w$n, model = m, freq =  w$freq) # generated data
+    
+    w$form = wvar(as.numeric(Xt), robust = FALSE) # OR USE HERE DIRECTLY THE FORMULAS FROM THE HOMEPAGE, I WAS NOT ABLE TO FIND THEM THOUGH
+   
     updateNavbarPage(session, "tabs", selected = "Datasheet")
   })
   
-  # PUSHING ON BUTTON "Plot WV"
+  # PUSHING ON BUTTON "Plot/update WV"
   observeEvent(input$fit1, {
     v$plot = TRUE
     v$fit = FALSE
     v$overlap_datasheet = input$overlay_datasheet
-    my_data = get(input$imu_obj)
-    Xt = my_data[, input$sensors]
+    if ("library" %in% input$data_input_choice){ #using library data
+      my_data = get(input$imu_obj)
+      Xt = my_data[, input$sensors]
+      v$freq = attr(my_data, 'freq')
+      v$custom_data = FALSE
+    } else{ #using custom data
+      inFile <- input$user_defined_txt_file
+      if (is.null(inFile))
+        return(NULL)
+      
+      my_data = read.csv(inFile$datapath, header = FALSE, sep = ",")
+  
+      if(input$user_defined_txt_file_column > ncol(my_data)){
+        updateSliderInput(session, "user_defined_txt_file_column", value = ncol(my_data))
+        the_column_number = ncol(my_data)
+      } else{
+        the_column_number = input$user_defined_txt_file_column
+      }
+      
+      # update the slider number with the current number of colums
+      updateSliderInput(session, "user_defined_txt_file_column", max = ncol(my_data))
+
+
+      Xt = my_data[, the_column_number]
+      v$freq = input$user_defined_txt_frequency
+      v$custom_data = TRUE
+      v$custom_data_name = inFile$name
+      v$custom_data_type = inFile$type
+      v$custom_data_size = inFile$size
+      v$custom_data_tot_colums = ncol(my_data)
+
+    }
+    
     v$n = length(Xt)
-    v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust"))
-    v$freq = attr(my_data, 'freq')
+    v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust") )
     updateNavbarPage(session, "tabs", selected = "Selected Sensor")
   })
   
+  #PUSHED THE BUTTON "FIT MODEL"
   observeEvent(input$fit3, {
     
     if (is.null(v$first_gmwm)){
@@ -239,10 +314,23 @@ server <- function(input, output, session) {
     }
     v$fit = TRUE
     v$plot = FALSE
-    my_data = get(input$imu_obj)
-    sensor_axis = paste(input$sensor, input$axis)
     
-    Xt = my_data[, input$sensors]
+    if ("library" %in% input$data_input_choice){
+      my_data = get(input$imu_obj)
+      Xt = my_data[, input$sensors]
+      v$freq = attr(my_data, 'freq')
+      v$custom_data = FALSE
+    } else{
+      inFile <- input$user_defined_txt_file
+      if (is.null(inFile))
+        return(NULL)
+      
+      my_data = read.csv(inFile$datapath, header = FALSE, sep = ",")
+      Xt = my_data[, input$user_defined_txt_file_column]
+      v$freq = input$user_defined_txt_frequency
+      v$custom_data = TRUE
+    }
+    
     v$n = length(Xt)
     first = TRUE
     counter_model_size = 0
@@ -324,7 +412,7 @@ server <- function(input, output, session) {
     
   })
   
-  
+  # BUTTON REDUCE MODEL WHICH WILL USE THE AUTOIMU FUNCTION
   observeEvent(input$fit2, {
     
     if (is.null(v$first_gmwm)){
@@ -332,10 +420,29 @@ server <- function(input, output, session) {
     }
     v$fit = TRUE
     v$plot = FALSE
-    my_data = get(input$imu_obj)
-    sensor_axis = paste(input$sensor, input$axis)
     
-    Xt = my_data[, input$sensors]
+    
+    # my_data = get(input$imu_obj)
+    # Xt = my_data[, input$sensors]
+    
+    if ("library" %in% input$data_input_choice){
+      my_data = get(input$imu_obj)
+      Xt = my_data[, input$sensors]
+      v$freq = attr(my_data, 'freq')
+      v$custom_data = FALSE
+    } else{
+      inFile <- input$user_defined_txt_file
+      if (is.null(inFile))
+        return(NULL)
+      
+      my_data = read.csv(inFile$datapath, header = FALSE, sep = ",")
+      Xt = my_data[, input$user_defined_txt_file_column]
+      Xt = imu(data = Xt, freq = v$freq, gyros = 1)
+      v$freq = input$user_defined_txt_frequency
+      v$custom_data = TRUE
+    }
+    
+    
     v$n = length(Xt)
     first = TRUE
     counter_model_size = 0
@@ -434,12 +541,12 @@ server <- function(input, output, session) {
   output$plot_datasheet <- renderPlot({
     
     if (w$plot){
-      a = w$form
+      b = w$form
       freq = w$freq
-      a$scales = a$scales/freq
+      b$scales = b$scales/freq
       duration = w$n/(freq*60*60)
       title = paste("Haar Wavelet Variance of DATASHEET, Duration: ", round(duration,1), "(h) @", freq, "(Hz)", sep = "")
-      plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title, CI = FALSE)
+      plot(b, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title, CI = FALSE)
     }else{
       plot(NA)
     }
@@ -450,25 +557,43 @@ server <- function(input, output, session) {
   output$plot2 <- renderPlot({
     
     if (v$fit || v$plot){
+      # for the real data
       a = v$form
-      freq = v$freq
-      a$scales = a$scales/freq
-      duration_a = v$n/(freq*60*60)
+      freq_a = v$freq
+      a$scales = a$scales/freq_a
+      duration_a = v$n/(freq_a*60*60)
       
+      # for the simualted data
       b = w$form
-      freq = w$freq
-      b$scales = b$scales/freq
-      duration_b = w$n/(freq*60*60)
+      freq_b = w$freq
+      b$scales = b$scales/freq_b
+      duration_b = w$n/(freq_b*60*60)
       
-      title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,
-                    ") - Duration: ", round(duration_a,1), "(h) @", freq, "(Hz)", sep = "")
-      if (v$plot){
-        if (w$plot && v$overlap_datasheet) {
+      if (v$plot){ # should i plot just the real data?
+        if (w$plot && v$overlap_datasheet) { #should i plot the emulated data AND is the overlap-checkbox activated
         compare_wvar(a, b, split = FALSE, CI = FALSE, legend.label = c('dataset','datasheet'), auto.label.wvar = FALSE)
         } else{
+          if (v$custom_data){ # is it custom data from a txt file?
+            title = paste("Haar Wavelet Variance of TXT-FILE-DATA: ", v$custom_data_name, " (column number ", input$user_defined_txt_file_column, " out of ", v$custom_data_tot_colums,  
+                          ") - Filesize: ", round(v$custom_data_size/1024/1024,2), " [MB] - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
+          }else{ # it is NOT custom data
+            title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,
+                          ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
+          }
+          
           plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
         }
-      }else{
+      }else{ # when doing the gmwm modeling plot
+        
+        if (v$custom_data){ # is it custom data from a txt file?
+          title = paste("Haar Wavelet Variance of TXT-FILE-DATA: ", v$custom_data_name, " (column number ", input$user_defined_txt_file_column,
+                        ") - Filesize: ", round(v$custom_data_size/1024/1024,2), " [MB] - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
+        }else{ # it is NOT custom data
+          title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,
+                        ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
+        }
+        
+        
         plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), 
              process.decomp = "process_decomp" %in% input$option_plot, 
              CI = "ci" %in% input$option_plot, title = title)
