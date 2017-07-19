@@ -20,4 +20,8 @@ write(format(t(B), nsmall = 19),
       append = FALSE,
       sep = ",")
 
+## Calculating the wvar of white noise and comparing them 
+a = wvar(Xt)
+b = wvar(Yt)
 
+compare_wvar(a, b)
