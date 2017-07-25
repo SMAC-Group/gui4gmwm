@@ -22,7 +22,7 @@ ui <- shinyUI(fluidPage(
   
   title = "GMWM GUI",
   tabsetPanel(id = "tabs",
-              tabPanel("Datasheet", plotOutput(outputId = "plot_datasheet", height = "500px")), 
+              # tabPanel("Datasheet", plotOutput(outputId = "plot_datasheet", height = "500px")), 
               tabPanel("Model Data", plotOutput(outputId = "plot", height = "500px")), 
               tabPanel("Selected Sensor", plotOutput(outputId = "plot2", height = "500px")),
               tabPanel("Summary", verbatimTextOutput(outputId = "summ", placeholder = TRUE))
@@ -32,61 +32,7 @@ ui <- shinyUI(fluidPage(
   
   fluidRow(
     column(3,
-           h3("Datasheet values"),
-           br(),
-           
-           # radioButtons("imu_type_choice", "Select IMU type:", choices = c("Gyroscope" = "gyro", "Accelerometer" = "accel")),
-           # 
-           # conditionalPanel(
-           #   condition = "input.imu_type_choice == 'accel'",
-           #  
-           #   sliderInput("gm_nb", "Number of Gauss-Markov Processes", 1, 5, 2)
-           # ),
-           
-           numericInput("dsv_frequency", label = "Frequency", value = 250), # frequency defined by the user
-           
-           numericInput("no_of_samples", label = "Number of datapoints", value = 10^6), # not sure to let it here, as we could plot the WV from directly from the formula, so there would be no need to generate and the to WV this generated data, no?
-           
-           checkboxGroupInput("model_from_datasheet", "Select Model from datasheet",
-                              c("Quantization Noise" = "QN",
-                                "White Noise" = "WN",
-                                "Gauss-Markov" = "GM"
-                                # "Random Walk" = "RW",
-                                # "Drift" = "DR"
-                                )
-                              # ,selected = "WN"
-                              ),
-           
-           br(),
-           
-           conditionalPanel(
-             condition = "input.model_from_datasheet.indexOf('QN') > -1",
-             numericInput("dsv_qn", label = "QN value [(rad/s)^2]", value = 1.95e-6) 
-             
-           ),
-           
-           conditionalPanel(
-             condition = "input.model_from_datasheet.indexOf('WN') > -1",
-             numericInput("dsv_wn", label = "WN value [(rad/s)^2]", value = 4.13e-7) 
-
-           ),
-           
-           conditionalPanel(
-             condition = "input.model_from_datasheet.indexOf('GM') > -1",
-             numericInput("dsv_gm_beta", label = "GM beta [1/s]", value = 1.85e-3),
-             numericInput("dsv_gm", label = "GM value [(rad/s)^2]", value = 6.4e-9)
-             
-           ),
-           
-           fluidRow(
-             column(5,
-                    br(),
-                    actionButton("fit0", label = "Update Datasheet WV plot"))
-           )
-    ),
-    
-    column(3,
-           h3("Data"),
+           h3("Data" ),
            br(),
            
            radioButtons("data_input_choice", "Select data input:", choices = c("from library" = "library", "custom" = "custom")),
@@ -117,14 +63,14 @@ ui <- shinyUI(fluidPage(
              ),
              sliderInput("user_defined_txt_file_column", "Select Column number:", 
                          min=1, max=6, value=1),
-             numericInput("user_defined_txt_frequency", label = "Select Frequency", value = 250) # frequency defined by the user
+             numericInput("user_defined_txt_frequency", label = "Set Frequency of dataset", value = 250) # frequency defined by the user
              
            ),
 
            column(7, radioButtons("robust", "Select estimator:", choices = c("Classic WV" = "classic", "Robust WV" = "robust"))),
              
-           checkboxInput("overlay_datasheet", "Overlay Datasheet WV", FALSE),
-           
+           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE),
+
            br(),
            actionButton("fit1", label = "Plot / Update WV"),
 
@@ -132,6 +78,48 @@ ui <- shinyUI(fluidPage(
     ),
     
     column(3,
+           br(),
+           
+           br(),
+           conditionalPanel(
+             condition = "input.overlay_datasheet",
+             h3("Datasheet Specs"),
+            # here
+            checkboxGroupInput("model_from_datasheet", "Select Model from datasheet",
+                               c("Quantization Noise" = "QN",
+                                 "White Noise" = "WN",
+                                 "Gauss-Markov" = "GM"
+                                 # "Random Walk" = "RW",
+                                 # "Drift" = "DR"
+                               )
+                               , selected = "WN"
+            ),
+            
+            br(),
+            
+            conditionalPanel(
+              condition = "input.model_from_datasheet.indexOf('QN') > -1",
+              numericInput("dsv_qn", label = "QN value", value = 1.95e-6) 
+              
+            ),
+            
+            conditionalPanel(
+              condition = "input.model_from_datasheet.indexOf('WN') > -1",
+              numericInput("dsv_wn", label = "WN value", value = 4.13e-7) 
+              
+            ),
+            
+            conditionalPanel(
+              condition = "input.model_from_datasheet.indexOf('GM') > -1",
+              numericInput("dsv_gm_beta", label = "GM beta", value = 1.85e-3),
+              numericInput("dsv_gm", label = "GM value", value = 6.4e-9)
+              
+            )
+           ),
+           br()
+    ),
+    
+    column(2,
            h3("GMWM Modelling"),
            br(),
            checkboxGroupInput("model", "Select Model",
@@ -146,13 +134,15 @@ ui <- shinyUI(fluidPage(
              sliderInput("gm_nb", "Number of Gauss-Markov Processes", 1, 5, 2)
            ),
            
-           fluidRow(
-             column(6, actionButton("fit2", label = "Reduce Model")),
-             column(6, actionButton("fit3", label = "Fit Model"))
-           )
+           actionButton("fit2", label = "Reduce Model"),
+           
+           br(),
+           
+           actionButton("fit3", label = "Fit Model")
+           
     ),
     
-    column(3,
+    column(2,
            h3("Options"),
            br(),
            
@@ -200,68 +190,56 @@ server <- function(input, output, session) {
                       custom_data_name = NULL,
                       custom_data_type = NULL,
                       custom_data_size = NULL, 
-                      custom_data_tot_colums = NULL)
+                      custom_data_tot_colums = NULL, 
+                      datasheet_noise_model = NULL, 
+                      datasheet_values_make_sense = FALSE)
   
-  # PUSHING ON BUTTON "Update Datasheet WV plot"
-  observeEvent(input$fit0, {
-    w$plot = TRUE
-    w$fit = FALSE
-    
-    if ("WN" %in% input$model_from_datasheet){
-      if ("QN" %in% input$model_from_datasheet){
-        if ("GM" %in% input$model_from_datasheet){
-          m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
-        } else{
-          m = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
-        }
-      }else{
-        if ("GM" %in% input$model_from_datasheet){
-          m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn))
-        } else {
-          m = WN(sigma2 = (input$dsv_wn))
-        }
-      }
-    }else{
-      if ("QN" %in% input$model_from_datasheet){
-        if ("GM" %in% input$model_from_datasheet){
-          m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + QN(q2 = (input$dsv_qn))
-        } else {
-          m = QN(q2 = (input$dsv_qn))
-        }
-      } else{
-        if ("GM" %in% input$model_from_datasheet){
-          m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta)
-        } else {
-          m = WN(sigma2 = 0)
-          w$plot = FALSE
-        }
-      }
-    }
-
-    # if ("WN" %in% input$model_from_datasheet){
-    #   if("QN" %in% input$model_from_datasheet){
-    #     m = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
-    #   } else{
-    #     m = WN(sigma2 = (input$dsv_wn))
-    #   }
-    # } else{
-    #   if("QN" %in% input$model_from_datasheet){
-    #     m = QN(q2 = (input$dsv_qn))
-    #   } else{
-    #     m = WN(sigma2 = 0)
-    #     w$plot = FALSE
-    #   }
-    # }
   
-    # Generate Data
-    w$freq = input$dsv_frequency # the frequence defined by the user
-    w$n = input$no_of_samples # numbers of samples
-    Xt = gen_gts(n = w$n, model = m, freq =  w$freq) # generated data
-    
-    w$form = wvar(as.numeric(Xt), robust = FALSE) # OR USE HERE DIRECTLY THE FORMULAS FROM THE HOMEPAGE, I WAS NOT ABLE TO FIND THEM THOUGH
-   
-    updateNavbarPage(session, "tabs", selected = "Datasheet")
-  })
+  ###3# PUSHING ON BUTTON "Update Datasheet WV plot"
+  # observeEvent(input$fit0, {
+  #   w$plot = TRUE
+  #   w$fit = FALSE
+  #   
+  #   if ("WN" %in% input$model_from_datasheet){
+  #     if ("QN" %in% input$model_from_datasheet){
+  #       if ("GM" %in% input$model_from_datasheet){
+  #         m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+  #       } else{
+  #         m = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+  #       }
+  #     }else{
+  #       if ("GM" %in% input$model_from_datasheet){
+  #         m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn))
+  #       } else {
+  #         m = WN(sigma2 = (input$dsv_wn))
+  #       }
+  #     }
+  #   }else{
+  #     if ("QN" %in% input$model_from_datasheet){
+  #       if ("GM" %in% input$model_from_datasheet){
+  #         m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + QN(q2 = (input$dsv_qn))
+  #       } else {
+  #         m = QN(q2 = (input$dsv_qn))
+  #       }
+  #     } else{
+  #       if ("GM" %in% input$model_from_datasheet){
+  #         m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta)
+  #       } else {
+  #         m = WN(sigma2 = 0)
+  #         w$plot = FALSE
+  #       }
+  #     }
+  #   }
+  # 
+  #   # Generate Data
+  #   w$freq = input$dsv_frequency # the frequence defined by the user
+  #   w$n = input$no_of_samples # numbers of samples
+  #   Xt = gen_gts(n = w$n, model = m, freq =  w$freq) # generated data
+  #   
+  #   w$form = wvar(as.numeric(Xt), robust = FALSE) # OR USE HERE DIRECTLY THE FORMULAS FROM THE HOMEPAGE, I WAS NOT ABLE TO FIND THEM THOUGH
+  #  
+  #   updateNavbarPage(session, "tabs", selected = "Datasheet")
+  ###### })
   
   # PUSHING ON BUTTON "Plot/update WV"
   observeEvent(input$fit1, {
@@ -303,6 +281,53 @@ server <- function(input, output, session) {
     
     v$n = length(Xt)
     v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust") )
+    
+    # if the user checked the "overlay datasheet checkbox
+    if (v$overlap_datasheet == TRUE){
+      # condition is set to true for plottin ghte datasheet
+      v$datasheet_values_make_sense = TRUE
+      # the datasheet noise model is assembled
+      if ("WN" %in% input$model_from_datasheet){
+            if ("QN" %in% input$model_from_datasheet){
+              if ("GM" %in% input$model_from_datasheet){
+                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+              } else{
+                v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+              }
+            }else{
+              if ("GM" %in% input$model_from_datasheet){
+                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn))
+              } else {
+                v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn))
+              }
+            }
+          }else{
+            if ("QN" %in% input$model_from_datasheet){
+              if ("GM" %in% input$model_from_datasheet){
+                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + QN(q2 = (input$dsv_qn))
+              } else {
+                v$datasheet_noise_model = QN(q2 = (input$dsv_qn))
+              }
+            } else{
+              if ("GM" %in% input$model_from_datasheet){
+                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta)
+              } else {
+                # no model is selected, thus the datasheet noise model is set to empty
+                v$datasheet_noise_model = NULL
+                # in this case, the values make NO sense, maybe this flag is not required later on, to be discussed
+                v$datasheet_values_make_sense = FALSE
+              }
+            }
+          }
+      # here would be the code, which convert the datasheet noise model "v$datasheet_noise_model" into a vector, if the condition is given
+      if (v$datasheet_values_make_sense){
+        # bla
+        # bla
+        # bla
+        # bla
+      }
+    }
+
     updateNavbarPage(session, "tabs", selected = "Selected Sensor")
   })
   
@@ -315,12 +340,12 @@ server <- function(input, output, session) {
     v$fit = TRUE
     v$plot = FALSE
     
-    if ("library" %in% input$data_input_choice){
+    if ("library" %in% input$data_input_choice){ #using library data
       my_data = get(input$imu_obj)
       Xt = my_data[, input$sensors]
       v$freq = attr(my_data, 'freq')
       v$custom_data = FALSE
-    } else{
+    } else{ #using custom data
       inFile <- input$user_defined_txt_file
       if (is.null(inFile))
         return(NULL)
@@ -392,8 +417,6 @@ server <- function(input, output, session) {
       model = 3*GM()
     }
     
-    #if (v$first_gmwm == TRUE || counter_model_size == 1){
-    
     if (is.null(input$seed)){
       input$seed = 1982
     }
@@ -404,9 +427,6 @@ server <- function(input, output, session) {
     v$gmwm = gmwm_imu(model, Xt, G = input$num, seed = input$seed, robust = (input$robust=="robust")) 
     v$form = v$gmwm
     v$first_gmwm = FALSE
-    #}else{
-    #  v$form = update(v$gmwm, model) 
-    #}
     
     updateNavbarPage(session, "tabs", selected = "Selected Sensor")
     
@@ -421,16 +441,12 @@ server <- function(input, output, session) {
     v$fit = TRUE
     v$plot = FALSE
     
-    
-    # my_data = get(input$imu_obj)
-    # Xt = my_data[, input$sensors]
-    
-    if ("library" %in% input$data_input_choice){
+    if ("library" %in% input$data_input_choice){ #using library data
       my_data = get(input$imu_obj)
       Xt = my_data[, input$sensors]
       v$freq = attr(my_data, 'freq')
       v$custom_data = FALSE
-    } else{
+    } else{ #using custom data
       inFile <- input$user_defined_txt_file
       if (is.null(inFile))
         return(NULL)
@@ -442,11 +458,9 @@ server <- function(input, output, session) {
       v$custom_data = TRUE
     }
     
-    
     v$n = length(Xt)
     first = TRUE
     counter_model_size = 0
-  
     
     if ("GM" %in% input$model){
       for (i in 1:input$gm_nb){
@@ -511,8 +525,6 @@ server <- function(input, output, session) {
   })
   
   
-  
-  
   dsnames <- c()
   
   data_set <- reactive({
@@ -535,7 +547,6 @@ server <- function(input, output, session) {
                       selected = "")
     
   })
-  
   
   
   output$plot_datasheet <- renderPlot({
@@ -570,9 +581,9 @@ server <- function(input, output, session) {
       duration_b = w$n/(freq_b*60*60)
       
       if (v$plot){ # should i plot just the real data?
-        if (w$plot && v$overlap_datasheet) { #should i plot the emulated data AND is the overlap-checkbox activated
-        compare_wvar(a, b, split = FALSE, CI = FALSE, legend.label = c('dataset','datasheet'), auto.label.wvar = FALSE)
-        } else{
+        # if (w$plot && v$overlap_datasheet) { #should i plot the emulated data AND is the overlap-checkbox activated
+        # compare_wvar(a, b, split = FALSE, CI = FALSE, legend.label = c('dataset','datasheet'), auto.label.wvar = FALSE)
+        # } else{
           if (v$custom_data){ # is it custom data from a txt file?
             title = paste("Haar Wavelet Variance of TXT-FILE-DATA: ", v$custom_data_name, " (column number ", input$user_defined_txt_file_column, " out of ", v$custom_data_tot_colums,  
                           ") - Filesize: ", round(v$custom_data_size/1024/1024,2), " [MB] - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
@@ -582,8 +593,13 @@ server <- function(input, output, session) {
           }
           
           plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
-        }
-      }else{ # when doing the gmwm modeling plot
+
+          # if(v$datasheet_values_make_sense){
+          #    v$datasheet_values_make_sense = v$datasheet_values_make_sense
+          # }
+          
+        # }
+      }else{ # when doing the "gmwm modeling" plot
         
         if (v$custom_data){ # is it custom data from a txt file?
           title = paste("Haar Wavelet Variance of TXT-FILE-DATA: ", v$custom_data_name, " (column number ", input$user_defined_txt_file_column,
@@ -597,15 +613,14 @@ server <- function(input, output, session) {
         plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), 
              process.decomp = "process_decomp" %in% input$option_plot, 
              CI = "ci" %in% input$option_plot, title = title)
+        
+        # if(v$datasheet_values_make_sense){
+        #   v$datasheet_values_make_sense = v$datasheet_values_make_sense
+        # }
       }
     }else{
       plot(NA)
     }
-    
-    # if (w$plot){
-    #  compare_wvar(v$form, w$form, split = FALSE)# , axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
-    # }
-    
     
   })
   
