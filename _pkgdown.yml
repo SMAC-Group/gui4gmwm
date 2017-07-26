@@ -1,0 +1,45 @@
+template:
+  params:
+    bootswatch: flatly
+
+reference:
+  - title: Time Series Models 
+    contents:
+    - AR
+    - AR1 
+    - ARIMA 
+    - ARMA
+    - DR
+    - GM
+    - MA
+    - MA1
+    - QN
+    - RW
+    - SARIMA
+    - SARMA
+    - WN
+  - title: Simulation 
+    contents: 
+    - gen_gts
+    - gen_lts 
+    - gts 
+    - lts 
+  - title: Helpers
+    contents:
+    - outf
+    - value
+    - desc.to.ts.model
+    - conv.ar1.to.gm
+    - conv.gm.to.ar1
+
+navbar:
+  left:
+  - text: From Models
+    href: articles/sim_models.html
+  - text: From TS Data 
+    href: articles/sim_data.html
+  - text: Reference
+    href: reference/index.html
+  right: 
+  - icon: fa-github
+    href: https://github.com/SMAC-Group/simts
