@@ -14,8 +14,6 @@ imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis =
 data("imar.gyro")
 data("ln200.gyro")
 
-deg_h__2__rad_s = pi / ( 180 * 3600 )
-
 options(shiny.maxRequestSize=100*1024^2) # increses file limit from default-5MB to 100MB
 
 ui <- shinyUI(fluidPage(
@@ -185,6 +183,8 @@ server <- function(input, output, session) {
                       freq = 100,
                       first_gmwm = NULL,
                       n = NULL,
+                      sensor_name = NULL,
+                      sensor_column = NULL, 
                       overlap_datasheet = FALSE,
                       custom_data = FALSE, 
                       custom_data_name = NULL,
@@ -249,8 +249,21 @@ server <- function(input, output, session) {
     if ("library" %in% input$data_input_choice){ #using library data
       my_data = get(input$imu_obj)
       Xt = my_data[, input$sensors]
+      
+      v$sensor_name = input$imu_obj
+      v$sensor_column = input$sensors
       v$freq = attr(my_data, 'freq')
       v$custom_data = FALSE
+      
+      if( v$sensor_column >= 0 && v$sensor_column<=3){
+        updateNumericInput(session, "dsv_wn", value = 999999)
+      } elseif {
+        updateNumericInput(session, "dsv_wn", value = -999999)
+      } else{
+        updateNumericInput(session, "dsv_wn", value = 0)
+      }
+      
+      
     } else{ #using custom data
       inFile <- input$user_defined_txt_file
       if (is.null(inFile))
@@ -268,7 +281,7 @@ server <- function(input, output, session) {
       # update the slider number with the current number of colums
       updateSliderInput(session, "user_defined_txt_file_column", max = ncol(my_data))
 
-
+      v$sensor_column = the_column_number
       Xt = my_data[, the_column_number]
       v$freq = input$user_defined_txt_frequency
       v$custom_data = TRUE
