@@ -1,11 +1,32 @@
-Package: ggmwm
+Package: gui4gmwm
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
-Encoding: UTF-8
+Title: Graphical User Interface for the Inertial Sensors Calibration
+Version: 1.0
+Date: 2017-05-28
 LazyData: true
+Authors@R: c(
+    person("Philipp", "Clausen", email = "philipp.clausen@epfl.ch", role = c("aut","cre")),
+    person("Stephane", "Guerrier", role = "aut"),
+    person("Justin", "Lee", role = "aut"),
+    person("Roberto", "Molinari", role = "aut"), 
+    person("Jan", "Skaloud", role = "ctb")
+    )
+Maintainer: Philipp Clausen <philipp.clausen@epfl.ch>
+Depends: R (>= 3.1.0)
+License: CC BY-NC-SA 4.0
+Imports:
+    Rcpp (>= 0.12.11), 
+    methods,
+    stats,
+    utils, 
+    scales, 
+    grDevices, 
+    graphics
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.0.1.9000
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+URL: https://github.com/SMAC-Group/gmwm_gui
+BugReports: https://github.com/SMAC-Group/gmwm_gui/issues
