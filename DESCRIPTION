@@ -12,8 +12,6 @@ Authors@R: c(
     person("Jan", "Skaloud", role = "ctb")
     )
 Maintainer: Philipp Clausen <philipp.clausen@epfl.ch>
-Depends: R (>= 3.1.0)
-License: CC BY-NC-SA 4.0
 Depends:
     scales,
     reshape,
@@ -22,8 +20,9 @@ Depends:
     imudata,
     shinydashboard,
     leaflet,
-RoxygenNote: 6.0.1.9000
-Suggests: 
+License: CC BY-NC-SA 4.0
+RoxygenNote: 5.0.1
+Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
