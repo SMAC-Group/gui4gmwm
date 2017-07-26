@@ -14,23 +14,14 @@ Authors@R: c(
 Maintainer: Philipp Clausen <philipp.clausen@epfl.ch>
 Depends: R (>= 3.1.0)
 License: CC BY-NC-SA 4.0
-Imports:
-    Rcpp (>= 0.12.11), 
-    methods,
-    stats,
-    utils, 
+Depends:
     scales,
     reshape,
-    grDevices, 
-    graphics,
     shiny,
     gmwm,
     imudata,
     shinydashboard,
     leaflet,
-    data.table,
-    ggplot2
-LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1.9000
 Suggests: 
     knitr,
