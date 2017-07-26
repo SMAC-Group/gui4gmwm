@@ -146,7 +146,7 @@ data("navchip")
 #   p
 # }
 
-setwd('/home/philipp/Desktop/padova/rcode_new/gmwm_gui/gmwm_gui')
+# setwd('/home/philipp/Desktop/padova/rcode_new/gmwm_gui/gmwm_gui')
 
 
 source("plot_wv_and_datasheet.R")
