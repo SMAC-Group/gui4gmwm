@@ -19,9 +19,17 @@ Imports:
     methods,
     stats,
     utils, 
-    scales, 
+    scales,
+    reshape,
     grDevices, 
-    graphics
+    graphics,
+    shiny,
+    gmwm,
+    imudata,
+    shinydashboard,
+    leaflet,
+    data.table,
+    ggplot2
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1.9000
 Suggests: 
