@@ -10,9 +10,15 @@ library(ggplot2)
 # source("../R/plot_wv_and_datasheet.R")
 # source("../R/load_internal_datasets.R")
 
-const.NAVCHIP.GYRO_WN = (0.003 / 360 * 2*pi * sqrt(250))^2 # [(rad/s)^2]
+const.degps_2_radps = 1/360 * 2*pi
+
+const.DEFAULT_WN = 1
+
+const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
 const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
 
+const.MTIG.GYRO_WN = (0.05 * const.degps_2_radps * sqrt(100))^2 
+const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
 
 
 data("navchip")
@@ -131,41 +137,7 @@ ui <- shinyUI(fluidPage(
            
            conditionalPanel(
              condition = "input.overlay_datasheet",
-             # h3("Datasheet Specs"),
-             # here
-             # h4("WN Datasheet specification"),
-             
-             numericInput("dsv_wn", label = "WN from Datasheet", value = 4.13e-7)
-             
-             # checkboxGroupInput("model_from_datasheet", "Select Model from datasheet",
-             #                    c("Quantization Noise" = "QN",
-             #                      "White Noise" = "WN",
-             #                      "Gauss-Markov" = "GM"
-             #                      # "Random Walk" = "RW",
-             #                      # "Drift" = "DR"
-             #                    )
-             #                    , selected = "WN"
-             # ),
-
-             
-             # conditionalPanel(
-             #   condition = "input.model_from_datasheet.indexOf('QN') > -1",
-             #   numericInput("dsv_qn", label = "QN value", value = 1.95e-6)
-             #   
-             # ),
-             
-             # conditionalPanel(
-             #   condition = "input.model_from_datasheet.indexOf('WN') > -1",
-             #   
-             #   
-             # )
-             
-             # conditionalPanel(
-             #   condition = "input.model_from_datasheet.indexOf('GM') > -1",
-             #   numericInput("dsv_gm_beta", label = "GM beta", value = 1.85e-3),
-             #   numericInput("dsv_gm", label = "GM value", value = 6.4e-9)
-             #   
-             # )
+             numericInput("dsv_wn", label = "WN from Datasheet", value = NULL)
            )
            
     )
@@ -266,17 +238,26 @@ server <- function(input, output, session) {
       if( v$sensor_column == "Gyro. X" || v$sensor_column == "Gyro. Y" || v$sensor_column == "Gyro. Z"){
         if (v$sensor_name == "navchip"){
           updateNumericInput(session, "dsv_wn", value = const.NAVCHIP.GYRO_WN)
-        } else{
-          updateNumericInput(session, "dsv_wn", value = 99)
-        }
+        } else {
+          if(v$sensor_name == "imu6"){
+            updateNumericInput(session, "dsv_wn", value = const.MTIG.GYRO_WN)
+          } else {
+            updateNumericInput(session, "dsv_wn", value = const.DEFAULT_WN)
+          }
+        } 
       }
+      
 
       if( v$sensor_column == "Accel. X" || v$sensor_column == "Accel. Y" || v$sensor_column == "Accel. Z"){
         if (v$sensor_name == "navchip"){
           updateNumericInput(session, "dsv_wn", value = const.NAVCHIP.ACC_WN)
-        } else{
-          updateNumericInput(session, "dsv_wn", value = 99)
-        }
+        } else {
+          if(v$sensor_name == "imu6"){
+            updateNumericInput(session, "dsv_wn", value = const.MTIG.ACC_WN)
+          } else {
+            updateNumericInput(session, "dsv_wn", value = const.DEFAULT_WN)
+          }
+        } 
       }
 
     } else{ #using custom data
