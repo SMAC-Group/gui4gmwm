@@ -60,6 +60,7 @@ plot_wv_and_datasheet <- function(wv, datasheet){
   default = list(legend.label.default)
   nullIsFine = T
   object$dat = object$ci_high
+  # object$dat = object$ci.high
   checkParams(params = params, require.len = requireLength,
               default = default, null.is.fine = nullIsFine)
   #check parameter
@@ -82,6 +83,9 @@ plot_wv_and_datasheet <- function(wv, datasheet){
 
   WV = data.frame(var = object$variance, dat = datasheet, low = object$ci_low, high = object$ci_high,
                   scale = object$scales)
+  
+  # WV = data.frame(var = object$wv.empir, dat = datasheet, low = object$ci.low, high = object$ci.high,
+  #                 scale = object$scales)
 
 
 

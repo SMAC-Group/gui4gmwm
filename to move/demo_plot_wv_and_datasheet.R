@@ -187,6 +187,16 @@ wv_yt = wvar(as.numeric(Yt), freq = nc_freq)
 datasheet_yt = qn_to_wv(q2 = 1.95e-6, tau = wv_yt$scales)/nc_freq/nc_freq + wn_to_wv(sigma2 = 4.13e-7, tau = wv_yt$scales)/nc_freq
 plot_wv_and_datasheet(wv_yt, datasheet_yt)
 
+## TEST 4##
+nc_freq = 250
+Yt = navchip[,3]
+wv_yt = wvar(as.numeric(Yt), freq = nc_freq)
+
+analysis = gmwm_imu(model = WN(), data = Yt)
+
+datasheet_yt = wn_to_wv(sigma2 = 4.13e-7, tau = wv_yt$scales)/nc_freq
+plot_wv_and_datasheet(wv_yt, datasheet_yt)
+
 
 
 

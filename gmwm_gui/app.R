@@ -47,7 +47,6 @@ ui <- shinyUI(fluidPage(
 
   title = "GMWM GUI",
   tabsetPanel(id = "tabs",
-              # tabPanel("Datasheet", plotOutput(outputId = "plot_datasheet", height = "500px")),
               tabPanel("Model Data", plotOutput(outputId = "plot", height = const.FIGURE_PLOT_HEIGHT)),
               tabPanel("Selected Sensor", plotOutput(outputId = "plot2", height = const.FIGURE_PLOT_HEIGHT)),
               tabPanel("Summary", verbatimTextOutput(outputId = "summ", placeholder = TRUE))
@@ -72,7 +71,6 @@ ui <- shinyUI(fluidPage(
                            "IMAR" = "imar.gyro"),
                          selected = 1),
 
-
              selectInput("sensors", "Select sensor", c("1"="1","2"="2", selected = 1))
            ),
 
@@ -95,6 +93,7 @@ ui <- shinyUI(fluidPage(
            column(7, radioButtons("robust", "Select estimator:", choices = c("Classic WV" = "classic", "Robust WV" = "robust"))),
 
                       br(),
+           
            actionButton("fit1", label = "Plot / Update WV"),
 
            uiOutput("choose_columns")
@@ -116,18 +115,18 @@ ui <- shinyUI(fluidPage(
              sliderInput("gm_nb", "Number of Gauss-Markov Processes", 1, 5, 2)
            ),
 
-           actionButton("fit2", label = "Reduce Model"),
+           actionButton("fit3", label = "Fit Model"),
 
            br(),
-
-           actionButton("fit3", label = "Fit Model")
+           br(),
+           
+           actionButton("fit2", label = "Reduce Model Automatically")
 
     ),
 
     column(3,
            h3("Options"),
            br(),
-
 
            checkboxGroupInput("option_plot", label = "Plot options:",
                               c("Process Decomp." = "process_decomp",
@@ -159,13 +158,13 @@ ui <- shinyUI(fluidPage(
 server <- function(input, output, session) {
 
   # data created by the datasheet
-  w <- reactiveValues(plot = FALSE,
-                      fit = FALSE,
-                      gmwm = NULL,
-                      form = NULL,
-                      freq = 100,
-                      first_gmwm = NULL,
-                      n = NULL)
+  # w <- reactiveValues(plot = FALSE,
+  #                     fit = FALSE,
+  #                     gmwm = NULL,
+  #                     form = NULL,
+  #                     freq = 100,
+  #                     first_gmwm = NULL,
+  #                     n = NULL)
 
   # library or custom dataset
   v <- reactiveValues(plot = FALSE,
@@ -271,7 +270,6 @@ server <- function(input, output, session) {
         } 
       }
       
-
       if( v$sensor_column == "Accel. X" || v$sensor_column == "Accel. Y" || v$sensor_column == "Accel. Z"){
         if (v$sensor_name == "navchip"){
           v$actual_datasheet_WN_parameter = const.NAVCHIP.ACC_WN
@@ -309,6 +307,8 @@ server <- function(input, output, session) {
       v$custom_data_type = inFile$type
       v$custom_data_size = inFile$size
       v$custom_data_tot_colums = ncol(my_data)
+      
+      v$actual_datasheet_WN_parameter = const.DEFAULT_WN
 
     }
     
@@ -593,22 +593,6 @@ server <- function(input, output, session) {
 
   })
 
-
-  output$plot_datasheet <- renderPlot({
-
-    if (w$plot){
-      b = w$form
-      freq = w$freq
-      b$scales = b$scales/freq
-      duration = w$n/(freq*60*60)
-      title = paste("Haar Wavelet Variance of DATASHEET, Duration: ", round(duration,1), "(h) @", freq, "(Hz)", sep = "")
-      plot(b, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title, CI = FALSE)
-    }else{
-      plot(NA)
-    }
-
-  })
-
   # calc a specific VW and plot it in the tab "Selected Sensor"
   output$plot2 <- renderPlot({
 
@@ -620,10 +604,10 @@ server <- function(input, output, session) {
       duration_a = v$n/(freq_a*60*60)
 
       # for the simualted data
-      b = w$form
-      freq_b = w$freq
-      b$scales = b$scales/freq_b
-      duration_b = w$n/(freq_b*60*60)
+      # b = w$form
+      # freq_b = w$freq
+      # b$scales = b$scales/freq_b
+      # duration_b = w$n/(freq_b*60*60)
 
       if (v$plot){ # should i plot just the real data?
         # if (w$plot && v$overlap_datasheet) { #should i plot the emulated data AND is the overlap-checkbox activated
@@ -658,6 +642,15 @@ server <- function(input, output, session) {
         plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
              process.decomp = "process_decomp" %in% input$option_plot,
              CI = "ci" %in% input$option_plot, title = title)
+        
+        # if (v$overlap_datasheet){
+        #   plot_wv_and_datasheet(a, v$datasheet_noise_model)
+        #   # plot(NA)
+        # } else {
+        #   plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
+        #        process.decomp = "process_decomp" %in% input$option_plot,
+        #        CI = "ci" %in% input$option_plot, title = title)
+        # }
 
         # if(v$datasheet_values_make_sense){
         #   v$datasheet_values_make_sense = v$datasheet_values_make_sense
