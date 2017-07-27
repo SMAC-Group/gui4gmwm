@@ -130,38 +130,41 @@ ui <- shinyUI(fluidPage(
            
            conditionalPanel(
              condition = "input.overlay_datasheet",
-             h3("Datasheet Specs"),
+             # h3("Datasheet Specs"),
              # here
-             checkboxGroupInput("model_from_datasheet", "Select Model from datasheet",
-                                c("Quantization Noise" = "QN",
-                                  "White Noise" = "WN",
-                                  "Gauss-Markov" = "GM"
-                                  # "Random Walk" = "RW",
-                                  # "Drift" = "DR"
-                                )
-                                , selected = "WN"
-             ),
+             # h4("WN Datasheet specification"),
              
-             br(),
+             numericInput("dsv_wn", label = "WN from Datasheet", value = 4.13e-7)
              
-             conditionalPanel(
-               condition = "input.model_from_datasheet.indexOf('QN') > -1",
-               numericInput("dsv_qn", label = "QN value", value = 1.95e-6)
-               
-             ),
+             # checkboxGroupInput("model_from_datasheet", "Select Model from datasheet",
+             #                    c("Quantization Noise" = "QN",
+             #                      "White Noise" = "WN",
+             #                      "Gauss-Markov" = "GM"
+             #                      # "Random Walk" = "RW",
+             #                      # "Drift" = "DR"
+             #                    )
+             #                    , selected = "WN"
+             # ),
+
              
-             conditionalPanel(
-               condition = "input.model_from_datasheet.indexOf('WN') > -1",
-               numericInput("dsv_wn", label = "WN value", value = 4.13e-7)
-               
-             ),
+             # conditionalPanel(
+             #   condition = "input.model_from_datasheet.indexOf('QN') > -1",
+             #   numericInput("dsv_qn", label = "QN value", value = 1.95e-6)
+             #   
+             # ),
              
-             conditionalPanel(
-               condition = "input.model_from_datasheet.indexOf('GM') > -1",
-               numericInput("dsv_gm_beta", label = "GM beta", value = 1.85e-3),
-               numericInput("dsv_gm", label = "GM value", value = 6.4e-9)
-               
-             )
+             # conditionalPanel(
+             #   condition = "input.model_from_datasheet.indexOf('WN') > -1",
+             #   
+             #   
+             # )
+             
+             # conditionalPanel(
+             #   condition = "input.model_from_datasheet.indexOf('GM') > -1",
+             #   numericInput("dsv_gm_beta", label = "GM beta", value = 1.85e-3),
+             #   numericInput("dsv_gm", label = "GM value", value = 6.4e-9)
+             #   
+             # )
            )
            
     )
