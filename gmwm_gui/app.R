@@ -17,8 +17,13 @@ const.DEFAULT_WN = 1
 const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
 const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
 
+# source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
 const.MTIG.GYRO_WN = (0.05 * const.degps_2_radps * sqrt(100))^2 
 const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
+
+#source: http://www.imar-navigation.de/downloads/IMU_FSAS.pdf
+const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
+const.IMAR.ACC_WN = const.DEFAULT_WN
 
 
 data("navchip")
