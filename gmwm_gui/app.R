@@ -18,6 +18,7 @@ data("navchip")
 
 imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis =
              c('X', 'Y', 'Z', 'X', 'Y', 'Z'), freq = 100)
+
 data("imar.gyro")
 data("ln200.gyro")
 
@@ -74,9 +75,7 @@ ui <- shinyUI(fluidPage(
 
            column(7, radioButtons("robust", "Select estimator:", choices = c("Classic WV" = "classic", "Robust WV" = "robust"))),
 
-           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE),
-
-           br(),
+                      br(),
            actionButton("fit1", label = "Plot / Update WV"),
 
            uiOutput("choose_columns")
@@ -166,7 +165,10 @@ ui <- shinyUI(fluidPage(
              condition = "input.edit_intern == 1",
              numericInput("num", label = "Number of Simu. for Starting Values", value = 10^5),
              numericInput("seed", label = "Simulation seed", value = 1982)
-           )
+           ),
+           
+           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE)
+           
     )
   )
 ))
