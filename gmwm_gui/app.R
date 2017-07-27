@@ -25,7 +25,8 @@ const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
 const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
 const.IMAR.ACC_WN = const.DEFAULT_WN
 
-const.LN200.GYRO_WN = (0.07 / 60 * sqrt(400) * const.degps_2_radps)^2
+#source: http://www.northropgrumman.com/Capabilities/LN200FOG/Documents/ln200.pdf
+const.LN200.GYRO_WN = (0.05 / 60 * sqrt(400) * const.degps_2_radps)^2
 
 
 data("navchip")
@@ -254,7 +255,11 @@ server <- function(input, output, session) {
             if(v$sensor_name == "imar.gyro"){
               v$actual_datasheet_WN_parameter = const.IMAR.GYRO_WN
             } else{
-              v$actual_datasheet_WN_parameter = const.DEFAULT_WN
+              if(v$sensor_name == "ln200.gyro"){
+                v$actual_datasheet_WN_parameter = const.LN200.GYRO_WN
+              } else{
+                v$actual_datasheet_WN_parameter = const.DEFAULT_WN
+              }
             }
           }
         } 
