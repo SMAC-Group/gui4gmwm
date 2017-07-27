@@ -6,7 +6,7 @@ data("navchip")
 
 
 
-# 
+#
 # wv_and_datasheet = function(wv, datasheet){
 #   object = wv
 #   CI = T
@@ -29,8 +29,8 @@ data("navchip")
 #   legend.label = NULL
 #   legend.title = ""
 #   legend.key.size = 1
-# 
-# 
+#
+#
 #   params = "legend.label"
 #   if (CI){
 #     requireLength = 3
@@ -59,17 +59,17 @@ data("navchip")
 #   }
 #   nullIsFine = rep(T,4)
 #   checkParams(params = params, require.len = requireLength, default = default, null.is.fine = nullIsFine)
-# 
+#
 #   if(bw){
 #     if(CI){line.color = c("#000000", "#404040")}else{line.color = c("#000000")}
 #     CI.color = "grey50"
 #   }
-# 
+#
 #   WV = data.frame(var = object$variance, dat = datasheet, low = object$ci_low, high = object$ci_high,
 #                   scale = object$scales)
-# 
-# 
-# 
+#
+#
+#
 #   if(CI){
 #     #process parameter (insert some values)
 #     params = params[-5]; from = 2; to = 3; times = 1;
@@ -78,49 +78,49 @@ data("navchip")
 #       target = real_param[from]
 #       stuff = rep(target, times)
 #       one_param = params[i]
-# 
+#
 #       assign(one_param, c(real_param, stuff))
 #     }
-# 
+#
 #     #other parameter
 #     breaks = c('var', 'low', 'dat')
 #     legend.color = c(NA, alpha(CI.color, transparence), NA)
 #     legend.linetype = c(line.type[1], 'blank', line.type[1])
 #     legend.pointshape = c(point.shape[1], NA, point.shape[2])
-# 
+#
 #     # put data in the desired format
 #     melt.wv = melt(WV, id.vars = 'scale')
-# 
+#
 #   }else{
 #     #other parameter
 #     breaks = c('var')
-# 
+#
 #     # put data in the desired format
 #     melt.wv = melt(WV, id.vars = 'scale', measure.vars = 'var')
 #   }
-# 
+#
 #   p = ggplot() + geom_line(data = melt.wv, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
 #     geom_point(data = melt.wv, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
-# 
+#
 #     scale_linetype_manual(name = legend.title, values = c(line.type), breaks = breaks, labels = legend.label ) +
 #     scale_shape_manual(name = legend.title, values = c(point.shape), breaks = breaks, labels = legend.label)+
 #     scale_size_manual(name = legend.title, values = c(point.size), breaks = breaks, labels = legend.label) +
 #     scale_color_manual(name = legend.title,values = c(line.color), breaks = breaks, labels = legend.label) +
-# 
+#
 #     scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
 #                   labels = trans_format("log10", math_format(10^.x))) +
 #     scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
 #                   labels = trans_format("log10", math_format(10^.x)))
-# 
+#
 #   if(CI){
 #     p = p + geom_ribbon(data = WV, mapping = aes(ymin = low , ymax = high, x = scale, y = NULL), alpha = transparence, fill = CI.color, show.legend = T) +
 #       guides(colour = guide_legend(override.aes = list(fill = legend.color, linetype = legend.linetype, shape = legend.pointshape)))
 #   }
-# 
+#
 #   if( background == 'white'||bw){
 #     p = p + theme_bw()
 #   }
-# 
+#
 #   #decide where to place the legend
 #   legendPlace = placeLegend(WV$var[1], WV$low[ length(WV$low) ], WV$high[ length(WV$high)])
 #   p = p +
@@ -137,7 +137,7 @@ data("navchip")
 #       legend.background = element_rect(fill="transparent"),
 #       legend.justification=legendPlace[1:2], legend.position=legendPlace[3:4],
 #       legend.text.align = 0)
-# 
+#
 #   if (is.na(title)) {
 #     name = if (object$robust){
 #       "Robust"
@@ -195,7 +195,10 @@ wv_yt = wvar(as.numeric(Yt), freq = nc_freq)
 analysis = gmwm_imu(model = WN(), data = Yt)
 
 datasheet_yt = wn_to_wv(sigma2 = 4.13e-7, tau = wv_yt$scales)/nc_freq
-plot_wv_and_datasheet(wv_yt, datasheet_yt)
+
+plot_wv_and_datasheet(wv_yt, datasheet_yt, NA)
+
+# plot_wv_and_datasheet_and_gmwm(wv_yt, datasheet_yn, analysis, my_title)
 
 
 
