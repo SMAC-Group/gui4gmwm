@@ -249,7 +249,11 @@ server <- function(input, output, session) {
           if(v$sensor_name == "imu6"){
             v$actual_datasheet_WN_parameter = const.MTIG.GYRO_WN
           } else {
-            v$actual_datasheet_WN_parameter = const.DEFAULT_WN
+            if(v$sensor_name == "imar.gyro"){
+              v$actual_datasheet_WN_parameter = const.IMAR.GYRO_WN
+            } else{
+              v$actual_datasheet_WN_parameter = const.DEFAULT_WN
+            }
           }
         } 
       }
