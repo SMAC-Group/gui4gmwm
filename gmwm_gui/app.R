@@ -7,7 +7,7 @@ library(leaflet)
 library(data.table)
 library(ggplot2)
 
-# source("../R/plot_wv_and_datasheet.R")
+source("../R/plot_wv_and_datasheet.R")
 # source("../R/load_internal_datasets.R")
 
 const.degps_2_radps = 1/360 * 2*pi
@@ -137,7 +137,7 @@ ui <- shinyUI(fluidPage(
            
            conditionalPanel(
              condition = "input.overlay_datasheet",
-             numericInput("dsv_wn", label = "WN from Datasheet", value = NULL)
+             numericInput("dsv_wn", label = "WN from Datasheet", value = const.DEFAULT_WN)
            )
            
     )
@@ -166,6 +166,8 @@ server <- function(input, output, session) {
                       sensor_name = NULL,
                       sensor_column = NULL,
                       overlap_datasheet = FALSE,
+                      actual_datasheet_WN_parameter = const.DEFAULT_WN, 
+                      
                       custom_data = FALSE,
                       custom_data_name = NULL,
                       custom_data_type = NULL,
@@ -237,12 +239,12 @@ server <- function(input, output, session) {
 
       if( v$sensor_column == "Gyro. X" || v$sensor_column == "Gyro. Y" || v$sensor_column == "Gyro. Z"){
         if (v$sensor_name == "navchip"){
-          updateNumericInput(session, "dsv_wn", value = const.NAVCHIP.GYRO_WN)
+          v$actual_datasheet_WN_parameter = const.NAVCHIP.GYRO_WN
         } else {
           if(v$sensor_name == "imu6"){
-            updateNumericInput(session, "dsv_wn", value = const.MTIG.GYRO_WN)
+            v$actual_datasheet_WN_parameter = const.MTIG.GYRO_WN
           } else {
-            updateNumericInput(session, "dsv_wn", value = const.DEFAULT_WN)
+            v$actual_datasheet_WN_parameter = const.DEFAULT_WN
           }
         } 
       }
@@ -250,12 +252,12 @@ server <- function(input, output, session) {
 
       if( v$sensor_column == "Accel. X" || v$sensor_column == "Accel. Y" || v$sensor_column == "Accel. Z"){
         if (v$sensor_name == "navchip"){
-          updateNumericInput(session, "dsv_wn", value = const.NAVCHIP.ACC_WN)
+          v$actual_datasheet_WN_parameter = const.NAVCHIP.ACC_WN
         } else {
           if(v$sensor_name == "imu6"){
-            updateNumericInput(session, "dsv_wn", value = const.MTIG.ACC_WN)
+            v$actual_datasheet_WN_parameter = const.MTIG.ACC_WN
           } else {
-            updateNumericInput(session, "dsv_wn", value = const.DEFAULT_WN)
+            v$actual_datasheet_WN_parameter = const.DEFAULT_WN
           }
         } 
       }
@@ -287,55 +289,67 @@ server <- function(input, output, session) {
       v$custom_data_tot_colums = ncol(my_data)
 
     }
+    
+    updateNumericInput(session, "dsv_wn", value = v$actual_datasheet_WN_parameter)
 
     v$n = length(Xt)
     v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust") )
+    
+    if (v$overlap_datasheet == TRUE){
+      v$datasheet_values_make_sense = TRUE
+      
+      v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) 
+      
+    } else{
+      v$datasheet_values_make_sense = FALSE
+    }
+    
 
     # if the user checked the "overlay datasheet checkbox
-    if (v$overlap_datasheet == TRUE){
-      # condition is set to true for plottin ghte datasheet
-      v$datasheet_values_make_sense = TRUE
-      # the datasheet noise model is assembled
-      if ("WN" %in% input$model_from_datasheet){
-            if ("QN" %in% input$model_from_datasheet){
-              if ("GM" %in% input$model_from_datasheet){
-                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
-              } else{
-                v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
-              }
-            }else{
-              if ("GM" %in% input$model_from_datasheet){
-                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn))
-              } else {
-                v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn))
-              }
-            }
-          }else{
-            if ("QN" %in% input$model_from_datasheet){
-              if ("GM" %in% input$model_from_datasheet){
-                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + QN(q2 = (input$dsv_qn))
-              } else {
-                v$datasheet_noise_model = QN(q2 = (input$dsv_qn))
-              }
-            } else{
-              if ("GM" %in% input$model_from_datasheet){
-                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta)
-              } else {
-                # no model is selected, thus the datasheet noise model is set to empty
-                v$datasheet_noise_model = NULL
-                # in this case, the values make NO sense, maybe this flag is not required later on, to be discussed
-                v$datasheet_values_make_sense = FALSE
-              }
-            }
-          }
-      # here would be the code, which convert the datasheet noise model "v$datasheet_noise_model" into a vector, if the condition is given
-      if (v$datasheet_values_make_sense){
-        # bla
-        # bla
-        # bla
-        # bla
-      }
-    }
+    # if (v$overlap_datasheet == TRUE){
+    #   # condition is set to true for plottin ghte datasheet
+    #   v$datasheet_values_make_sense = TRUE
+    #   # the datasheet noise model is assembled
+    #   if ("WN" %in% input$model_from_datasheet){
+    #         if ("QN" %in% input$model_from_datasheet){
+    #           if ("GM" %in% input$model_from_datasheet){
+    #             v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+    #           } else{
+    #             v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+    #           }
+    #         }else{
+    #           if ("GM" %in% input$model_from_datasheet){
+    #             v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn))
+    #           } else {
+    #             v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn))
+    #           }
+    #         }
+    #       }else{
+    #         if ("QN" %in% input$model_from_datasheet){
+    #           if ("GM" %in% input$model_from_datasheet){
+    #             v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + QN(q2 = (input$dsv_qn))
+    #           } else {
+    #             v$datasheet_noise_model = QN(q2 = (input$dsv_qn))
+    #           }
+    #         } else{
+    #           if ("GM" %in% input$model_from_datasheet){
+    #             v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta)
+    #           } else {
+    #             # no model is selected, thus the datasheet noise model is set to empty
+    #             v$datasheet_noise_model = NULL
+    #             # in this case, the values make NO sense, maybe this flag is not required later on, to be discussed
+    #             v$datasheet_values_make_sense = FALSE
+    #           }
+    #         }
+    #       }
+    #   # here would be the code, which convert the datasheet noise model "v$datasheet_noise_model" into a vector, if the condition is given
+    #   if (v$datasheet_values_make_sense){
+    #     # bla
+    #     # bla
+    #     # bla
+    #     # bla
+    #   }
+    # }
 
     updateNavbarPage(session, "tabs", selected = "Selected Sensor")
   })
@@ -600,8 +614,15 @@ server <- function(input, output, session) {
             title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,
                           ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
           }
-
+        
+        
+        if (v$overlap_datasheet){
+          # plot_wv_and_datasheet(v$form, v$datasheet_noise_model)
+          plot_wv_and_datasheet(a, v$datasheet_noise_model)
+        } else {
           plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
+        }
+        
 
           # if(v$datasheet_values_make_sense){
           #    v$datasheet_values_make_sense = v$datasheet_values_make_sense
