@@ -10,10 +10,14 @@ library(ggplot2)
 source("../R/plot_wv_and_datasheet.R")
 # source("../R/load_internal_datasets.R")
 
+const.FIGURE_PLOT_HEIGHT = "500px"
+const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
+
 const.degps_2_radps = 1/360 * 2*pi
 
 const.DEFAULT_WN = 1
 
+# source: http://cdn-docs.av-iq.com/dataSheet//NavChip_Product_Brief.pdf, 
 const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
 const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
 
@@ -21,13 +25,13 @@ const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
 const.MTIG.GYRO_WN = (0.05 * const.degps_2_radps * sqrt(100))^2 
 const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
 
-#source: http://www.imar-navigation.de/downloads/IMU_FSAS.pdf
+# source: http://www.imar-navigation.de/downloads/IMU_FSAS.pdf
 const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
 const.IMAR.ACC_WN = const.DEFAULT_WN
 
-#source: http://www.northropgrumman.com/Capabilities/LN200FOG/Documents/ln200.pdf
+# source: http://www.northropgrumman.com/Capabilities/LN200FOG/Documents/ln200.pdf
 const.LN200.GYRO_WN = (0.05 / 60 * sqrt(400) * const.degps_2_radps)^2
-
+const.LN200.ACC_WN = const.DEFAULT_WN
 
 data("navchip")
 
@@ -44,8 +48,8 @@ ui <- shinyUI(fluidPage(
   title = "GMWM GUI",
   tabsetPanel(id = "tabs",
               # tabPanel("Datasheet", plotOutput(outputId = "plot_datasheet", height = "500px")),
-              tabPanel("Model Data", plotOutput(outputId = "plot", height = "500px")),
-              tabPanel("Selected Sensor", plotOutput(outputId = "plot2", height = "500px")),
+              tabPanel("Model Data", plotOutput(outputId = "plot", height = const.FIGURE_PLOT_HEIGHT)),
+              tabPanel("Selected Sensor", plotOutput(outputId = "plot2", height = const.FIGURE_PLOT_HEIGHT)),
               tabPanel("Summary", verbatimTextOutput(outputId = "summ", placeholder = TRUE))
   ),
 
@@ -175,6 +179,8 @@ server <- function(input, output, session) {
                       sensor_column = NULL,
                       overlap_datasheet = FALSE,
                       actual_datasheet_WN_parameter = const.DEFAULT_WN, 
+                      
+                      first_time_plotting_6_pack = TRUE,
                       
                       custom_data = FALSE,
                       custom_data_name = NULL,
@@ -633,18 +639,11 @@ server <- function(input, output, session) {
         
         
         if (v$overlap_datasheet){
-          # plot_wv_and_datasheet(v$form, v$datasheet_noise_model)
           plot_wv_and_datasheet(a, v$datasheet_noise_model)
         } else {
           plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
         }
-        
 
-          # if(v$datasheet_values_make_sense){
-          #    v$datasheet_values_make_sense = v$datasheet_values_make_sense
-          # }
-
-        # }
       }else{ # when doing the "gmwm modeling" plot
 
         if (v$custom_data){ # is it custom data from a txt file?
@@ -671,11 +670,38 @@ server <- function(input, output, session) {
   })
 
   # calc the 6 WV from the dataset and plot it in the tab "Model Data"
-  output$plot <- renderPlot({
-
-    plot(wvar(get(input$imu_obj)))
-
-  })
+  output$plot <- renderImage({
+  
+    # plot(wvar(get(input$imu_obj))) # original
+    
+    width  <- session$clientData$output_plot2_width
+    height <- session$clientData$output_plot2_height
+    
+    
+    if(input$data_input_choice == 'library'){
+      if(input$imu_obj == 'imu6'){
+        filename <- normalizePath(file.path('./initial_6_pack_plots', paste('imu6', '.png', sep='')))
+        model_data_height = const.FIGURE_PLOT_HEIGHT
+      } else{
+        if(input$imu_obj == 'navchip'){
+          filename <- normalizePath(file.path('./initial_6_pack_plots', paste('navchip', '.png', sep='')))
+          model_data_height = const.FIGURE_PLOT_HEIGHT
+        } else{
+          if(input$imu_obj == 'ln200.gyro'){
+            filename <- normalizePath(file.path('./initial_6_pack_plots', paste('ln200_gyro', '.png', sep='')))
+            model_data_height = const.FIGURE_PLOT_HEIGHT_REDUCED
+          } else{
+            if(input$imu_obj == 'imar.gyro'){
+              filename <- normalizePath(file.path('./initial_6_pack_plots', paste('imar_gyro', '.png', sep='')))
+              model_data_height = const.FIGURE_PLOT_HEIGHT_REDUCED
+            }
+          }
+        }
+      }
+    }
+    
+    list(src = filename, height = model_data_height)
+  }, deleteFile = FALSE)
 
   # print the summary in the summary-tab
   output$summ <- renderPrint({
