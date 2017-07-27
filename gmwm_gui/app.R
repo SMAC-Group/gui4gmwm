@@ -241,6 +241,7 @@ server <- function(input, output, session) {
     v$plot = TRUE
     v$fit = FALSE
     v$overlap_datasheet = input$overlay_datasheet
+    
     if ("library" %in% input$data_input_choice){ #using library data
       my_data = get(input$imu_obj)
       Xt = my_data[, input$sensors]
@@ -308,7 +309,7 @@ server <- function(input, output, session) {
       v$custom_data_size = inFile$size
       v$custom_data_tot_colums = ncol(my_data)
       
-      v$actual_datasheet_WN_parameter = const.DEFAULT_WN
+      v$actual_datasheet_WN_parameter = input$dsv_wn
 
     }
     
@@ -623,7 +624,7 @@ server <- function(input, output, session) {
         
         
         if (v$overlap_datasheet){
-          plot_wv_and_datasheet(a, v$datasheet_noise_model)
+          plot_wv_and_datasheet(a, v$datasheet_noise_model, title)
         } else {
           plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
         }

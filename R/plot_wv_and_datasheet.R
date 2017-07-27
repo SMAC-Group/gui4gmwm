@@ -22,7 +22,7 @@
 #' wv = wvar(Zt, freq = 500)
 #' datasheet = wn_to_wv(sigma2 = 1, tau = wv$scales)
 #' plot_wv_and_datasheet(wv, datasheet/500)
-plot_wv_and_datasheet <- function(wv, datasheet){
+plot_wv_and_datasheet <- function(wv, datasheet, prov_tile){
   object = wv
   CI = T
   transparence = 0.1
@@ -33,7 +33,7 @@ plot_wv_and_datasheet <- function(wv, datasheet){
   line.color = NULL
   point.size = NULL
   point.shape = NULL
-  title = NA
+  title = prov_tile#NA
   title.size = 15
   axis.label.size = 13
   axis.tick.size = 11
