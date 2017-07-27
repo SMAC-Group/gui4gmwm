@@ -25,6 +25,8 @@ const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
 const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
 const.IMAR.ACC_WN = const.DEFAULT_WN
 
+const.LN200.GYRO_WN = (0.07 / 60 * sqrt(400) * const.degps_2_radps)^2
+
 
 data("navchip")
 
