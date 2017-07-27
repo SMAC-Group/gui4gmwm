@@ -10,8 +10,9 @@ library(ggplot2)
 # source("../R/plot_wv_and_datasheet.R")
 # source("../R/load_internal_datasets.R")
 
-NAVCHIP_GYRO_WN = (0.003 / 360 * 2*pi * sqrt(250))^2
-NAVCHIP_ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2
+const.NAVCHIP.GYRO_WN = (0.003 / 360 * 2*pi * sqrt(250))^2 # [(rad/s)^2]
+const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
+
 
 
 data("navchip")
@@ -264,7 +265,7 @@ server <- function(input, output, session) {
 
       if( v$sensor_column == "Gyro. X" || v$sensor_column == "Gyro. Y" || v$sensor_column == "Gyro. Z"){
         if (v$sensor_name == "navchip"){
-          updateNumericInput(session, "dsv_wn", value = NAVCHIP_GYRO_WN)
+          updateNumericInput(session, "dsv_wn", value = const.NAVCHIP.GYRO_WN)
         } else{
           updateNumericInput(session, "dsv_wn", value = 99)
         }
@@ -272,7 +273,7 @@ server <- function(input, output, session) {
 
       if( v$sensor_column == "Accel. X" || v$sensor_column == "Accel. Y" || v$sensor_column == "Accel. Z"){
         if (v$sensor_name == "navchip"){
-          updateNumericInput(session, "dsv_wn", value = NAVCHIP_ACC_WN)
+          updateNumericInput(session, "dsv_wn", value = const.NAVCHIP.ACC_WN)
         } else{
           updateNumericInput(session, "dsv_wn", value = 99)
         }
