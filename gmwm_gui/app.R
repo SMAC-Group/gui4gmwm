@@ -37,7 +37,7 @@ ui <- shinyUI(fluidPage(
   hr(),
 
   fluidRow(
-    column(3,
+    column(5,
            h3("Data" ),
            br(),
 
@@ -81,49 +81,8 @@ ui <- shinyUI(fluidPage(
            uiOutput("choose_columns")
     ),
 
-    column(3,
-           br(),
 
-           br(),
-           conditionalPanel(
-             condition = "input.overlay_datasheet",
-             h3("Datasheet Specs"),
-            # here
-            checkboxGroupInput("model_from_datasheet", "Select Model from datasheet",
-                               c("Quantization Noise" = "QN",
-                                 "White Noise" = "WN",
-                                 "Gauss-Markov" = "GM"
-                                 # "Random Walk" = "RW",
-                                 # "Drift" = "DR"
-                               )
-                               , selected = "WN"
-            ),
-
-            br(),
-
-            conditionalPanel(
-              condition = "input.model_from_datasheet.indexOf('QN') > -1",
-              numericInput("dsv_qn", label = "QN value", value = 1.95e-6)
-
-            ),
-
-            conditionalPanel(
-              condition = "input.model_from_datasheet.indexOf('WN') > -1",
-              numericInput("dsv_wn", label = "WN value", value = 4.13e-7)
-
-            ),
-
-            conditionalPanel(
-              condition = "input.model_from_datasheet.indexOf('GM') > -1",
-              numericInput("dsv_gm_beta", label = "GM beta", value = 1.85e-3),
-              numericInput("dsv_gm", label = "GM value", value = 6.4e-9)
-
-            )
-           ),
-           br()
-    ),
-
-    column(2,
+    column(4,
            h3("GMWM Modelling"),
            br(),
            checkboxGroupInput("model", "Select Model",
@@ -146,7 +105,7 @@ ui <- shinyUI(fluidPage(
 
     ),
 
-    column(2,
+    column(3,
            h3("Options"),
            br(),
 
@@ -167,7 +126,43 @@ ui <- shinyUI(fluidPage(
              numericInput("seed", label = "Simulation seed", value = 1982)
            ),
            
-           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE)
+           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE), 
+           
+           conditionalPanel(
+             condition = "input.overlay_datasheet",
+             h3("Datasheet Specs"),
+             # here
+             checkboxGroupInput("model_from_datasheet", "Select Model from datasheet",
+                                c("Quantization Noise" = "QN",
+                                  "White Noise" = "WN",
+                                  "Gauss-Markov" = "GM"
+                                  # "Random Walk" = "RW",
+                                  # "Drift" = "DR"
+                                )
+                                , selected = "WN"
+             ),
+             
+             br(),
+             
+             conditionalPanel(
+               condition = "input.model_from_datasheet.indexOf('QN') > -1",
+               numericInput("dsv_qn", label = "QN value", value = 1.95e-6)
+               
+             ),
+             
+             conditionalPanel(
+               condition = "input.model_from_datasheet.indexOf('WN') > -1",
+               numericInput("dsv_wn", label = "WN value", value = 4.13e-7)
+               
+             ),
+             
+             conditionalPanel(
+               condition = "input.model_from_datasheet.indexOf('GM') > -1",
+               numericInput("dsv_gm_beta", label = "GM beta", value = 1.85e-3),
+               numericInput("dsv_gm", label = "GM value", value = 6.4e-9)
+               
+             )
+           )
            
     )
   )
