@@ -136,8 +136,7 @@ ui <- shinyUI(fluidPage(
            checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE), 
            
            checkboxGroupInput("summary_plot", label = "Summary options:",
-                              c("Display summary" = "sum",
-                                "Include CI" = "ci"),
+                              c("Include CI" = "ci"),
                               selected = c("sum")),
            checkboxInput("edit_intern", label = "Edit Optimization Parameters", value = FALSE),
 
@@ -700,7 +699,7 @@ server <- function(input, output, session) {
 
   # print the summary in the summary-tab
   output$summ <- renderPrint({
-    if (v$fit && "sum" %in% input$summary_plot){
+    if (v$fit){
       summary(v$form, inference = "ci" %in% input$summary_plot)
     }
   })
