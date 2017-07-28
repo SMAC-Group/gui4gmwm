@@ -7,18 +7,41 @@ library(leaflet)
 library(data.table)
 library(ggplot2)
 library(reshape)
+<<<<<<< HEAD
+=======
+library(scales)
+>>>>>>> origin/master
 
-# source("../R/plot_wv_and_datasheet.R")
-# source("../R/load_internal_datasets.R")
+source("../R/plot_wv_and_datasheet.R", chdir = TRUE)
 
-NAVCHIP_GYRO_WN = (0.003 / 360 * 2*pi * sqrt(250))^2
-NAVCHIP_ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2
+const.FIGURE_PLOT_HEIGHT = "500px"
+const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
 
+const.degps_2_radps = 1/360 * 2*pi
+
+const.DEFAULT_WN = 1
+
+# source: http://cdn-docs.av-iq.com/dataSheet//NavChip_Product_Brief.pdf, 
+const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
+const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
+
+# source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
+const.MTIG.GYRO_WN = (0.05 * const.degps_2_radps * sqrt(100))^2 
+const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
+
+# source: http://www.imar-navigation.de/downloads/IMU_FSAS.pdf
+const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
+const.IMAR.ACC_WN = const.DEFAULT_WN
+
+# source: http://www.northropgrumman.com/Capabilities/LN200FOG/Documents/ln200.pdf
+const.LN200.GYRO_WN = (0.05 / 60 * sqrt(400) * const.degps_2_radps)^2
+const.LN200.ACC_WN = const.DEFAULT_WN
 
 data("navchip")
 
 imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis =
              c('X', 'Y', 'Z', 'X', 'Y', 'Z'), freq = 100)
+
 data("imar.gyro")
 data("ln200.gyro")
 
@@ -28,16 +51,15 @@ ui <- shinyUI(fluidPage(
 
   title = "GMWM GUI",
   tabsetPanel(id = "tabs",
-              # tabPanel("Datasheet", plotOutput(outputId = "plot_datasheet", height = "500px")),
-              tabPanel("Model Data", plotOutput(outputId = "plot", height = "500px")),
-              tabPanel("Selected Sensor", plotOutput(outputId = "plot2", height = "500px")),
+              tabPanel("Model Data", plotOutput(outputId = "plot", height = const.FIGURE_PLOT_HEIGHT)),
+              tabPanel("Selected Sensor", plotOutput(outputId = "plot2", height = const.FIGURE_PLOT_HEIGHT)),
               tabPanel("Summary", verbatimTextOutput(outputId = "summ", placeholder = TRUE))
   ),
 
   hr(),
 
   fluidRow(
-    column(3,
+    column(5,
            h3("Data" ),
            br(),
 
@@ -52,7 +74,6 @@ ui <- shinyUI(fluidPage(
                            "LN-200" = "ln200.gyro",
                            "IMAR" = "imar.gyro"),
                          selected = 1),
-
 
              selectInput("sensors", "Select sensor", c("1"="1","2"="2", selected = 1))
            ),
@@ -75,57 +96,15 @@ ui <- shinyUI(fluidPage(
 
            column(7, radioButtons("robust", "Select estimator:", choices = c("Classic WV" = "classic", "Robust WV" = "robust"))),
 
-           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE),
-
-           br(),
+                      br(),
+           
            actionButton("fit1", label = "Plot / Update WV"),
 
            uiOutput("choose_columns")
     ),
 
-    column(3,
-           br(),
 
-           br(),
-           conditionalPanel(
-             condition = "input.overlay_datasheet",
-             h3("Datasheet Specs"),
-            # here
-            checkboxGroupInput("model_from_datasheet", "Select Model from datasheet",
-                               c("Quantization Noise" = "QN",
-                                 "White Noise" = "WN",
-                                 "Gauss-Markov" = "GM"
-                                 # "Random Walk" = "RW",
-                                 # "Drift" = "DR"
-                               )
-                               , selected = "WN"
-            ),
-
-            br(),
-
-            conditionalPanel(
-              condition = "input.model_from_datasheet.indexOf('QN') > -1",
-              numericInput("dsv_qn", label = "QN value", value = 1.95e-6)
-
-            ),
-
-            conditionalPanel(
-              condition = "input.model_from_datasheet.indexOf('WN') > -1",
-              numericInput("dsv_wn", label = "WN value", value = 4.13e-7)
-
-            ),
-
-            conditionalPanel(
-              condition = "input.model_from_datasheet.indexOf('GM') > -1",
-              numericInput("dsv_gm_beta", label = "GM beta", value = 1.85e-3),
-              numericInput("dsv_gm", label = "GM value", value = 6.4e-9)
-
-            )
-           ),
-           br()
-    ),
-
-    column(2,
+    column(4,
            h3("GMWM Modelling"),
            br(),
            checkboxGroupInput("model", "Select Model",
@@ -140,26 +119,32 @@ ui <- shinyUI(fluidPage(
              sliderInput("gm_nb", "Number of Gauss-Markov Processes", 1, 5, 2)
            ),
 
-           actionButton("fit2", label = "Reduce Model"),
+           actionButton("fit3", label = "Fit Model"),
 
            br(),
-
-           actionButton("fit3", label = "Fit Model")
+           br(),
+           
+           actionButton("fit2", label = "Reduce Model Automatically")
 
     ),
 
-    column(2,
+    column(3,
            h3("Options"),
            br(),
 
-
            checkboxGroupInput("option_plot", label = "Plot options:",
                               c("Process Decomp." = "process_decomp",
-                                "Include CI" = "ci"),
+                                "Show CI of empirical WV" = "ci"),
                               selected = c("process_decomp","ci")),
+           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE),
+           
+           conditionalPanel(
+             condition = "input.overlay_datasheet",
+             numericInput("dsv_wn", label = "WN from Datasheet", value = const.DEFAULT_WN)
+           ), 
+           
            checkboxGroupInput("summary_plot", label = "Summary options:",
-                              c("Display summary" = "sum",
-                                "Include CI" = "ci"),
+                              c("Show CI of parameters" = "ci"),
                               selected = c("sum")),
            checkboxInput("edit_intern", label = "Edit Optimization Parameters", value = FALSE),
 
@@ -175,13 +160,13 @@ ui <- shinyUI(fluidPage(
 server <- function(input, output, session) {
 
   # data created by the datasheet
-  w <- reactiveValues(plot = FALSE,
-                      fit = FALSE,
-                      gmwm = NULL,
-                      form = NULL,
-                      freq = 100,
-                      first_gmwm = NULL,
-                      n = NULL)
+  # w <- reactiveValues(plot = FALSE,
+  #                     fit = FALSE,
+  #                     gmwm = NULL,
+  #                     form = NULL,
+  #                     freq = 100,
+  #                     first_gmwm = NULL,
+  #                     n = NULL)
 
   # library or custom dataset
   v <- reactiveValues(plot = FALSE,
@@ -194,6 +179,10 @@ server <- function(input, output, session) {
                       sensor_name = NULL,
                       sensor_column = NULL,
                       overlap_datasheet = FALSE,
+                      actual_datasheet_WN_parameter = const.DEFAULT_WN, 
+                      
+                      first_time_plotting_6_pack = TRUE,
+                      
                       custom_data = FALSE,
                       custom_data_name = NULL,
                       custom_data_type = NULL,
@@ -254,6 +243,7 @@ server <- function(input, output, session) {
     v$plot = TRUE
     v$fit = FALSE
     v$overlap_datasheet = input$overlay_datasheet
+    
     if ("library" %in% input$data_input_choice){ #using library data
       my_data = get(input$imu_obj)
       Xt = my_data[, input$sensors]
@@ -265,18 +255,34 @@ server <- function(input, output, session) {
 
       if( v$sensor_column == "Gyro. X" || v$sensor_column == "Gyro. Y" || v$sensor_column == "Gyro. Z"){
         if (v$sensor_name == "navchip"){
-          updateNumericInput(session, "dsv_wn", value = NAVCHIP_GYRO_WN)
-        } else{
-          updateNumericInput(session, "dsv_wn", value = 99)
-        }
+          v$actual_datasheet_WN_parameter = const.NAVCHIP.GYRO_WN
+        } else {
+          if(v$sensor_name == "imu6"){
+            v$actual_datasheet_WN_parameter = const.MTIG.GYRO_WN
+          } else {
+            if(v$sensor_name == "imar.gyro"){
+              v$actual_datasheet_WN_parameter = const.IMAR.GYRO_WN
+            } else{
+              if(v$sensor_name == "ln200.gyro"){
+                v$actual_datasheet_WN_parameter = const.LN200.GYRO_WN
+              } else{
+                v$actual_datasheet_WN_parameter = const.DEFAULT_WN
+              }
+            }
+          }
+        } 
       }
-
+      
       if( v$sensor_column == "Accel. X" || v$sensor_column == "Accel. Y" || v$sensor_column == "Accel. Z"){
         if (v$sensor_name == "navchip"){
-          updateNumericInput(session, "dsv_wn", value = NAVCHIP_ACC_WN)
-        } else{
-          updateNumericInput(session, "dsv_wn", value = 99)
-        }
+          v$actual_datasheet_WN_parameter = const.NAVCHIP.ACC_WN
+        } else {
+          if(v$sensor_name == "imu6"){
+            v$actual_datasheet_WN_parameter = const.MTIG.ACC_WN
+          } else {
+            v$actual_datasheet_WN_parameter = const.DEFAULT_WN
+          }
+        } 
       }
 
     } else{ #using custom data
@@ -304,57 +310,71 @@ server <- function(input, output, session) {
       v$custom_data_type = inFile$type
       v$custom_data_size = inFile$size
       v$custom_data_tot_colums = ncol(my_data)
+      
+      v$actual_datasheet_WN_parameter = input$dsv_wn
 
     }
+    
+    updateNumericInput(session, "dsv_wn", value = v$actual_datasheet_WN_parameter)
 
     v$n = length(Xt)
     v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust") )
+    
+    if (v$overlap_datasheet == TRUE){
+      v$datasheet_values_make_sense = TRUE
+      
+      v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) 
+      
+    } else{
+      v$datasheet_values_make_sense = FALSE
+    }
+    
 
     # if the user checked the "overlay datasheet checkbox
-    if (v$overlap_datasheet == TRUE){
-      # condition is set to true for plottin ghte datasheet
-      v$datasheet_values_make_sense = TRUE
-      # the datasheet noise model is assembled
-      if ("WN" %in% input$model_from_datasheet){
-            if ("QN" %in% input$model_from_datasheet){
-              if ("GM" %in% input$model_from_datasheet){
-                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
-              } else{
-                v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
-              }
-            }else{
-              if ("GM" %in% input$model_from_datasheet){
-                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn))
-              } else {
-                v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn))
-              }
-            }
-          }else{
-            if ("QN" %in% input$model_from_datasheet){
-              if ("GM" %in% input$model_from_datasheet){
-                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + QN(q2 = (input$dsv_qn))
-              } else {
-                v$datasheet_noise_model = QN(q2 = (input$dsv_qn))
-              }
-            } else{
-              if ("GM" %in% input$model_from_datasheet){
-                v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta)
-              } else {
-                # no model is selected, thus the datasheet noise model is set to empty
-                v$datasheet_noise_model = NULL
-                # in this case, the values make NO sense, maybe this flag is not required later on, to be discussed
-                v$datasheet_values_make_sense = FALSE
-              }
-            }
-          }
-      # here would be the code, which convert the datasheet noise model "v$datasheet_noise_model" into a vector, if the condition is given
-      if (v$datasheet_values_make_sense){
-        # bla
-        # bla
-        # bla
-        # bla
-      }
-    }
+    # if (v$overlap_datasheet == TRUE){
+    #   # condition is set to true for plottin ghte datasheet
+    #   v$datasheet_values_make_sense = TRUE
+    #   # the datasheet noise model is assembled
+    #   if ("WN" %in% input$model_from_datasheet){
+    #         if ("QN" %in% input$model_from_datasheet){
+    #           if ("GM" %in% input$model_from_datasheet){
+    #             v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+    #           } else{
+    #             v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
+    #           }
+    #         }else{
+    #           if ("GM" %in% input$model_from_datasheet){
+    #             v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn))
+    #           } else {
+    #             v$datasheet_noise_model = WN(sigma2 = (input$dsv_wn))
+    #           }
+    #         }
+    #       }else{
+    #         if ("QN" %in% input$model_from_datasheet){
+    #           if ("GM" %in% input$model_from_datasheet){
+    #             v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + QN(q2 = (input$dsv_qn))
+    #           } else {
+    #             v$datasheet_noise_model = QN(q2 = (input$dsv_qn))
+    #           }
+    #         } else{
+    #           if ("GM" %in% input$model_from_datasheet){
+    #             v$datasheet_noise_model = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta)
+    #           } else {
+    #             # no model is selected, thus the datasheet noise model is set to empty
+    #             v$datasheet_noise_model = NULL
+    #             # in this case, the values make NO sense, maybe this flag is not required later on, to be discussed
+    #             v$datasheet_values_make_sense = FALSE
+    #           }
+    #         }
+    #       }
+    #   # here would be the code, which convert the datasheet noise model "v$datasheet_noise_model" into a vector, if the condition is given
+    #   if (v$datasheet_values_make_sense){
+    #     # bla
+    #     # bla
+    #     # bla
+    #     # bla
+    #   }
+    # }
 
     updateNavbarPage(session, "tabs", selected = "Selected Sensor")
   })
@@ -576,22 +596,6 @@ server <- function(input, output, session) {
 
   })
 
-
-  output$plot_datasheet <- renderPlot({
-
-    if (w$plot){
-      b = w$form
-      freq = w$freq
-      b$scales = b$scales/freq
-      duration = w$n/(freq*60*60)
-      title = paste("Haar Wavelet Variance of DATASHEET, Duration: ", round(duration,1), "(h) @", freq, "(Hz)", sep = "")
-      plot(b, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title, CI = FALSE)
-    }else{
-      plot(NA)
-    }
-
-  })
-
   # calc a specific VW and plot it in the tab "Selected Sensor"
   output$plot2 <- renderPlot({
 
@@ -603,10 +607,10 @@ server <- function(input, output, session) {
       duration_a = v$n/(freq_a*60*60)
 
       # for the simualted data
-      b = w$form
-      freq_b = w$freq
-      b$scales = b$scales/freq_b
-      duration_b = w$n/(freq_b*60*60)
+      # b = w$form
+      # freq_b = w$freq
+      # b$scales = b$scales/freq_b
+      # duration_b = w$n/(freq_b*60*60)
 
       if (v$plot){ # should i plot just the real data?
         # if (w$plot && v$overlap_datasheet) { #should i plot the emulated data AND is the overlap-checkbox activated
@@ -619,14 +623,14 @@ server <- function(input, output, session) {
             title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,
                           ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
           }
-
+        
+        
+        if (v$overlap_datasheet){
+          plot_wv_and_datasheet(a, v$datasheet_noise_model, title)
+        } else {
           plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
+        }
 
-          # if(v$datasheet_values_make_sense){
-          #    v$datasheet_values_make_sense = v$datasheet_values_make_sense
-          # }
-
-        # }
       }else{ # when doing the "gmwm modeling" plot
 
         if (v$custom_data){ # is it custom data from a txt file?
@@ -641,6 +645,15 @@ server <- function(input, output, session) {
         plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
              process.decomp = "process_decomp" %in% input$option_plot,
              CI = "ci" %in% input$option_plot, title = title)
+        
+        # if (v$overlap_datasheet){
+        #   plot_wv_and_datasheet(a, v$datasheet_noise_model)
+        #   # plot(NA)
+        # } else {
+        #   plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
+        #        process.decomp = "process_decomp" %in% input$option_plot,
+        #        CI = "ci" %in% input$option_plot, title = title)
+        # }
 
         # if(v$datasheet_values_make_sense){
         #   v$datasheet_values_make_sense = v$datasheet_values_make_sense
@@ -653,15 +666,42 @@ server <- function(input, output, session) {
   })
 
   # calc the 6 WV from the dataset and plot it in the tab "Model Data"
-  output$plot <- renderPlot({
-
-    plot(wvar(get(input$imu_obj)))
-
-  })
+  output$plot <- renderImage({
+  
+    # plot(wvar(get(input$imu_obj))) # original
+    
+    width  <- session$clientData$output_plot2_width
+    height <- session$clientData$output_plot2_height
+    
+    
+    if(input$data_input_choice == 'library'){
+      if(input$imu_obj == 'imu6'){
+        filename <- normalizePath(file.path('./initial_6_pack_plots', paste('imu6', '.png', sep='')))
+        model_data_height = const.FIGURE_PLOT_HEIGHT
+      } else{
+        if(input$imu_obj == 'navchip'){
+          filename <- normalizePath(file.path('./initial_6_pack_plots', paste('navchip', '.png', sep='')))
+          model_data_height = const.FIGURE_PLOT_HEIGHT
+        } else{
+          if(input$imu_obj == 'ln200.gyro'){
+            filename <- normalizePath(file.path('./initial_6_pack_plots', paste('ln200_gyro', '.png', sep='')))
+            model_data_height = const.FIGURE_PLOT_HEIGHT_REDUCED
+          } else{
+            if(input$imu_obj == 'imar.gyro'){
+              filename <- normalizePath(file.path('./initial_6_pack_plots', paste('imar_gyro', '.png', sep='')))
+              model_data_height = const.FIGURE_PLOT_HEIGHT_REDUCED
+            }
+          }
+        }
+      }
+    }
+    
+    list(src = filename, height = model_data_height)
+  }, deleteFile = FALSE)
 
   # print the summary in the summary-tab
   output$summ <- renderPrint({
-    if (v$fit && "sum" %in% input$summary_plot){
+    if (v$fit){
       summary(v$form, inference = "ci" %in% input$summary_plot)
     }
   })

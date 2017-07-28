@@ -22,7 +22,7 @@
 #' wv = wvar(Zt, freq = 500)
 #' datasheet = wn_to_wv(sigma2 = 1, tau = wv$scales)
 #' plot_wv_and_datasheet(wv, datasheet/500)
-plot_wv_and_datasheet <- function(wv, datasheet){
+plot_wv_and_datasheet <- function(wv, datasheet, prov_tile){
   object = wv
   CI = T
   transparence = 0.1
@@ -33,14 +33,14 @@ plot_wv_and_datasheet <- function(wv, datasheet){
   line.color = NULL
   point.size = NULL
   point.shape = NULL
-  title = NA
-  title.size = 15
-  axis.label.size = 13
-  axis.tick.size = 11
+  title = prov_tile#NA
+  title.size = 20# 15
+  axis.label.size = 18 #13
+  axis.tick.size = 15 #11
   axis.x.label = expression(paste("Scale ", tau))
   axis.y.label = expression(paste("Wavelet Variance ", nu))
-  legend.title.size = 13
-  legend.text.size = 13
+  legend.title.size = 17#13
+  legend.text.size = 17#13
   legend.label = NULL
   legend.title = ""
   legend.key.size = 1
@@ -60,6 +60,7 @@ plot_wv_and_datasheet <- function(wv, datasheet){
   default = list(legend.label.default)
   nullIsFine = T
   object$dat = object$ci_high
+  # object$dat = object$ci.high
   checkParams(params = params, require.len = requireLength,
               default = default, null.is.fine = nullIsFine)
   #check parameter
@@ -82,6 +83,9 @@ plot_wv_and_datasheet <- function(wv, datasheet){
 
   WV = data.frame(var = object$variance, dat = datasheet, low = object$ci_low, high = object$ci_high,
                   scale = object$scales)
+  
+  # WV = data.frame(var = object$wv.empir, dat = datasheet, low = object$ci.low, high = object$ci.high,
+  #                 scale = object$scales)
 
 
 
