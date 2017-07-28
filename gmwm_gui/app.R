@@ -136,7 +136,7 @@ ui <- shinyUI(fluidPage(
            checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE), 
            
            checkboxGroupInput("summary_plot", label = "Summary options:",
-                              c("Include CI" = "ci"),
+                              c("Show CI of parameters" = "ci"),
                               selected = c("sum")),
            checkboxInput("edit_intern", label = "Edit Optimization Parameters", value = FALSE),
 
