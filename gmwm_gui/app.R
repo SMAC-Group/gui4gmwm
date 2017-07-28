@@ -9,11 +9,7 @@ library(ggplot2)
 library(reshape)
 library(scales)
 
-# source("../another_script.R", chdir = TRUE)
-
-# source("../R/plot_wv_and_datasheet.R")
 source("../R/plot_wv_and_datasheet.R", chdir = TRUE)
-# source("../R/load_internal_datasets.R")
 
 const.FIGURE_PLOT_HEIGHT = "500px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
@@ -23,7 +19,7 @@ const.degps_2_radps = 1/360 * 2*pi
 const.DEFAULT_WN = 1
 
 # source: http://cdn-docs.av-iq.com/dataSheet//NavChip_Product_Brief.pdf, 
-const.NAVCHIP.GYRO_WN = (0.005 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
+const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
 const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
 
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
