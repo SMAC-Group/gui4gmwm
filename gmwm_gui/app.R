@@ -131,7 +131,7 @@ ui <- shinyUI(fluidPage(
 
            checkboxGroupInput("option_plot", label = "Plot options:",
                               c("Process Decomp." = "process_decomp",
-                                "Include CI" = "ci"),
+                                "Show CI of empirical WV" = "ci"),
                               selected = c("process_decomp","ci")),
            checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE), 
            
