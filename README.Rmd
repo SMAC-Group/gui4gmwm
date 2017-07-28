@@ -4,39 +4,35 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, echo = FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-"
 )
 
-library(simts)
+library(gui4gmwm)
 ```
 
-[![Travis-CI Build Status](https://travis-ci.org/SMAC-Group/simts.svg?branch=master)](https://travis-ci.org/SMAC-Group/simts)
+[![Travis-CI Build Status](https://travis-ci.org/SMAC-Group/gui4gmwm.svg?branch=master)](https://travis-ci.org/SMAC-Group/gui4gmwm)
 
-# `simts` Overview <a href="https://smac-group.com/"><img src="man/figures/logo.png" align="right" style="width: 20%; height: 20%"/></a>
+# `gui4gmwm` Overview <a href="https://smac-group.com/"><img src="man/figures/logo.png" align="right" style="width: 20%; height: 20%"/></a>
 
-The Time Series Simulation (`simts`) R package generates various time series objects for use in other packages, in which includes: 
+Graphical User Interface for the Inertial Sensors Calibration
 
-* Simulation of time series simulations from SARIMA models and various state-space models that can be expressed as latent time series processes.
-* Visualize time series data with user specifications.
-* Visualize latent time series processes.
 
-To see what `simts` is capable of, please refer to the vignettes.
 
 
 
 ## Install Instructions
 
-To install the `simts` package, there is currently one option: [GitHub](https://github.com/SMAC-Group/simts/).
+To install the `gui4gmwm` package, there is currently one option: [GitHub](https://github.com/SMAC-Group/gui4gmwm/).
 
 ### Installing the package through GitHub
 
 For users who are interested in having the latest developments, this option is ideal. Though, more dependancies are required to run a stable version of the package. Most importantly, users **must** have a compiler installed on their machine that is compatible with R (e.g. Clang).
 
-*The setup to obtain the development version of `simts` is platform dependent.*
+*The setup to obtain the development version of `gui4gmwm` is platform dependent.*
 
 ### Requirements and Dependencies
 
@@ -62,16 +58,16 @@ sudo yum install curl curl-devel libxml2 libxml2-dev
 
 **All Systems**
 
-The following R packages are also required. If you have made it this far, run the following code in an R session and you will be ready to use the devlopment version of `simts`.
+The following R packages are also required. If you have made it this far, run the following code in an R session and you will be ready to use the devlopment version of `gui4gmwm`.
 
 ```{r, eval = F}
 # Install dependencies
 install.packages(c("RcppArmadillo","devtools","knitr","rmarkdown"))
 
 # Install the package from GitHub without Vignettes/User Guides
-devtools::install_github("SMAC-Group/simts")
+devtools::install_github("SMAC-Group/gui4gmwm")
 
 # Install the package with Vignettes/User Guides 
-devtools::install_github("SMAC-Group/simts", vignette = TRUE)
+devtools::install_github("SMAC-Group/gui4gmwm", vignette = TRUE)
 ```
 

@@ -29,6 +29,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="/index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
@@ -57,26 +63,20 @@
 <div class="contents">
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<div id="simts-overview" class="section level1">
+<div id="gui4gmwm-overview" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#simts-overview" class="anchor"></a><code>simts</code> Overview <a href="https://smac-group.com/"><img src="reference/figures/logo.png" align="right" style="width: 20%; height: 20%"></a>
+<a href="#gui4gmwm-overview" class="anchor"></a><code>gui4gmwm</code> Overview <a href="https://smac-group.com/"><img src="reference/figures/logo.png" align="right" style="width: 20%; height: 20%"></a>
 </h1></div>
-<p>The Time Series Simulation (<code>simts</code>) R package generates various time series objects for use in other packages, in which includes:</p>
-<ul>
-<li>Simulation of time series simulations from SARIMA models and various state-space models that can be expressed as latent time series processes.</li>
-<li>Visualize time series data with user specifications.</li>
-<li>Visualize latent time series processes.</li>
-</ul>
-<p>To see what <code>simts</code> is capable of, please refer to the vignettes.</p>
+<p>Graphical User Interface for the Inertial Sensors Calibration</p>
 <div id="install-instructions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#install-instructions" class="anchor"></a>Install Instructions</h2>
-<p>To install the <code>simts</code> package, there is currently one option: <a href="https://github.com/SMAC-Group/simts/">GitHub</a>.</p>
+<p>To install the <code>gui4gmwm</code> package, there is currently one option: <a href="https://github.com/SMAC-Group/gui4gmwm/">GitHub</a>.</p>
 <div id="installing-the-package-through-github" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installing-the-package-through-github" class="anchor"></a>Installing the package through GitHub</h3>
 <p>For users who are interested in having the latest developments, this option is ideal. Though, more dependancies are required to run a stable version of the package. Most importantly, users <strong>must</strong> have a compiler installed on their machine that is compatible with R (e.g. Clang).</p>
-<p><em>The setup to obtain the development version of <code>simts</code> is platform dependent.</em></p>
+<p><em>The setup to obtain the development version of <code>gui4gmwm</code> is platform dependent.</em></p>
 </div>
 <div id="requirements-and-dependencies" class="section level3">
 <h3 class="hasAnchor">
@@ -90,15 +90,15 @@
 <p>For <strong>RHEL</strong> systems, enter the following in terminal:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> yum install curl curl-devel libxml2 libxml2-dev</code></pre></div>
 <p><strong>All Systems</strong></p>
-<p>The following R packages are also required. If you have made it this far, run the following code in an R session and you will be ready to use the devlopment version of <code>simts</code>.</p>
+<p>The following R packages are also required. If you have made it this far, run the following code in an R session and you will be ready to use the devlopment version of <code>gui4gmwm</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Install dependencies</span>
 <span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">"RcppArmadillo"</span>,<span class="st">"devtools"</span>,<span class="st">"knitr"</span>,<span class="st">"rmarkdown"</span>))
 
 <span class="co"># Install the package from GitHub without Vignettes/User Guides</span>
-devtools::<span class="kw">install_github</span>(<span class="st">"SMAC-Group/simts"</span>)
+devtools::<span class="kw">install_github</span>(<span class="st">"SMAC-Group/gui4gmwm"</span>)
 
 <span class="co"># Install the package with Vignettes/User Guides </span>
-devtools::<span class="kw">install_github</span>(<span class="st">"SMAC-Group/simts"</span>, <span class="dt">vignette =</span> <span class="ot">TRUE</span>)</code></pre></div>
+devtools::<span class="kw">install_github</span>(<span class="st">"SMAC-Group/gui4gmwm"</span>, <span class="dt">vignette =</span> <span class="ot">TRUE</span>)</code></pre></div>
 </div>
 </div>
 </div>
@@ -106,7 +106,8 @@ devtools::<span class="kw">install_github</span>(<span class="st">"SMAC-Group/si
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Links</h2>
+    <h2 class="hasAnchor">
+<a href="#sidebar" class="anchor"></a>Links</h2>
 <ul class="list-unstyled">
 <li>Browse source code at <br><a href="https://github.com/SMAC-Group/gmwm_gui">https://​github.com/​SMAC-Group/​gmwm_gui</a>
 </li>
@@ -125,7 +126,7 @@ devtools::<span class="kw">install_github</span>(<span class="st">"SMAC-Group/si
 </ul>
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/SMAC-Group/simts"><img src="https://travis-ci.org/SMAC-Group/simts.svg?branch=master" alt="Travis-CI Build Status"></a></li>
+<li><a href="https://travis-ci.org/SMAC-Group/gui4gmwm"><img src="https://travis-ci.org/SMAC-Group/gui4gmwm.svg?branch=master" alt="Travis-CI Build Status"></a></li>
 </ul>
 </div>
 
