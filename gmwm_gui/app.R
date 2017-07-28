@@ -11,7 +11,7 @@ library(scales)
 
 source("../R/plot_wv_and_datasheet.R", chdir = TRUE)
 
-const.FIGURE_PLOT_HEIGHT = "500px"
+const.FIGURE_PLOT_HEIGHT = "600px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
 
 const.degps_2_radps = 1/360 * 2*pi
@@ -625,7 +625,12 @@ server <- function(input, output, session) {
         if (v$overlap_datasheet){
           plot_wv_and_datasheet(a, v$datasheet_noise_model, title)
         } else {
-          plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
+          plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title,
+               title.size = 22, 
+               axis.label.size = 20, 
+               axis.tick.size = 17, 
+               legend.title.size = 19, 
+               legend.text.size = 19)
         }
 
       }else{ # when doing the "gmwm modeling" plot
@@ -641,7 +646,13 @@ server <- function(input, output, session) {
 
         plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
              process.decomp = "process_decomp" %in% input$option_plot,
-             CI = "ci" %in% input$option_plot, title = title)
+             CI = "ci" %in% input$option_plot, title = title, 
+             title.size = 22, 
+             axis.label.size = 20, 
+             axis.tick.size = 17, 
+             legend.title.size = 19, 
+             legend.text.size = 19, 
+             legend.position = "none")
         
         # if (v$overlap_datasheet){
         #   plot_wv_and_datasheet(a, v$datasheet_noise_model)
