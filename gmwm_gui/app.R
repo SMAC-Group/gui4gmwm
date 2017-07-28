@@ -133,6 +133,8 @@ ui <- shinyUI(fluidPage(
                               c("Process Decomp." = "process_decomp",
                                 "Include CI" = "ci"),
                               selected = c("process_decomp","ci")),
+           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE), 
+           
            checkboxGroupInput("summary_plot", label = "Summary options:",
                               c("Display summary" = "sum",
                                 "Include CI" = "ci"),
@@ -144,8 +146,6 @@ ui <- shinyUI(fluidPage(
              numericInput("num", label = "Number of Simu. for Starting Values", value = 10^5),
              numericInput("seed", label = "Simulation seed", value = 1982)
            ),
-           
-           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE), 
            
            conditionalPanel(
              condition = "input.overlay_datasheet",
