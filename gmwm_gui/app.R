@@ -133,7 +133,12 @@ ui <- shinyUI(fluidPage(
                               c("Process Decomp." = "process_decomp",
                                 "Show CI of empirical WV" = "ci"),
                               selected = c("process_decomp","ci")),
-           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE), 
+           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE),
+           
+           conditionalPanel(
+             condition = "input.overlay_datasheet",
+             numericInput("dsv_wn", label = "WN from Datasheet", value = const.DEFAULT_WN)
+           ), 
            
            checkboxGroupInput("summary_plot", label = "Summary options:",
                               c("Show CI of parameters" = "ci"),
@@ -144,13 +149,7 @@ ui <- shinyUI(fluidPage(
              condition = "input.edit_intern == 1",
              numericInput("num", label = "Number of Simu. for Starting Values", value = 10^5),
              numericInput("seed", label = "Simulation seed", value = 1982)
-           ),
-           
-           conditionalPanel(
-             condition = "input.overlay_datasheet",
-             numericInput("dsv_wn", label = "WN from Datasheet", value = const.DEFAULT_WN)
            )
-           
     )
   )
 ))
