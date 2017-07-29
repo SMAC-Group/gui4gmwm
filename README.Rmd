@@ -4,11 +4,10 @@ output: github_document
 
 The Generalized Method of Wavelet Moments (GMWM) is a recently proposed statistical approach that allows to estimate the parameters of (complex) time series models in a simple and efficient manner. It is therefore an extremely useful tool to estimate the models underlying the composite processes that characterize the measurement errors of (low-cost) Inertial Measurement Units (IMU). Moreover, aside from efficiently estimating these complex models, the GMWM framework also provides a procedure to select the best model for the data (within a set of given models) based on a prediction-accuracy criterion called the Wavelet Variance Information Criterion (WVIC).
 
-<<<<<<< HEAD
 This online platform provides an easy-to-use GUI that allows practitioners to load their calibration data, compare it to the datasheet specifications, identify and estimate potential models as well as select the best candidate among a given set of models.
 
 
-### Loading calibration data
+# Loading calibration data
 
 The GMWM GUI presents itself with a Wavelet Variance (WV) log-log plot of a default IMU dataset underneath which the user will find a three column structure where data loading, analysing and modelling options are made available. In the first column there are two buttons that are linked to the two basic ways of loading data in the GUI:
 

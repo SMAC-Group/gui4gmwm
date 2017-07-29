@@ -4,7 +4,7 @@
 \alias{plot_wv_and_datasheet}
 \title{Plot WV with datasheet characteristics}
 \usage{
-plot_wv_and_datasheet(wv, datasheet)
+plot_wv_and_datasheet(wv, datasheet, prov_tile)
 }
 \arguments{
 \item{wv}{A \code{wvar} object.}
@@ -24,4 +24,3 @@ plot_wv_and_datasheet(wv, datasheet/500)
 \author{
 Stephane Guerrier
 }
-
