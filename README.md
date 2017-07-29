@@ -86,4 +86,4 @@ Licence
 
 The `gui4gmwm` R package is a free software: you can redistribute it and/or modify it under the terms of the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA) 4.0 License.
 
-<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="man/figures/licence.png" align="left" style="width: 20%; height: 20%"/></a>
+<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="man/figures/licence.png" align="left" width: 20%; height: 20%/></a>
