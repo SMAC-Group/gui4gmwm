@@ -16,13 +16,14 @@
 #' @author Stephane Guerrier
 #' @param wv      A \code{wvar} object.
 #' @param datasheet  A \code{vector} with the implied WV of the datasheet.
+#' @param prov_tile  A \code{string} for the title of the graph.
 #' @export
 #' @examples
 #' Zt = rnorm(1000000)
 #' wv = wvar(Zt, freq = 500)
 #' datasheet = wn_to_wv(sigma2 = 1, tau = wv$scales)
 #' plot_wv_and_datasheet(wv, datasheet/500)
-plot_wv_and_datasheet <- function(wv, datasheet, prov_tile){
+plot_wv_and_datasheet <- function(wv, datasheet, prov_tile = NA){
   object = wv
   CI = T
   transparence = 0.1
@@ -165,6 +166,158 @@ plot_wv_and_datasheet <- function(wv, datasheet, prov_tile){
     }
     p = p + ggtitle(paste0("Haar Wavelet Variance Representation for ",
                            name, " Calculation"))
+  }
+  p
+}
+
+#' @title Plot GMWM with datasheet characteristics
+#' @description Plot empirical WV of a sensors together the empirical WV implied by
+#' the datasheet of the manufacture as well as GMWM solution
+#' @author Stephane Guerrier
+#' @param object      A \code{gmwm} object.
+#' @param datasheet   A \code{vector} with the implied WV of the datasheet.
+#' @param prov_tile   A \code{string} for the title of the graph.
+#' @export
+#' @examples
+#' Zt = rnorm(1000000)
+#' wv = gmwm(WN(), Zt, freq = 500)
+#' datasheet = wn_to_wv(sigma2 = 1, tau = wv$scales)
+#' plot_gmwm_and_datasheet(wv, datasheet/500)
+plot_gmwm_and_datasheet <- function(object, datasheet, prov_tile = NULL){
+  process.decomp = FALSE
+  background = "white"
+  CI = T
+  transparence = 0.1
+  bw = F
+  CI.color = "#003C7D"
+  line.type = NULL
+  line.color = NULL
+  point.size = NULL
+  point.shape = NULL 
+  title = prov_tile 
+  title.size = 15
+  axis.label.size = 13
+  axis.tick.size = 11 
+  axis.x.label = expression(paste("Scale ", tau))
+  axis.y.label = expression(paste("Wavelet Variance ",nu))
+  legend.title = ""
+  legend.label = NULL
+  legend.key.size = 1
+  legend.title.size = 13
+  legend.text.size = 13
+  
+  #require pakage: scales, grid
+  low=high=emp=theo=trans_breaks=trans_format=math_format=.x=value=variable=NULL
+  
+  temp = data.frame( emp = object$wv.empir,
+                     dat = datasheet,
+                     low = object$ci.low,
+                     high = object$ci.high,
+                     theo = object$theo,
+                     scale = object$scales)
+  
+  if(CI == T){
+    if(is.null(line.type)){line.type = c('solid', 'solid', 'dotted', 'solid')}
+    if(length(line.type)==4){line.type = c(line.type[1:3], line.type[3:4])}
+    
+    if(is.null(line.color)){
+      line.color = c("#003C7D", "red2", "#999999" , "#F47F24")
+    }
+    
+    if(bw){
+      line.color = c("#b2b2b2", "#404040", "#000000")
+      CI.color = "grey50"
+    }
+    if(length(line.color)==4){
+      line.color = c(line.color[1:3],line.color[3:4])
+    }
+    
+    if(is.null(point.size)){point.size = c(5, 5, 0, 5)}
+    if(length(point.size)==4){point.size = c(point.size[1:3],point.size[3:4])}
+    
+    if(is.null(point.shape)){point.shape = c(20, 20, 46, 1) }
+    if(length(point.shape)==4){point.shape = c(point.shape[1:3],point.shape[3:4])}
+    
+    if(is.null(legend.label)){
+      #legend.label = c(expression(paste("Empirical WV ", hat(nu))), 
+      #                                         expression(paste("CI(", hat(nu)," , 0.95)" )),
+      #                                         expression(paste("Implied WV ", nu,"(",hat(theta),")")) )
+      
+      legend.label = c(bquote("Empirical WV "~hat(nu)), 
+                       bquote("CI("*hat(nu)*", "*.(1 - object$alpha)*")" ),
+                       bquote("Implied WV "~nu*"("*hat(theta)*")"), "Datasheet") 
+    }
+    
+    WV = melt(temp, id.vars = 'scale')
+    breaks = c('emp','low','theo','dat')
+    legend.fill = c(NA, CI.color, NA, NA)
+    legend.linetype = c(line.type[1],'blank', "solid", 'solid')
+    legend.pointshape = c(point.shape[1], NA, 1, 20)
+    #legend.pointsize = c(point.size[1:2],0)
+  }else{
+    if(is.null(line.type)){line.type = c('solid','solid')}
+    if(is.null(line.color)){line.color = c("#003C7D", "#F47F24")}
+    if(bw){
+      line.color = c("#b2b2b2", "#000000")}
+    if(is.null(point.size)){point.size = c(5,5)}
+    if(is.null(point.shape)){point.shape = c(20,1) }
+    if(is.null(legend.label)){legend.label = c(expression(paste("Empirical WV ", hat(nu))),
+                                               expression(paste("Implied WV ", nu,"(",hat(theta),")"))    )}
+    
+    WV = melt(temp, id.vars = 'scale', measure.vars = c('emp', 'theo'))
+    breaks = c('emp','theo')
+    #legend.color = c(NA,NA)
+  }
+  
+  p = ggplot(data = WV, mapping = aes(x = scale)) + geom_line(aes(y = value, color = variable, linetype = variable)) +
+    geom_point(aes(y = value, shape = variable, size = variable, color = variable)) + 
+    scale_linetype_manual(name = legend.title, values = c(line.type), breaks = breaks, labels = legend.label) +
+    scale_shape_manual(name = legend.title, values = c(point.shape), breaks = breaks,labels = legend.label)+
+    
+    scale_size_manual(name = legend.title, values = c(point.size),breaks = breaks,labels = legend.label) +
+    scale_color_manual(name = legend.title, values = c(line.color), breaks = breaks, labels = legend.label) 
+  
+  if(CI){
+    p = p +
+      geom_ribbon(data = temp, mapping = aes(ymin = low, ymax = high),fill = CI.color, show.legend = T,alpha = transparence) +
+      
+      #scale_fill_manual(name = legend.title, values = c(color.CI,'red'), breaks = breaks, labels = legend.label) +
+      guides(colour = guide_legend(override.aes = list(fill = legend.fill, linetype = legend.linetype, shape = legend.pointshape)))
+  }
+  
+  #decide where to place the legend
+  legendPlace = placeLegend(temp$emp[1], temp$low[ length(temp$low) ], temp$high[ length(temp$high)])    
+  p = p + 
+    scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                  labels = trans_format("log10", math_format(10^.x))) + 
+    scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                  labels = trans_format("log10", math_format(10^.x)))
+  
+  if( background == 'white' || bw){
+    p = p + theme_bw() 
+  }
+  
+  p = p +
+    xlab(axis.x.label) + ylab(axis.y.label) + ggtitle(title) +
+    theme(
+      plot.title = element_text(size= title.size),
+      axis.title.y = element_text(size= axis.label.size),
+      axis.text.y  = element_text(size= axis.tick.size),
+      axis.title.x = element_text(size= axis.label.size),
+      axis.text.x  = element_text(size= axis.tick.size),
+      legend.key.size = unit(legend.key.size, "cm"),
+      legend.text = element_text(size = legend.text.size),  
+      legend.title = element_text(size = legend.title.size),
+      legend.background = element_rect(fill="transparent"),
+      legend.text.align = 0 )
+  # if(!bw){p = p + theme(legend.background = element_rect(fill="gray90", size=.5, linetype="dotted"))}
+  if (is.null(title)){
+    if(object$robust){
+      p = p + ggtitle("Haar Wavelet Variance Robust Representation")
+    }
+    else{
+      p = p + ggtitle("Haar Wavelet Variance Classical Representation")
+    }
   }
   p
 }
