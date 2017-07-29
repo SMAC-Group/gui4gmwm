@@ -7,10 +7,7 @@ library(leaflet)
 library(data.table)
 library(ggplot2)
 library(reshape)
-<<<<<<< HEAD
-=======
 library(scales)
->>>>>>> origin/master
 
 source("../R/plot_wv_and_datasheet.R", chdir = TRUE)
 

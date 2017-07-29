@@ -29,6 +29,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="/index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
@@ -55,54 +61,42 @@
     
     
 <div class="contents">
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+<div id="gui4gmwm-overview" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#gui4gmwm-overview" class="anchor"></a><code>gui4gmwm</code> Overview <a href="https://smac-group.com/"><img src="reference/figures/logo.png" align="right" style="width: 20%; height: 20%"></a>
+</h1></div>
+<p>Graphical User Interface for the Inertial Sensors Calibration</p>
 <p>The Generalized Method of Wavelet Moments (GMWM) is a recently proposed statistical approach that allows to estimate the parameters of (complex) time series models in a simple and efficient manner. It is therefore an extremely useful tool to estimate the models underlying the composite processes that characterize the measurement errors of (low-cost) Inertial Measurement Units (IMU). Moreover, aside from efficiently estimating these complex models, the GMWM framework also provides a procedure to select the best model for the data (within a set of given models) based on a prediction-accuracy criterion called the Wavelet Variance Information Criterion (WVIC).</p>
 <p>This online platform provides an easy-to-use GUI that allows practitioners to load their calibration data, compare it to the datasheet specifications, identify and estimate potential models as well as select the best candidate among a given set of models.</p>
+</div>
 <div id="loading-calibration-data" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#loading-calibration-data" class="anchor"></a>Loading calibration data</h1></div>
+<h1 class="hasAnchor">
+<a href="#loading-calibration-data" class="anchor"></a>Loading calibration data</h1>
 <p>The GMWM GUI presents itself with a Wavelet Variance (WV) log-log plot of a default IMU dataset underneath which the user will find a three column structure where data loading, analysing and modelling options are made available. In the first column there are two buttons that are linked to the two basic ways of loading data in the GUI:</p>
 <ul>
-<li>“From library”: the user can select this option to load data from real calibration procedures of different IMUs that can be used to understand how the GMWM GUI works</li>
-<li>“Custom”: the user can upload a “.txt” file containing calibration data from any inertial sensor</li>
+<li>
+<code>From library</code>: the user can select this option to load data from real calibration procedures of different IMUs that can be used to understand how the GMWM GUI works</li>
+<li>
+<code>Custom</code>: the user can upload a “.txt” file containing calibration data from any inertial sensor</li>
 </ul>
 <p>If the user decides to upload data using the “from library” option, then the “Select IMU file” dropdown curtain allows to select the type of IMU that the user intends to calibrate among the datasets available in the GUI. In either case, it is then possible for the user to specify which IMU sensor they intend to analyse and model (e.g. X-axis gyroscope). This can be done by using the second dropdown curtain in which the six different sensors are listed and can consequently be selected.</p>
-</div>
-<div id="plotting-the-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#plotting-the-data" class="anchor"></a>### Plotting the data</h1>
-<p><a href="https://travis-ci.org/SMAC-Group/gui4gmwm"><img src="https://travis-ci.org/SMAC-Group/gui4gmwm.svg?branch=master" alt="Travis-CI Build Status"></a></p>
-</div>
-<div id="gui4gmwm-overview" class="section level1">
-<h1 class="hasAnchor">
-<a href="#gui4gmwm-overview" class="anchor"></a><code>gui4gmwm</code> Overview <a href="https://smac-group.com/"><img src="reference/figures/logo.png" align="right" style="width: 20%; height: 20%"></a>
-</h1>
-<p>Graphical User Interface for the Inertial Sensors Calibration</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>origin/master</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
+<div id="plotting-the-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#plotting-the-data" class="anchor"></a>Plotting the data</h3>
 <p>The first step towards modelling the error signals that come from an IMU calibration procedure is visualizing the data in a useful manner. As mentioned above, the GUI presents itself with an example of a WV log-log plot of a default IMU calibration dataset. This kind of plot is very commonly used to visualize and identify the type of error signals that characterize IMUs since the form of the WV (similarly to the Allan variance) along with the region in the plot are indicative of the underlying probabilistic models.</p>
 <p>According to the selected sensor, it is then possible to select the type of WV that the user wants to plot. More specifically, the default WV is the standard (or classic) WV estimator which is the commonly used one that was proposed by Percival (1995). However, the calibration may be affected by disturbances or forms of contamination which generate outliers in the observed data. This can create considerable bias in the plots and consequent modelling process and is therefore a useful feature to limit this bias in case such a contamination is present. If this is not the case, the standard WV is generally preferrable in terms of statistical efficiency.</p>
 <p>Once the choice of the estimator (and the sensor) is made, then the user can click the “Plot / Update WV” button which brings them to the “Selected Sensor” tab where the estimated WV is plotted along with the Confidence Intervals (CI) for the true WV. As mentioned before, this plot can then be used to understand the possible underlying models that characterize the error signal.</p>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD <strong>Plotting options</strong> ======= To install the <code>gui4gmwm</code> package, there is currently one option: <a href="https://github.com/SMAC-Group/gui4gmwm/">GitHub</a>. &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/master</p>
+<p><strong>Plotting options</strong></p>
 <p>There are a few options available to the user in order to add/remove features to the estimated WV plot. These can be found in the first part of the third column (“Options”) of the GMWM GUI under “Plot options”. The only arguments that are of interest when simply plotting the estimated WV are two (we will discuss the third argument further below)</p>
-<p><em>“Include CI for WV”: this argument is ticked by default and allows to visualize the CI for the true WV, meaning the range of values (for each scale of WV) within which there is a 95% probability of finding the true WV; </em>“Overlay Datasheet Specifications”: this argument allows to visualize the WV implied by the noise model given by the supplier. In this case, these models are those given for the datasets already available in the GUI (and that can be chosen using the “from library” option) and in all cases the noise model is a White Noise with a corresponding value for the innovation variance <span class="math inline">\(\sigma^2\)</span>.</p>
+<ul>
+<li>
+<code>Include CI for WV</code>: this argument is ticked by default and allows to visualize the CI for the true WV, meaning the range of values (for each scale of WV) within which there is a 95% probability of finding the true WV;</li>
+<li>
+<code>Overlay Datasheet Specifications</code>: this argument allows to visualize the WV implied by the noise model given by the supplier. In this case, these models are those given for the datasets already available in the GUI (and that can be chosen using the “from library” option) and in all cases the noise model is a White Noise with a corresponding value for the innovation variance <span class="math inline">\(\sigma^2\)</span>.</li>
+</ul>
 </div>
-<div id="head" class="section level1">
-<h1 class="hasAnchor">
-<a href="#head" class="anchor"></a>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</h1>
-<p><em>The setup to obtain the development version of <code>gui4gmwm</code> is platform dependent.</em> &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/master</p>
 <div id="modelling-using-the-gmwm" class="section level3">
 <h3 class="hasAnchor">
 <a href="#modelling-using-the-gmwm" class="anchor"></a>Modelling using the GMWM</h3>
@@ -111,42 +105,45 @@
 <p><span class="math display">\[\hat{\mathbf{\theta}} = \underset{\mathbf{\theta}}{\text{argmin}}\,(\hat{\mathbf{\nu}} - \mathbf{\nu}(\mathbf{\theta}))^T\Omega(\hat{\mathbf{\nu}} - \mathbf{\nu}(\mathbf{\theta}))\]</span></p>
 <p>where <span class="math inline">\(\hat{\mathbf{\nu}}\)</span> represents the estimated WV (standard or robust) and <span class="math inline">\(\Omega\)</span> represents a weighting matrix that depends on the variance of the estimator <span class="math inline">\(\hat{\mathbf{\nu}}\)</span> (see Guerrier et al., 2013).</p>
 <p>Once the model is specified (by ticking the corresponding buttons), in order to obtain the estimated parameter vector <span class="math inline">\(\hat{\mathbf{\theta}}\)</span> of interest the GMWM GUI provides the “Fit Model” button. By using this option the GUI starts the estimation procedure in the R statistical enviroment and outputs the results that are presented in two different ways:</p>
-<p><em>WV visual fit: the WV implied by the estimated model (i.e. <span class="math inline">\(\mathbf{\nu}(\hat{\mathbf{\theta}})\)</span>) is plotted against the previous estimated WV plot. This tool allows the user to visually assess whether the estimated model appears to well describe the observed WV coming from the data. By default the WV plot also shows the WV implied by each individual noise model which contributes to the overall WV. In this manner it is possible to understand if the presence of a specific noise model is needed or not. However, this plotting option can be removed by ticking the “Process Decomp.” button which represents the third argument in the “Plot options” area discussed earlier on. <em>NB When the fitted WV is plotted it is not possible to also plot the noise model implied by the datasheet specifications</em>. </em>Summary output: the numerical values of the estimated parameters <span class="math inline">\(\hat{\mathbf{\theta}}\)</span> are given in the “Summary” tab of the GUI. Another information that is given is the value of the GMWM objective function given earlier which has to be minimized. As a general rule, the smaller the value then the better the model fits the observed data. However this may not necessarily be the goal to pursue as explained further on.</p>
+<ul>
+<li>
+<code>WV visual fit</code>: the WV implied by the estimated model (i.e. <span class="math inline">\(\mathbf{\nu}(\hat{\mathbf{\theta}})\)</span>) is plotted against the previous estimated WV plot. This tool allows the user to visually assess whether the estimated model appears to well describe the observed WV coming from the data. By default the WV plot also shows the WV implied by each individual noise model which contributes to the overall WV. In this manner it is possible to understand if the presence of a specific noise model is needed or not. However, this plotting option can be removed by ticking the “Process Decomp.” button which represents the third argument in the “Plot options” area discussed earlier on. <em>NB When the fitted WV is plotted it is not possible to also plot the noise model implied by the datasheet specifications</em>.</li>
+<li>
+<code>Summary output</code>: the numerical values of the estimated parameters <span class="math inline">\(\hat{\mathbf{\theta}}\)</span> are given in the “Summary” tab of the GUI. Another information that is given is the value of the GMWM objective function given earlier which has to be minimized. As a general rule, the smaller the value then the better the model fits the observed data. However this may not necessarily be the goal to pursue as explained further on.</li>
+</ul>
 <p><strong>Summary options</strong></p>
 <p>As for the plotting features, obtaining the summary of the estimation procedure also has available options that are included in the “Summary options” section. There are two arguments available:</p>
-<p><em>“Include CI for Parameters”: if the button linked to this option is ticked, then aside from the value of the estimated model parameters the user will also obtain the values of the 95% CI for each parameter. </em>“Edit Optimization Parameters”: when selecting this option the user will be offered additional arguments which allow them to modify some features used to find starting values for the optimization process to run. <em>“Number of Simu. for Starting Values”: this argument allows to modify the number of simulated starting values that are evaluated at the objective function. The set of simulated starting values that minimize the objective function are then used as starting values for the optimization procedure. The larger the number of simulated starting values then larger is the probability of finding starting values that allow to get closer to the true minimum of the objective function. The drawback of increasing this number however lies in the fact that the overall estimation procedure experiences a comparable decrease in computational speed. </em>“Simulation seed”: this argument controls the seed that determines the random value generation process for the starting values which in turn affect the optimization process. This is mainly used to ensure replicability of the estimation procedure.</p>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD ### Automatically Selecting the Model</p>
+<ul>
+<li>
+<code>Include CI for Parameters</code>: if the button linked to this option is ticked, then aside from the value of the estimated model parameters the user will also obtain the values of the 95% CI for each parameter.</li>
+<li>
+<code>Edit Optimization Parameters</code>: when selecting this option the user will be offered additional arguments which allow them to modify some features used to find starting values for the optimization process to run.</li>
+<li>
+<code>Number of Simu. for Starting Values</code>: this argument allows to modify the number of simulated starting values that are evaluated at the objective function. The set of simulated starting values that minimize the objective function are then used as starting values for the optimization procedure. The larger the number of simulated starting values then larger is the probability of finding starting values that allow to get closer to the true minimum of the objective function. The drawback of increasing this number however lies in the fact that the overall estimation procedure experiences a comparable decrease in computational speed.</li>
+<li>
+<code>Simulation seed</code>: this argument controls the seed that determines the random value generation process for the starting values which in turn affect the optimization process. This is mainly used to ensure replicability of the estimation procedure.</li>
+</ul>
+</div>
+<div id="automatically-selecting-the-model" class="section level3">
+<h3 class="hasAnchor">
+<a href="#automatically-selecting-the-model" class="anchor"></a>Automatically Selecting the Model</h3>
 <p>A final option that’s available to the GMWM GUI user consists in the “Reduce Model Automatically” feature also included under the “GMWM Modelling” section in the second column. In this case, the user can specify a general composite model in which they think all the potential models for the observed error signal are included. For example, after observing the WV plot the user may believe that the most complex model that could fit the observed WV would be a model composed by a White Noise plus a Random Walk. In this case they select the latter model using the options explained earlier in the second column for the GMWM estimation and then click the “Reduce Model Automatically” button which uses the WVIC to select the “best” model among the possible candidates (in the case of the considered example there would be three candidates: White Noise, Random Walk, White Noise plus Random Walk).</p>
+<p>The WVIC is a model selection criterion (Guerrier et al., 2015) which provides a consistent estimator of the out-of-sample prediction error of a model in terms of its WV. More specifically, the WVIC estimates the prediction error of a model when predicting future values of the WV when computed on other samples of the error signal issued from the same IMU. Hence, we would want to select a model that minimizes this error and this does not necessrily correspond to the model that minimizes the objective function on the observed sample (which in general is achieved by choosing the most complex model possible). The WVIC therefore provides a balance between model complexity and out-of-sample variability in terms of prediction, penalizing models that are overly complex for the observed data.</p>
 </div>
-</div>
-<div id="the-wvic-is-a-model-selection-criterion-guerrier-et-al--2015-which-provides-a-consistent-estimator-of-the-out-of-sample-prediction-error-of-a-model-in-terms-of-its-wv--more-specifically-the-wvic-estimates-the-prediction-error-of-a-model-when-predicting-future-values-of-the-wv-when-computed-on-other-samples-of-the-error-signal-issued-from-the-same-imu--hence-we-would-want-to-select-a-model-that-minimizes-this-error-and-this-does-not-necessrily-correspond-to-the-model-that-minimizes-the-objective-function-on-the-observed-sample-which-in-general-is-achieved-by-choosing-the-most-complex-model-possible--the-wvic-therefore-provides-a-balance-between-model-complexity-and-out-of-sample-variability-in-terms-of-prediction-penalizing-models-that-are-overly-complex-for-the-observed-data-" class="section level1">
-<h1 class="hasAnchor">
-<a href="#the-wvic-is-a-model-selection-criterion-guerrier-et-al--2015-which-provides-a-consistent-estimator-of-the-out-of-sample-prediction-error-of-a-model-in-terms-of-its-wv--more-specifically-the-wvic-estimates-the-prediction-error-of-a-model-when-predicting-future-values-of-the-wv-when-computed-on-other-samples-of-the-error-signal-issued-from-the-same-imu--hence-we-would-want-to-select-a-model-that-minimizes-this-error-and-this-does-not-necessrily-correspond-to-the-model-that-minimizes-the-objective-function-on-the-observed-sample-which-in-general-is-achieved-by-choosing-the-most-complex-model-possible--the-wvic-therefore-provides-a-balance-between-model-complexity-and-out-of-sample-variability-in-terms-of-prediction-penalizing-models-that-are-overly-complex-for-the-observed-data-" class="anchor"></a>The WVIC is a model selection criterion (Guerrier et al., 2015) which provides a consistent estimator of the out-of-sample prediction error of a model in terms of its WV. More specifically, the WVIC estimates the prediction error of a model when predicting future values of the WV when computed on other samples of the error signal issued from the same IMU. Hence, we would want to select a model that minimizes this error and this does not necessrily correspond to the model that minimizes the objective function on the observed sample (which in general is achieved by choosing the most complex model possible). The WVIC therefore provides a balance between model complexity and out-of-sample variability in terms of prediction, penalizing models that are overly complex for the observed data.</h1>
-<p>The following R packages are also required. If you have made it this far, run the following code in an R session and you will be ready to use the devlopment version of <code>gui4gmwm</code>. &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/master</p>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
-</div>
-<div id="licence" class="section level1">
-<h1 class="hasAnchor">
-<a href="#licence" class="anchor"></a>### Licence</h1>
-</div>
-<div id="install-the-package-from-github-without-vignettesuser-guides" class="section level1">
-<h1 class="hasAnchor">
-<a href="#install-the-package-from-github-without-vignettesuser-guides" class="anchor"></a>Install the package from GitHub without Vignettes/User Guides</h1>
-<p>devtools::install_github(“SMAC-Group/gui4gmwm”)</p>
-</div>
-<div id="install-the-package-with-vignettesuser-guides" class="section level1">
-<h1 class="hasAnchor">
-<a href="#install-the-package-with-vignettesuser-guides" class="anchor"></a>Install the package with Vignettes/User Guides</h1>
-<p>devtools::install_github(“SMAC-Group/gui4gmwm”, vignette = TRUE) ``` &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/master</p>
+<div id="licence" class="section level3">
+<h3 class="hasAnchor">
+<a href="#licence" class="anchor"></a>Licence</h3>
 <div class="figure">
-<img src="licence.png" alt="Licence"><p class="caption">Licence</p>
+<img src="reference/figures/licence.png" alt="Licence"><p class="caption">Licence</p>
+</div>
 </div>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Links</h2>
+    <h2 class="hasAnchor">
+<a href="#sidebar" class="anchor"></a>Links</h2>
 <ul class="list-unstyled">
 <li>Browse source code at <br><a href="https://github.com/SMAC-Group/gmwm_gui">https://​github.com/​SMAC-Group/​gmwm_gui</a>
 </li>
@@ -162,6 +159,10 @@
 <li>Justin Lee <br><small class="roles"> Author </small> </li>
 <li>Roberto Molinari <br><small class="roles"> Author </small> </li>
 <li><a href="authors.html">All authors...</a></li>
+</ul>
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.org/SMAC-Group/gui4gmwm"><img src="https://travis-ci.org/SMAC-Group/gui4gmwm.svg?branch=master" alt="Travis-CI Build Status"></a></li>
 </ul>
 </div>
 
