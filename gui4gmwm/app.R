@@ -1,14 +1,4 @@
-library(shiny)
-library(gmwm)
-library(imudata)
-library(shiny)
-library(shinydashboard)
-library(leaflet)
-library(data.table)
-library(ggplot2)
-library(reshape)
-library(scales)
-
+library(gui4gmwm)
 
 const.FIGURE_PLOT_HEIGHT = "500px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
@@ -56,8 +46,7 @@ ui <- shinyUI(fluidPage(
 
   fluidRow(
     column(5,
-           h3("Data" ),
-           br(),
+           #h4("Data" ),
 
            radioButtons("data_input_choice", "Select data input:", choices = c("from library" = "library", "custom" = "custom")),
 
@@ -84,25 +73,27 @@ ui <- shinyUI(fluidPage(
                          ".txt",
                          placeholder = "No file selected")
              ),
-             sliderInput("user_defined_txt_file_column", "Select Column number:",
+             sliderInput("user_defined_txt_file_column", "Select column number:",
                          min=1, max=6, value=1),
-             numericInput("user_defined_txt_frequency", label = "Set Frequency of dataset", value = 250) # frequency defined by the user
+             numericInput("user_defined_txt_frequency", label = "Set frequency of dataset", value = 250) # frequency defined by the user
 
            ),
 
            column(7, radioButtons("robust", "Select estimator:", choices = c("Classic WV" = "classic", "Robust WV" = "robust"))),
 
-                      br(),
+          br(),
            
-           actionButton("fit1", label = "Plot / Update WV"),
+           actionButton("fit1", label = "Plot WV"),
 
-           uiOutput("choose_columns")
+           br(),
+           
+            uiOutput("choose_columns")
     ),
 
 
     column(4,
-           h3("GMWM Modelling"),
-           br(),
+          # h4("GMWM Modelling"),
+
            checkboxGroupInput("model", "Select Model",
                               c("Quantization Noise" = "QN",
                                 "White Noise" = "WN",
@@ -125,13 +116,13 @@ ui <- shinyUI(fluidPage(
     ),
 
     column(3,
-           h3("Options"),
-           br(),
-
+           #h4("Options"),
+  
            checkboxGroupInput("option_plot", label = "Plot options:",
                               c("Process Decomp." = "process_decomp",
+                                "Add Datasheet WV" = "datasheet",
                                 "Show CI of empirical WV" = "ci"),
-                              selected = c("process_decomp","ci")),
+                              selected = c("datasheet","ci")),
            checkboxInput("overlay_datasheet", label = "Show Datasheet Specifications", value = FALSE),
            
            conditionalPanel(
@@ -238,7 +229,7 @@ server <- function(input, output, session) {
   observeEvent(input$fit1, {
     v$plot = TRUE
     v$fit = FALSE
-    v$overlap_datasheet = input$overlay_datasheet
+    v$overlap_datasheet = "datasheet" %in% input$option_plot
     
     if ("library" %in% input$data_input_choice){ #using library data
       my_data = get(input$imu_obj)
@@ -621,8 +612,10 @@ server <- function(input, output, session) {
           }
         
         
-        if (v$overlap_datasheet){
-          plot_wv_and_datasheet(a, v$datasheet_noise_model, title)
+        if ("datasheet" %in% input$option_plot){
+          plot_wv_and_datasheet(a, v$datasheet_noise_model, 
+                                expression(paste("Scale ", tau, " [s]")),
+                                title)
         } else {
           plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title)
         }
@@ -637,10 +630,17 @@ server <- function(input, output, session) {
                         ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
         }
 
-
-        plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
-             process.decomp = "process_decomp" %in% input$option_plot,
-             CI = "ci" %in% input$option_plot, title = title)
+        if ("datasheet" %in% input$option_plot & !"process_decomp" %in% input$option_plot){
+          plot_gmwm_and_datasheet(object = a, 
+                                  datasheet = v$datasheet_noise_model, 
+                                  axis.x.label = expression(paste("Scale ", tau, " [s]")),
+                                  prov_tile = title)
+        }else{
+          plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
+               process.decomp = "process_decomp" %in% input$option_plot,
+               CI = "ci" %in% input$option_plot, title = title)
+        }
+        
         
         # if (v$overlap_datasheet){
         #   plot_wv_and_datasheet(a, v$datasheet_noise_model)

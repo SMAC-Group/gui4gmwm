@@ -4,14 +4,17 @@
 \alias{plot_wv_and_datasheet}
 \title{Plot WV with datasheet characteristics}
 \usage{
-plot_wv_and_datasheet(wv, datasheet, prov_tile = NA)
+plot_wv_and_datasheet(wv, datasheet, axis.x.label = expression(paste("Scale ",
+  tau)), prov_tile = NA)
 }
 \arguments{
-\item{wv}{A \code{wvar} object.}
-
 \item{datasheet}{A \code{vector} with the implied WV of the datasheet.}
 
+\item{axis.x.label}{A \code{string} for the label of the "x-axis".}
+
 \item{prov_tile}{A \code{string} for the title of the graph.}
+
+\item{object}{A \code{gmwm} object.}
 }
 \description{
 Plot empirical WV of a sensors together the empirical WV implied by

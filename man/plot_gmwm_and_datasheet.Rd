@@ -4,12 +4,15 @@
 \alias{plot_gmwm_and_datasheet}
 \title{Plot GMWM with datasheet characteristics}
 \usage{
-plot_gmwm_and_datasheet(object, datasheet, prov_tile = NULL)
+plot_gmwm_and_datasheet(object, datasheet,
+  axis.x.label = expression(paste("Scale ", tau)), prov_tile = NULL)
 }
 \arguments{
 \item{object}{A \code{gmwm} object.}
 
 \item{datasheet}{A \code{vector} with the implied WV of the datasheet.}
+
+\item{axis.x.label}{A \code{string} for the label of the "x-axis".}
 
 \item{prov_tile}{A \code{string} for the title of the graph.}
 }

@@ -14,16 +14,19 @@
 #' @description Plot empirical WV of a sensors together the empirical WV implied by
 #' the datasheet of the manufacture
 #' @author Stephane Guerrier
-#' @param wv      A \code{wvar} object.
-#' @param datasheet  A \code{vector} with the implied WV of the datasheet.
-#' @param prov_tile  A \code{string} for the title of the graph.
+#' @param object       A \code{gmwm} object.
+#' @param datasheet    A \code{vector} with the implied WV of the datasheet.
+#' @param axis.x.label A \code{string} for the label of the "x-axis".
+#' @param prov_tile    A \code{string} for the title of the graph.
 #' @export
 #' @examples
 #' Zt = rnorm(1000000)
 #' wv = wvar(Zt, freq = 500)
 #' datasheet = wn_to_wv(sigma2 = 1, tau = wv$scales)
 #' plot_wv_and_datasheet(wv, datasheet/500)
-plot_wv_and_datasheet <- function(wv, datasheet, prov_tile = NA){
+plot_wv_and_datasheet <- function(wv, datasheet, 
+                                  axis.x.label = expression(paste("Scale ", tau)),
+                                  prov_tile = NA){
   object = wv
   CI = T
   transparence = 0.1
@@ -38,7 +41,7 @@ plot_wv_and_datasheet <- function(wv, datasheet, prov_tile = NA){
   title.size = 20# 15
   axis.label.size = 18 #13
   axis.tick.size = 15 #11
-  axis.x.label = expression(paste("Scale ", tau))
+  #axis.x.label = expression(paste("Scale ", tau))
   axis.y.label = expression(paste("Wavelet Variance ", nu))
   legend.title.size = 17#13
   legend.text.size = 17#13
@@ -174,16 +177,19 @@ plot_wv_and_datasheet <- function(wv, datasheet, prov_tile = NA){
 #' @description Plot empirical WV of a sensors together the empirical WV implied by
 #' the datasheet of the manufacture as well as GMWM solution
 #' @author Stephane Guerrier
-#' @param object      A \code{gmwm} object.
-#' @param datasheet   A \code{vector} with the implied WV of the datasheet.
-#' @param prov_tile   A \code{string} for the title of the graph.
+#' @param object       A \code{gmwm} object.
+#' @param datasheet    A \code{vector} with the implied WV of the datasheet.
+#' @param axis.x.label A \code{string} for the label of the "x-axis".
+#' @param prov_tile    A \code{string} for the title of the graph.
 #' @export
 #' @examples
 #' Zt = rnorm(1000000)
 #' wv = gmwm(WN(), Zt, freq = 500)
 #' datasheet = wn_to_wv(sigma2 = 1, tau = wv$scales)
 #' plot_gmwm_and_datasheet(wv, datasheet/500)
-plot_gmwm_and_datasheet <- function(object, datasheet, prov_tile = NULL){
+plot_gmwm_and_datasheet <- function(object, datasheet, 
+                                    axis.x.label = expression(paste("Scale ", tau)),
+                                    prov_tile = NULL){
   process.decomp = FALSE
   background = "white"
   CI = T
@@ -198,7 +204,7 @@ plot_gmwm_and_datasheet <- function(object, datasheet, prov_tile = NULL){
   title.size = 15
   axis.label.size = 13
   axis.tick.size = 11 
-  axis.x.label = expression(paste("Scale ", tau))
+  #axis.x.label = expression(paste("Scale ", tau))
   axis.y.label = expression(paste("Wavelet Variance ",nu))
   legend.title = ""
   legend.label = NULL
@@ -321,3 +327,9 @@ plot_gmwm_and_datasheet <- function(object, datasheet, prov_tile = NULL){
   }
   p
 }
+
+
+
+
+
+
