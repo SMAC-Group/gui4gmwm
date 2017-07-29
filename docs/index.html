@@ -29,6 +29,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="/index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
@@ -66,15 +72,47 @@
 <a href="#graphical-user-interface-for-the-inertial-sensors-calibration" class="anchor"></a>Graphical User Interface for the Inertial Sensors Calibration</h1>
 <p>The Generalized Method of Wavelet Moments (GMWM) is a recently proposed statistical approach that allows to estimate the parameters of (complex) time series models in a simple and efficient manner. It is therefore an extremely useful tool to estimate the models underlying the composite processes that characterize the measurement errors of (low-cost) Inertial Measurement Units (IMU). Moreover, aside from efficiently estimating these complex models, the GMWM framework also provides a procedure to select the best model for the data (within a set of given models) based on a prediction-accuracy criterion called the Wavelet Variance Information Criterion (WVIC).</p>
 <p>This online platform provides an easy-to-use GUI that allows practitioners to load their calibration data, compare it to the datasheet specifications, identify and estimate potential models as well as select the best candidate among a given set of models.</p>
-<p>The online platform can be accessed by visiting the webpage: <a href="ggmwm.smac-group.com" class="uri">ggmwm.smac-group.com</a> or by installating the <code>gui4gmwm</code> R package. This package can be installed using the following command:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">"smac-group/gmwm_gui"</span>)</code></pre></div>
-<p>once the <code>gui4gmwm</code> is installed you can run locally the GUI by using:</p>
+<div id="installation-instructions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation-instructions" class="anchor"></a>Installation Instructions</h2>
+<p>To use the <code>gui4gmwm</code> package, there are currently two options:</p>
+<ul>
+<li>Online Application <a href="ggmwm.smac-group.com">Webpage</a>
+</li>
+<li>Installing through <a href="github.com/SMAC-Group/gui4gmwm">GitHub</a>
+</li>
+</ul>
+<div id="online-application" class="section level3">
+<h3 class="hasAnchor">
+<a href="#online-application" class="anchor"></a>Online Application</h3>
+<p>The online platform can be accessed by visiting the webpage <a href="ggmwm.smac-group.com" class="uri">ggmwm.smac-group.com</a></p>
+<div class="figure">
+<img src="reference/figures/gui_screenshot.png">
+</div>
+</div>
+<div id="installing-through-github" class="section level3">
+<h3 class="hasAnchor">
+<a href="#installing-through-github" class="anchor"></a>Installing through GitHub</h3>
+<p>The following R packages are also required. Run the following code in an R session and you will be ready to use the development version of <code>gui4gmwm</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Install dependencies </span>
+devtools::<span class="kw">install_github</span>(<span class="st">"SMAC-Group/gmwm"</span>)
+devtools::<span class="kw">install_github</span>(<span class="st">"SMAC-Group/imudata"</span>)
+<span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">"scales"</span>, <span class="st">"reshape"</span>, <span class="st">"shiny"</span>, <span class="st">"shinydashboard"</span>, <span class="st">"leaflet"</span>))
+
+<span class="co"># Install the package from GitHub</span>
+devtools::<span class="kw">install_github</span>(<span class="st">"SMAC-Group/gui4gmwm"</span>)</code></pre></div>
+<p>Once the <code>gui4gmwm</code> is installed you can run locally the Graphical User Interface (GUI) by using:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(gui4gmwm)
 <span class="kw">runApp</span>(<span class="st">"gui4gmwm"</span>)</code></pre></div>
 </div>
-<div id="loading-calibration-data" class="section level1">
+</div>
+</div>
+<div id="application-guide" class="section level1">
 <h1 class="hasAnchor">
-<a href="#loading-calibration-data" class="anchor"></a>Loading calibration data</h1>
+<a href="#application-guide" class="anchor"></a>Application Guide</h1>
+<div id="loading-calibration-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#loading-calibration-data" class="anchor"></a>Loading calibration data</h2>
 <p>The GMWM GUI presents itself with a Wavelet Variance (WV) log-log plot of a default IMU dataset underneath which the user will find a three column structure where data loading, analysing and modelling options are made available. In the first column there are two buttons that are linked to the two basic ways of loading data in the GUI:</p>
 <ul>
 <li>
@@ -84,9 +122,9 @@
 </ul>
 <p>If the user decides to upload data using the “from library” option, then the “Select IMU file” dropdown curtain allows to select the type of IMU that the user intends to calibrate among the datasets available in the GUI. In either case, it is then possible for the user to specify which IMU sensor they intend to analyse and model (e.g. X-axis gyroscope). This can be done by using the second dropdown curtain in which the six different sensors are listed and can consequently be selected.</p>
 </div>
-<div id="plotting-the-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#plotting-the-data" class="anchor"></a>Plotting the data</h1>
+<div id="plotting-the-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#plotting-the-data" class="anchor"></a>Plotting the data</h2>
 <p>The first step towards modelling the error signals that come from an IMU calibration procedure is visualizing the data in a useful manner. As mentioned above, the GUI presents itself with an example of a WV log-log plot of a default IMU calibration dataset. This kind of plot is very commonly used to visualize and identify the type of error signals that characterize IMUs since the form of the WV (similarly to the Allan variance) along with the region in the plot are indicative of the underlying probabilistic models.</p>
 <p>According to the selected sensor, it is then possible to select the type of WV that the user wants to plot. More specifically, the default WV is the standard (or classic) WV estimator which is the commonly used one that was proposed by Percival (1995). However, the calibration may be affected by disturbances or forms of contamination which generate outliers in the observed data. This can create considerable bias in the plots and consequent modelling process and is therefore a useful feature to limit this bias in case such a contamination is present. If this is not the case, the standard WV is generally preferrable in terms of statistical efficiency.</p>
 <p>Once the choice of the estimator (and the sensor) is made, then the user can click the “Plot / Update WV” button which brings them to the “Selected Sensor” tab where the estimated WV is plotted along with the Confidence Intervals (CI) for the true WV. As mentioned before, this plot can then be used to understand the possible underlying models that characterize the error signal.</p>
@@ -99,9 +137,9 @@
 <code>Overlay Datasheet Specifications</code>: this argument allows to visualize the WV implied by the noise model given by the supplier. In this case, these models are those given for the datasets already available in the GUI (and that can be chosen using the “from library” option) and in all cases the noise model is a White Noise with a corresponding value for the innovation variance <span class="math inline">\(\sigma^2\)</span>.</li>
 </ul>
 </div>
-<div id="modelling-using-the-gmwm" class="section level1">
-<h1 class="hasAnchor">
-<a href="#modelling-using-the-gmwm" class="anchor"></a>Modelling using the GMWM</h1>
+<div id="modelling-using-the-gmwm" class="section level2">
+<h2 class="hasAnchor">
+<a href="#modelling-using-the-gmwm" class="anchor"></a>Modelling using the GMWM</h2>
 <p>Once the user has identified a possible set of models that could adequately describe the observed WV, it is then possible to estimate the parameters of these models. This step is carried out in the second column of the GMWM GUI under “GMWM Modelling” which makes available a set of five noise models that can be combined in different ways to build a large variety of composite models that characterize IMU error signals. Four of these noise models can only be included once within a composite model while the fifth noise model is the Gauss-Markov noise model which can theoretically be included any finite number of times. However, in practice it is extremely rare to go beyond five Gauss-Markov models within a general composite model. Hence, when a Gauss-Markov model is selected by ticking the corresponding button, a slider appears in the GUI allowing the user to specify how many Gauss-Markov processes they want to include in the overall model (by default one which can then go up to five).</p>
 <p>Once a model is specified it is possible to obtain an expression for the WV implied by the chosen (composite) model which we denote as <span class="math inline">\(\mathbf{\nu}(\mathbf{\theta})\)</span> where <span class="math inline">\(\mathbf{\nu}\)</span> represents the true WV and <span class="math inline">\(\mathbf{\theta}\)</span> represents the model parameter vector which we are interested in estimating. Based on this, the GMWM is defined as the result of the following generalized least-squares optimization problem</p>
 <p><span class="math display">\[\hat{\mathbf{\theta}} = \underset{\mathbf{\theta}}{\text{argmin}}\,(\hat{\mathbf{\nu}} - \mathbf{\nu}(\mathbf{\theta}))^T\Omega(\hat{\mathbf{\nu}} - \mathbf{\nu}(\mathbf{\theta}))\]</span></p>
@@ -126,23 +164,25 @@
 <code>Simulation seed</code>: this argument controls the seed that determines the random value generation process for the starting values which in turn affect the optimization process. This is mainly used to ensure replicability of the estimation procedure.</li>
 </ul>
 </div>
-<div id="automatically-selecting-the-model" class="section level1">
-<h1 class="hasAnchor">
-<a href="#automatically-selecting-the-model" class="anchor"></a>Automatically Selecting the Model</h1>
+<div id="automatically-selecting-the-model" class="section level2">
+<h2 class="hasAnchor">
+<a href="#automatically-selecting-the-model" class="anchor"></a>Automatically Selecting the Model</h2>
 <p>A final option that’s available to the GMWM GUI user consists in the “Reduce Model Automatically” feature also included under the “GMWM Modelling” section in the second column. In this case, the user can specify a general composite model in which they think all the potential models for the observed error signal are included. For example, after observing the WV plot the user may believe that the most complex model that could fit the observed WV would be a model composed by a White Noise plus a Random Walk. In this case they select the latter model using the options explained earlier in the second column for the GMWM estimation and then click the “Reduce Model Automatically” button which uses the WVIC to select the “best” model among the possible candidates (in the case of the considered example there would be three candidates: White Noise, Random Walk, White Noise plus Random Walk).</p>
 <p>The WVIC is a model selection criterion (Guerrier et al., 2017) which provides a consistent estimator of the out-of-sample prediction error of a model in terms of its WV. More specifically, the WVIC estimates the prediction error of a model when predicting future values of the WV when computed on other samples of the error signal issued from the same IMU. Hence, we would want to select a model that minimizes this error and this does not necessrily correspond to the model that minimizes the objective function on the observed sample (which in general is achieved by choosing the most complex model possible). The WVIC therefore provides a balance between model complexity and out-of-sample variability in terms of prediction, penalizing models that are overly complex for the observed data.</p>
+</div>
 </div>
 <div id="licence" class="section level1">
 <h1 class="hasAnchor">
 <a href="#licence" class="anchor"></a>Licence</h1>
 <p>The <code>gui4gmwm</code> R package is a free software: you can redistribute it and/or modify it under the terms of the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA) 4.0 License.</p>
-<p><a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="reference/figures/licence.png" align="left" style="width: 20%; height: 20%"></a></p>
+<p><a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="reference/figures/licence.png" align="left" width="200"></a></p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Links</h2>
+    <h2 class="hasAnchor">
+<a href="#sidebar" class="anchor"></a>Links</h2>
 <ul class="list-unstyled">
 <li>Browse source code at <br><a href="https://github.com/SMAC-Group/gui4gmwm">https://​github.com/​SMAC-Group/​gui4gmwm</a>
 </li>
