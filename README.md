@@ -1,7 +1,5 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Travis-CI Build Status](https://travis-ci.org/SMAC-Group/gui4gmwm.svg?branch=master)](https://travis-ci.org/SMAC-Group/gui4gmwm)
-
 `gui4gmwm` Overview <a href="https://smac-group.com/"><img src="man/figures/logo.png" align="right" style="width: 20%; height: 20%"/></a>
 =========================================================================================================================================
 
@@ -73,6 +71,6 @@ The WVIC is a model selection criterion (Guerrier et al., 2015) which provides a
 Licence
 =======
 
-The `gui4gmwm` R package is free software: you can redistribute it and/or modify it under the terms of the CC BY-NC-SA 4.0 License.
+The `gui4gmwm` R package is free software: you can redistribute it and/or modify it under the terms of the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA) 4.0 License.
 
-<img src="man/figures/licence.png" align="center" style="width: 20%; height: 20%"/>
+<img src="man/figures/licence.png" align="left" style="width: 20%; height: 20%"/>
