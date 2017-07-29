@@ -26,5 +26,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-URL: https://github.com/SMAC-Group/gmwm_gui
-BugReports: https://github.com/SMAC-Group/gmwm_gui/issues
+URL: https://github.com/SMAC-Group/gui4gmwm
+BugReports: https://github.com/SMAC-Group/gui4gmwm/issues

@@ -34,7 +34,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/SMAC-Group/gmwm_gui">
+  <a href="https://github.com/SMAC-Group/gui4gmwm">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -66,6 +66,11 @@
 <a href="#graphical-user-interface-for-the-inertial-sensors-calibration" class="anchor"></a>Graphical User Interface for the Inertial Sensors Calibration</h1>
 <p>The Generalized Method of Wavelet Moments (GMWM) is a recently proposed statistical approach that allows to estimate the parameters of (complex) time series models in a simple and efficient manner. It is therefore an extremely useful tool to estimate the models underlying the composite processes that characterize the measurement errors of (low-cost) Inertial Measurement Units (IMU). Moreover, aside from efficiently estimating these complex models, the GMWM framework also provides a procedure to select the best model for the data (within a set of given models) based on a prediction-accuracy criterion called the Wavelet Variance Information Criterion (WVIC).</p>
 <p>This online platform provides an easy-to-use GUI that allows practitioners to load their calibration data, compare it to the datasheet specifications, identify and estimate potential models as well as select the best candidate among a given set of models.</p>
+<p>The online platform can be accessed by visiting the webpage: <a href="ggmwm.smac-group.com" class="uri">ggmwm.smac-group.com</a> or by installating the <code>gui4gmwm</code> R package. This package can be installed using the following command:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">"smac-group/gmwm_gui"</span>)</code></pre></div>
+<p>once the <code>gui4gmwm</code> is installed you can run locally the GUI by using:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(gui4gmwm)
+<span class="kw">runApp</span>(<span class="st">"gui4gmwm"</span>)</code></pre></div>
 </div>
 <div id="loading-calibration-data" class="section level1">
 <h1 class="hasAnchor">
@@ -139,9 +144,9 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/SMAC-Group/gmwm_gui">https://​github.com/​SMAC-Group/​gmwm_gui</a>
+<li>Browse source code at <br><a href="https://github.com/SMAC-Group/gui4gmwm">https://​github.com/​SMAC-Group/​gui4gmwm</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/SMAC-Group/gmwm_gui/issues">https://​github.com/​SMAC-Group/​gmwm_gui/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/SMAC-Group/gui4gmwm/issues">https://​github.com/​SMAC-Group/​gui4gmwm/​issues</a>
 </li>
 </ul>
 <h2>License</h2>

@@ -10,6 +10,19 @@ The Generalized Method of Wavelet Moments (GMWM) is a recently proposed statisti
 
 This online platform provides an easy-to-use GUI that allows practitioners to load their calibration data, compare it to the datasheet specifications, identify and estimate potential models as well as select the best candidate among a given set of models.
 
+The online platform can be accessed by visiting the webpage: [ggmwm.smac-group.com](ggmwm.smac-group.com) or by installating the `gui4gmwm` R package. This package can be installed using the following command:
+
+``` r
+devtools::install_github("smac-group/gmwm_gui")
+```
+
+once the `gui4gmwm` is installed you can run locally the GUI by using:
+
+``` r
+library(gui4gmwm)
+runApp("gui4gmwm")
+```
+
 Loading calibration data
 ========================
 
