@@ -6,6 +6,7 @@
 =========================================================================================================================================
 
 Graphical User Interface for the Inertial Sensors Calibration
+=============================================================
 
 The Generalized Method of Wavelet Moments (GMWM) is a recently proposed statistical approach that allows to estimate the parameters of (complex) time series models in a simple and efficient manner. It is therefore an extremely useful tool to estimate the models underlying the composite processes that characterize the measurement errors of (low-cost) Inertial Measurement Units (IMU). Moreover, aside from efficiently estimating these complex models, the GMWM framework also provides a procedure to select the best model for the data (within a set of given models) based on a prediction-accuracy criterion called the Wavelet Variance Information Criterion (WVIC).
 
@@ -21,7 +22,8 @@ The GMWM GUI presents itself with a Wavelet Variance (WV) log-log plot of a defa
 
 If the user decides to upload data using the "from library" option, then the "Select IMU file" dropdown curtain allows to select the type of IMU that the user intends to calibrate among the datasets available in the GUI. In either case, it is then possible for the user to specify which IMU sensor they intend to analyse and model (e.g. X-axis gyroscope). This can be done by using the second dropdown curtain in which the six different sensors are listed and can consequently be selected.
 
-### Plotting the data
+Plotting the data
+=================
 
 The first step towards modelling the error signals that come from an IMU calibration procedure is visualizing the data in a useful manner. As mentioned above, the GUI presents itself with an example of a WV log-log plot of a default IMU calibration dataset. This kind of plot is very commonly used to visualize and identify the type of error signals that characterize IMUs since the form of the WV (similarly to the Allan variance) along with the region in the plot are indicative of the underlying probabilistic models.
 
@@ -36,7 +38,8 @@ There are a few options available to the user in order to add/remove features to
 -   `Include CI for WV`: this argument is ticked by default and allows to visualize the CI for the true WV, meaning the range of values (for each scale of WV) within which there is a 95% probability of finding the true WV;
 -   `Overlay Datasheet Specifications`: this argument allows to visualize the WV implied by the noise model given by the supplier. In this case, these models are those given for the datasets already available in the GUI (and that can be chosen using the "from library" option) and in all cases the noise model is a White Noise with a corresponding value for the innovation variance *σ*<sup>2</sup>.
 
-### Modelling using the GMWM
+Modelling using the GMWM
+========================
 
 Once the user has identified a possible set of models that could adequately describe the observed WV, it is then possible to estimate the parameters of these models. This step is carried out in the second column of the GMWM GUI under "GMWM Modelling" which makes available a set of five noise models that can be combined in different ways to build a large variety of composite models that characterize IMU error signals. Four of these noise models can only be included once within a composite model while the fifth noise model is the Gauss-Markov noise model which can theoretically be included any finite number of times. However, in practice it is extremely rare to go beyond five Gauss-Markov models within a general composite model. Hence, when a Gauss-Markov model is selected by ticking the corresponding button, a slider appears in the GUI allowing the user to specify how many Gauss-Markov processes they want to include in the overall model (by default one which can then go up to five).
 
@@ -60,12 +63,16 @@ As for the plotting features, obtaining the summary of the estimation procedure 
 -   `Number of Simu. for Starting Values`: this argument allows to modify the number of simulated starting values that are evaluated at the objective function. The set of simulated starting values that minimize the objective function are then used as starting values for the optimization procedure. The larger the number of simulated starting values then larger is the probability of finding starting values that allow to get closer to the true minimum of the objective function. The drawback of increasing this number however lies in the fact that the overall estimation procedure experiences a comparable decrease in computational speed.
 -   `Simulation seed`: this argument controls the seed that determines the random value generation process for the starting values which in turn affect the optimization process. This is mainly used to ensure replicability of the estimation procedure.
 
-### Automatically Selecting the Model
+Automatically Selecting the Model
+=================================
 
 A final option that's available to the GMWM GUI user consists in the "Reduce Model Automatically" feature also included under the "GMWM Modelling" section in the second column. In this case, the user can specify a general composite model in which they think all the potential models for the observed error signal are included. For example, after observing the WV plot the user may believe that the most complex model that could fit the observed WV would be a model composed by a White Noise plus a Random Walk. In this case they select the latter model using the options explained earlier in the second column for the GMWM estimation and then click the "Reduce Model Automatically" button which uses the WVIC to select the "best" model among the possible candidates (in the case of the considered example there would be three candidates: White Noise, Random Walk, White Noise plus Random Walk).
 
 The WVIC is a model selection criterion (Guerrier et al., 2015) which provides a consistent estimator of the out-of-sample prediction error of a model in terms of its WV. More specifically, the WVIC estimates the prediction error of a model when predicting future values of the WV when computed on other samples of the error signal issued from the same IMU. Hence, we would want to select a model that minimizes this error and this does not necessrily correspond to the model that minimizes the objective function on the observed sample (which in general is achieved by choosing the most complex model possible). The WVIC therefore provides a balance between model complexity and out-of-sample variability in terms of prediction, penalizing models that are overly complex for the observed data.
 
-### Licence
+Licence
+=======
 
-![Licence](man/figures/licence.png)
+The `gui4gmwm` R package is free software: you can redistribute it and/or modify it under the terms of the CC BY-NC-SA 4.0 License.
+
+<img src="man/figures/licence.png" align="center" style="width: 20%; height: 20%"/>
