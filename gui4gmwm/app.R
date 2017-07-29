@@ -9,7 +9,6 @@ library(ggplot2)
 library(reshape)
 library(scales)
 
-source("../R/plot_wv_and_datasheet.R", chdir = TRUE)
 
 const.FIGURE_PLOT_HEIGHT = "500px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
@@ -133,7 +132,7 @@ ui <- shinyUI(fluidPage(
                               c("Process Decomp." = "process_decomp",
                                 "Show CI of empirical WV" = "ci"),
                               selected = c("process_decomp","ci")),
-           checkboxInput("overlay_datasheet", label = "Overlay Datasheet Specifications", value = FALSE),
+           checkboxInput("overlay_datasheet", label = "Show Datasheet Specifications", value = FALSE),
            
            conditionalPanel(
              condition = "input.overlay_datasheet",
