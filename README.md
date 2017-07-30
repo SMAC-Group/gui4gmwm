@@ -15,8 +15,8 @@ Installation Instructions
 
 To use the `gui4gmwm` package, there are currently two options:
 
--   Online Application [Webpage](ggmwm.smac-group.com)
--   Installing through [GitHub](github.com/SMAC-Group/gui4gmwm)
+-   Online Application [Webpage](http://ggmwm.smac-group.com)
+-   Installing through [GitHub](http://github.com/SMAC-Group/gui4gmwm)
 
 ### Online Application
 

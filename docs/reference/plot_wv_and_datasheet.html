@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot WV with datasheet characteristics � plot_wv_and_datasheet • gui4gmwm</title>
+<title>Plot WV with datasheet characteristics — plot_wv_and_datasheet • gui4gmwm</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -23,8 +23,7 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -52,12 +51,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
-    <span class="fa fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -117,7 +110,7 @@ the datasheet of the manufacture</p>
     <pre class="examples"><div class='input'><span class='no'>Zt</span> <span class='kw'>=</span> <span class='fu'>rnorm</span>(<span class='fl'>1000000</span>)
 <span class='no'>wv</span> <span class='kw'>=</span> <span class='fu'>wvar</span>(<span class='no'>Zt</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>500</span>)
 <span class='no'>datasheet</span> <span class='kw'>=</span> <span class='fu'>wn_to_wv</span>(<span class='kw'>sigma2</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>tau</span> <span class='kw'>=</span> <span class='no'>wv</span>$<span class='no'>scales</span>)
-<span class='fu'>plot_wv_and_datasheet</span>(<span class='no'>wv</span>, <span class='no'>datasheet</span>/<span class='fl'>500</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot_wv_and_datasheet(wv, datasheet/500): argument "prov_tile" is missing, with no default</span></div></pre>
+<span class='fu'>plot_wv_and_datasheet</span>(<span class='no'>wv</span>, <span class='no'>datasheet</span>/<span class='fl'>500</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Ignoring unknown aesthetics: y</span></div><img src='plot_wv_and_datasheet-3.png' alt='' width='540' height='400' /></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
