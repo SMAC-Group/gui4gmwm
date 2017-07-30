@@ -32,7 +32,7 @@ To use the `gui4gmwm` package, there are currently two options:
 
 ### Online Application 
 
-The online platform can be accessed by visiting the webpage [ggmwm.smac-group.com](ggmwm.smac-group.com)
+The online platform can be accessed by visiting the webpage [ggmwm.smac-group.com](http://ggmwm.smac-group.com)
 
 ![](man/figures/gui_screenshot.png)
 
