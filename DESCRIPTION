@@ -21,10 +21,10 @@ Depends:
     shinydashboard,
     leaflet
 License: CC BY-NC-SA 4.0
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-URL: https://github.com/SMAC-Group/gmwm_gui
-BugReports: https://github.com/SMAC-Group/gmwm_gui/issues
+URL: https://github.com/SMAC-Group/gui4gmwm
+BugReports: https://github.com/SMAC-Group/gui4gmwm/issues
