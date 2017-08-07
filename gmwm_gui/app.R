@@ -651,8 +651,7 @@ server <- function(input, output, session) {
              axis.label.size = 20, 
              axis.tick.size = 17, 
              legend.title.size = 19, 
-             legend.text.size = 19, 
-             legend.position = "none")
+             legend.text.size = 19)# + theme(legend.position = c(0.6, 0.9))
         
         # if (v$overlap_datasheet){
         #   plot_wv_and_datasheet(a, v$datasheet_noise_model)
