@@ -91,26 +91,12 @@ plot_wv_and_datasheet <- function(wv,
     CI.color = "grey50"
   }
   
-  # WV = data.frame(var = object$variance, dat = rep.int(datasheet[1,1], 19), low = object$ci_low, high = object$ci_high,
-  #                 scale = object$scales)
-  # WV = data.frame(var = object$variance, dat = rep.int(1e-6, 19), low = object$ci_low, high = object$ci_high,
-  #                 scale = object$scales)
-  
-  
-  
-  # WV = WV2
-  
   # datasheet values: WN+GM+.....
   WV = data.frame(var = object$variance, dat = datasheet, low = object$ci_low, high = object$ci_high,
                   scale = object$scales)
   # bias instability
   WV2 = data.frame(var = object$variance, dat = rep.int(datasheet_bi, length(datasheet)), low = object$ci_low, high = object$ci_high,
                    scale = object$scales)
-  
-  # WV = data.frame(var = object$wv.empir, dat = datasheet, low = object$ci.low, high = object$ci.high,
-  #                 scale = object$scales)
-
-
 
   if(CI){
     #process parameter (insert some values)
