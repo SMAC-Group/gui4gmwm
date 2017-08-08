@@ -24,7 +24,9 @@
 #' wv = wvar(Zt, freq = 500)
 #' datasheet = wn_to_wv(sigma2 = 1, tau = wv$scales)
 #' plot_wv_and_datasheet(wv, datasheet/500)
-plot_wv_and_datasheet <- function(wv, datasheet, 
+plot_wv_and_datasheet <- function(wv,
+                                  datasheet, 
+                                  datasheet_bi,
                                   axis.x.label = expression(paste("Scale ", tau)),
                                   prov_tile = NA){
   object = wv
@@ -88,9 +90,22 @@ plot_wv_and_datasheet <- function(wv, datasheet,
     if(CI){line.color = c("#000000", "#404040")}else{line.color = c("#000000")}
     CI.color = "grey50"
   }
-
+  
+  # WV = data.frame(var = object$variance, dat = rep.int(datasheet[1,1], 19), low = object$ci_low, high = object$ci_high,
+  #                 scale = object$scales)
+  # WV = data.frame(var = object$variance, dat = rep.int(1e-6, 19), low = object$ci_low, high = object$ci_high,
+  #                 scale = object$scales)
+  
+  
+  
+  # WV = WV2
+  
+  # datasheet values: WN+GM+.....
   WV = data.frame(var = object$variance, dat = datasheet, low = object$ci_low, high = object$ci_high,
                   scale = object$scales)
+  # bias instability
+  WV2 = data.frame(var = object$variance, dat = rep.int(datasheet_bi, length(datasheet)), low = object$ci_low, high = object$ci_high,
+                   scale = object$scales)
   
   # WV = data.frame(var = object$wv.empir, dat = datasheet, low = object$ci.low, high = object$ci.high,
   #                 scale = object$scales)
@@ -117,6 +132,7 @@ plot_wv_and_datasheet <- function(wv, datasheet,
 
     # put data in the desired format
     melt.wv = melt(WV, id.vars = 'scale')
+    melt.wv2 = melt(WV2, id.vars = 'scale')
 
   }else{
     #other parameter
@@ -124,10 +140,16 @@ plot_wv_and_datasheet <- function(wv, datasheet,
 
     # put data in the desired format
     melt.wv = melt(WV, id.vars = 'scale', measure.vars = 'var')
+    melt.wv2 = melt(WV2, id.vars = 'scale', measure.vars = 'var')
   }
 
-  p = ggplot() + geom_line(data = melt.wv, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
+  p = ggplot()+
+    
+    geom_line(data = melt.wv, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
     geom_point(data = melt.wv, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
+    
+    geom_line(data = melt.wv2, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
+    geom_point(data = melt.wv2, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
 
     scale_linetype_manual(name = legend.title, values = c(line.type), breaks = breaks, labels = legend.label ) +
     scale_shape_manual(name = legend.title, values = c(point.shape), breaks = breaks, labels = legend.label)+
@@ -191,7 +213,8 @@ plot_wv_and_datasheet <- function(wv, datasheet,
 #' wv = gmwm(WN(), Zt, freq = 500)
 #' datasheet = wn_to_wv(sigma2 = 1, tau = wv$scales)
 #' plot_gmwm_and_datasheet(wv, datasheet/500)
-plot_gmwm_and_datasheet <- function(object, datasheet, 
+plot_gmwm_and_datasheet <- function(object,
+                                    datasheet, 
                                     axis.x.label = expression(paste("Scale ", tau)),
                                     prov_tile = NULL){
   process.decomp = FALSE
@@ -279,13 +302,17 @@ plot_gmwm_and_datasheet <- function(object, datasheet,
     #legend.color = c(NA,NA)
   }
   
-  p = ggplot(data = WV, mapping = aes(x = scale)) + geom_line(aes(y = value, color = variable, linetype = variable)) +
-    geom_point(aes(y = value, shape = variable, size = variable, color = variable)) + 
-    scale_linetype_manual(name = legend.title, values = c(line.type), breaks = breaks, labels = legend.label) +
-    scale_shape_manual(name = legend.title, values = c(point.shape), breaks = breaks,labels = legend.label)+
+  p = ggplot(data = WV, mapping = aes(x = scale)) +
+      geom_line(aes(y = value, color = variable, linetype = variable)) +
     
-    scale_size_manual(name = legend.title, values = c(point.size),breaks = breaks,labels = legend.label) +
-    scale_color_manual(name = legend.title, values = c(line.color), breaks = breaks, labels = legend.label) 
+      # geom_line(aes(y = value+1, color = variable, linetype = variable)) +
+    
+      geom_point(aes(y = value, shape = variable, size = variable, color = variable)) + 
+      scale_linetype_manual(name = legend.title, values = c(line.type), breaks = breaks, labels = legend.label) +
+      scale_shape_manual(name = legend.title, values = c(point.shape), breaks = breaks,labels = legend.label)+
+    
+      scale_size_manual(name = legend.title, values = c(point.size),breaks = breaks,labels = legend.label) +
+      scale_color_manual(name = legend.title, values = c(line.color), breaks = breaks, labels = legend.label) 
   
   if(CI){
     p = p +

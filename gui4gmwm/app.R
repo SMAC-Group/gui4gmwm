@@ -7,21 +7,33 @@ const.degps_2_radps = 1/360 * 2*pi
 
 const.DEFAULT_WN = 1
 
-# source: http://cdn-docs.av-iq.com/dataSheet//NavChip_Product_Brief.pdf, 
-const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
-const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
+
 
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
+# https://www.xsens.com/tags/accelerometers/
+# https://www.xsens.com/tags/gyroscopes/
 const.MTIG.GYRO_WN = (0.05 * const.degps_2_radps * sqrt(100))^2 
+const.MTIG.GYRO_BI = (20 /3600 * const.degps_2_radps )^2
 const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
+const.MTIG.ACC_BI = (30 * 1e-6 * 10)^2
 
-# source: http://www.imar-navigation.de/downloads/IMU_FSAS.pdf
-const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
-const.IMAR.ACC_WN = const.DEFAULT_WN
+# source: http://cdn-docs.av-iq.com/dataSheet//NavChip_Product_Brief.pdf, 
+const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
+const.NAVCHIP.GYRO_BI = (10 /3600 * const.degps_2_radps)^2
+const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
+const.NAVCHIP.ACC_BI = (0.05 * 1e-3 * 10)^2
 
 # source: http://www.northropgrumman.com/Capabilities/LN200FOG/Documents/ln200.pdf
 const.LN200.GYRO_WN = (0.05 / 60 * sqrt(400) * const.degps_2_radps)^2
+const.LN200.GYRO_BI = NA
 const.LN200.ACC_WN = const.DEFAULT_WN
+const.LN200.ACC_BI = NA
+
+# source: http://www.imar-navigation.de/downloads/IMU_FSAS.pdf
+const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
+const.IMAR.GYRO_BI = (0.1 /3600 * const.degps_2_radps)^2
+const.IMAR.ACC_WN = const.DEFAULT_WN
+const.IMAR.ACC_BI = NA
 
 data("navchip")
 
@@ -116,7 +128,7 @@ ui <- shinyUI(fluidPage(
     ),
 
     column(3,
-           #h4("Options"),
+           # h4("Options"),
   
            checkboxGroupInput("option_plot", label = "Plot options:",
                               c("Process Decomp." = "process_decomp",
@@ -127,7 +139,8 @@ ui <- shinyUI(fluidPage(
            
            conditionalPanel(
              condition = "input.overlay_datasheet",
-             numericInput("dsv_wn", label = "WN from Datasheet", value = const.DEFAULT_WN)
+             numericInput("dsv_wn", label = " WN", value = const.DEFAULT_WN),
+             numericInput("dsv_bi", label = " BIAS INSTABILITY", value = const.DEFAULT_WN)
            ), 
            
            checkboxGroupInput("summary_plot", label = "Summary options:",
@@ -145,16 +158,6 @@ ui <- shinyUI(fluidPage(
 ))
 
 server <- function(input, output, session) {
-
-  # data created by the datasheet
-  # w <- reactiveValues(plot = FALSE,
-  #                     fit = FALSE,
-  #                     gmwm = NULL,
-  #                     form = NULL,
-  #                     freq = 100,
-  #                     first_gmwm = NULL,
-  #                     n = NULL)
-
   # library or custom dataset
   v <- reactiveValues(plot = FALSE,
                       fit = FALSE,
@@ -167,6 +170,7 @@ server <- function(input, output, session) {
                       sensor_column = NULL,
                       overlap_datasheet = FALSE,
                       actual_datasheet_WN_parameter = const.DEFAULT_WN, 
+                      actual_datasheet_BI_parameter = NA,
                       
                       first_time_plotting_6_pack = TRUE,
                       
@@ -178,54 +182,7 @@ server <- function(input, output, session) {
                       datasheet_noise_model = NULL,
                       datasheet_values_make_sense = FALSE)
 
-
-  ###3# PUSHING ON BUTTON "Update Datasheet WV plot"
-  # observeEvent(input$fit0, {
-  #   w$plot = TRUE
-  #   w$fit = FALSE
-  #
-  #   if ("WN" %in% input$model_from_datasheet){
-  #     if ("QN" %in% input$model_from_datasheet){
-  #       if ("GM" %in% input$model_from_datasheet){
-  #         m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
-  #       } else{
-  #         m = WN(sigma2 = (input$dsv_wn)) + QN(q2 = (input$dsv_qn))
-  #       }
-  #     }else{
-  #       if ("GM" %in% input$model_from_datasheet){
-  #         m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + WN(sigma2 = (input$dsv_wn))
-  #       } else {
-  #         m = WN(sigma2 = (input$dsv_wn))
-  #       }
-  #     }
-  #   }else{
-  #     if ("QN" %in% input$model_from_datasheet){
-  #       if ("GM" %in% input$model_from_datasheet){
-  #         m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta) + QN(q2 = (input$dsv_qn))
-  #       } else {
-  #         m = QN(q2 = (input$dsv_qn))
-  #       }
-  #     } else{
-  #       if ("GM" %in% input$model_from_datasheet){
-  #         m = GM(sigma2_gm = input$dsv_gm , beta = input$dsv_gm_beta)
-  #       } else {
-  #         m = WN(sigma2 = 0)
-  #         w$plot = FALSE
-  #       }
-  #     }
-  #   }
-  #
-  #   # Generate Data
-  #   w$freq = input$dsv_frequency # the frequence defined by the user
-  #   w$n = input$no_of_samples # numbers of samples
-  #   Xt = gen_gts(n = w$n, model = m, freq =  w$freq) # generated data
-  #
-  #   w$form = wvar(as.numeric(Xt), robust = FALSE) # OR USE HERE DIRECTLY THE FORMULAS FROM THE HOMEPAGE, I WAS NOT ABLE TO FIND THEM THOUGH
-  #
-  #   updateNavbarPage(session, "tabs", selected = "Datasheet")
-  ###### })
-
-  # PUSHING ON BUTTON "Plot/update WV"
+  # PUSHING ON BUTTON "Plot WV"
   observeEvent(input$fit1, {
     v$plot = TRUE
     v$fit = FALSE
@@ -243,17 +200,22 @@ server <- function(input, output, session) {
       if( v$sensor_column == "Gyro. X" || v$sensor_column == "Gyro. Y" || v$sensor_column == "Gyro. Z"){
         if (v$sensor_name == "navchip"){
           v$actual_datasheet_WN_parameter = const.NAVCHIP.GYRO_WN
+          v$actual_datasheet_BI_parameter = const.NAVCHIP.GYRO_BI
         } else {
           if(v$sensor_name == "imu6"){
             v$actual_datasheet_WN_parameter = const.MTIG.GYRO_WN
+            v$actual_datasheet_BI_parameter = const.MTIG.GYRO_BI
           } else {
             if(v$sensor_name == "imar.gyro"){
               v$actual_datasheet_WN_parameter = const.IMAR.GYRO_WN
+              v$actual_datasheet_BI_parameter = const.IMAR.GYRO_BI
             } else{
               if(v$sensor_name == "ln200.gyro"){
                 v$actual_datasheet_WN_parameter = const.LN200.GYRO_WN
+                v$actual_datasheet_BI_parameter = const.LN200.GYRO_BI
               } else{
                 v$actual_datasheet_WN_parameter = const.DEFAULT_WN
+                v$actual_datasheet_BI_parameter = NA
               }
             }
           }
@@ -263,11 +225,14 @@ server <- function(input, output, session) {
       if( v$sensor_column == "Accel. X" || v$sensor_column == "Accel. Y" || v$sensor_column == "Accel. Z"){
         if (v$sensor_name == "navchip"){
           v$actual_datasheet_WN_parameter = const.NAVCHIP.ACC_WN
+          v$actual_datasheet_BI_parameter = const.NAVCHIP.ACC_BI
         } else {
           if(v$sensor_name == "imu6"){
             v$actual_datasheet_WN_parameter = const.MTIG.ACC_WN
+            v$actual_datasheet_BI_parameter = const.MTIG.ACC_BI
           } else {
             v$actual_datasheet_WN_parameter = const.DEFAULT_WN
+            v$actual_datasheet_BI_parameter = NA
           }
         } 
       }
@@ -303,6 +268,7 @@ server <- function(input, output, session) {
     }
     
     updateNumericInput(session, "dsv_wn", value = v$actual_datasheet_WN_parameter)
+    updateNumericInput(session, "dsv_bi", value = v$actual_datasheet_BI_parameter)
 
     v$n = length(Xt)
     v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust") )
@@ -613,7 +579,9 @@ server <- function(input, output, session) {
         
         
         if ("datasheet" %in% input$option_plot){
-          plot_wv_and_datasheet(a, v$datasheet_noise_model, 
+          plot_wv_and_datasheet(a,
+                                v$datasheet_noise_model, 
+                                v$actual_datasheet_BI_parameter,
                                 expression(paste("Scale ", tau, " [s]")),
                                 title)
         } else {
