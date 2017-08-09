@@ -215,16 +215,16 @@ plot_gmwm_and_datasheet <- function(object,
   point.size = NULL
   point.shape = NULL 
   title = prov_tile 
-  title.size = 15
-  axis.label.size = 13
-  axis.tick.size = 11 
+  title.size = 22#15
+  axis.label.size = 20#13
+  axis.tick.size = 17#11 
   #axis.x.label = expression(paste("Scale ", tau))
   axis.y.label = expression(paste("Wavelet Variance ",nu))
   legend.title = ""
   legend.label = NULL
   legend.key.size = 1
-  legend.title.size = 13
-  legend.text.size = 13
+  legend.title.size = 19#13
+  legend.text.size = 19#13
   
   #require pakage: scales, grid
   low=high=emp=theo=trans_breaks=trans_format=math_format=.x=value=variable=NULL
@@ -302,11 +302,8 @@ plot_gmwm_and_datasheet <- function(object,
   p = ggplot(data = WV, mapping = aes(x = scale)) +
       geom_line(aes(y = value, color = variable, linetype = variable)) +
     
-      # geom_line(data = WV2, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
       geom_line(data = WV2, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
       geom_point(data = WV2, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
-    
-      # geom_line(aes(y = value+1, color = variable, linetype = variable)) +
     
       geom_point(aes(y = value, shape = variable, size = variable, color = variable)) + 
       scale_linetype_manual(name = legend.title, values = c(line.type), breaks = breaks, labels = legend.label) +
