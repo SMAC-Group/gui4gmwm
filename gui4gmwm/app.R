@@ -341,7 +341,7 @@ server <- function(input, output, session) {
   #PUSHED THE BUTTON "FIT MODEL"
   observeEvent(input$fit3, {
     
-    withProgress(message = 'Calculating fitted model...', value = 0, {
+    withProgress(message = 'Fitting desired model...', value = 0, {
 
     if (is.null(v$first_gmwm)){
       v$first_gmwm = TRUE
@@ -445,6 +445,8 @@ server <- function(input, output, session) {
 
   # BUTTON REDUCE MODEL WHICH WILL USE THE AUTOIMU FUNCTION
   observeEvent(input$fit2, {
+    
+    withProgress(message = 'FItting model automatically...', value = 0, {
 
     if (is.null(v$first_gmwm)){
       v$first_gmwm = TRUE
@@ -533,6 +535,7 @@ server <- function(input, output, session) {
     v$form = a[[1]][[2]]
 
     updateNavbarPage(session, "tabs", selected = "Selected Sensor")
+    })
   })
 
 
