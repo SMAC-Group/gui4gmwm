@@ -617,6 +617,7 @@ server <- function(input, output, session) {
         if ("datasheet" %in% input$option_plot & !"process_decomp" %in% input$option_plot){
           plot_gmwm_and_datasheet(object = a, 
                                   datasheet = v$datasheet_noise_model, 
+                                  1e-9,
                                   axis.x.label = expression(paste("Scale ", tau, " [s]")),
                                   prov_tile = title)
         }else{

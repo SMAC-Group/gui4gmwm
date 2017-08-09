@@ -201,6 +201,7 @@ plot_wv_and_datasheet <- function(wv,
 #' plot_gmwm_and_datasheet(wv, datasheet/500)
 plot_gmwm_and_datasheet <- function(object,
                                     datasheet, 
+                                    datasheet_bi,
                                     axis.x.label = expression(paste("Scale ", tau)),
                                     prov_tile = NULL){
   process.decomp = FALSE
@@ -235,6 +236,14 @@ plot_gmwm_and_datasheet <- function(object,
                      theo = object$theo,
                      scale = object$scales)
   
+  temp2 = data.frame( emp = object$wv.empir,
+                     dat = rep.int(datasheet_bi, length(datasheet)),
+                     low = object$ci.low,
+                     high = object$ci.high,
+                     theo = object$theo,
+                     scale = object$scales)
+  
+  
   if(CI == T){
     if(is.null(line.type)){line.type = c('solid', 'solid', 'dotted', 'solid')}
     if(length(line.type)==4){line.type = c(line.type[1:3], line.type[3:4])}
@@ -268,6 +277,7 @@ plot_gmwm_and_datasheet <- function(object,
     }
     
     WV = melt(temp, id.vars = 'scale')
+    WV2 = melt(temp2, id.vars = 'scale')
     breaks = c('emp','low','theo','dat')
     legend.fill = c(NA, CI.color, NA, NA)
     legend.linetype = c(line.type[1],'blank', "solid", 'solid')
@@ -284,12 +294,17 @@ plot_gmwm_and_datasheet <- function(object,
                                                expression(paste("Implied WV ", nu,"(",hat(theta),")"))    )}
     
     WV = melt(temp, id.vars = 'scale', measure.vars = c('emp', 'theo'))
+    WV2 = melt(temp2, id.vars = 'scale', measure.vars = c('emp', 'theo'))
     breaks = c('emp','theo')
     #legend.color = c(NA,NA)
   }
   
   p = ggplot(data = WV, mapping = aes(x = scale)) +
       geom_line(aes(y = value, color = variable, linetype = variable)) +
+    
+      # geom_line(data = WV2, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
+      geom_line(data = WV2, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
+      geom_point(data = WV2, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
     
       # geom_line(aes(y = value+1, color = variable, linetype = variable)) +
     
