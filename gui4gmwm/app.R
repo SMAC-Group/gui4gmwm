@@ -184,6 +184,9 @@ server <- function(input, output, session) {
 
   # PUSHING ON BUTTON "Plot WV"
   observeEvent(input$fit1, {
+    
+    withProgress(message = 'Calculating empirical WV...', value = 0, {
+      
     v$plot = TRUE
     v$fit = FALSE
     v$overlap_datasheet = "datasheet" %in% input$option_plot
@@ -328,12 +331,17 @@ server <- function(input, output, session) {
     #     # bla
     #   }
     # }
+    
 
+    
     updateNavbarPage(session, "tabs", selected = "Selected Sensor")
+    })
   })
 
   #PUSHED THE BUTTON "FIT MODEL"
   observeEvent(input$fit3, {
+    
+    withProgress(message = 'Calculating fitted model...', value = 0, {
 
     if (is.null(v$first_gmwm)){
       v$first_gmwm = TRUE
@@ -430,6 +438,8 @@ server <- function(input, output, session) {
     v$first_gmwm = FALSE
 
     updateNavbarPage(session, "tabs", selected = "Selected Sensor")
+    
+    })
 
   })
 
