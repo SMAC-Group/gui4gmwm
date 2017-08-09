@@ -344,6 +344,7 @@ plot_gmwm_and_datasheet <- function(object,
       legend.text = element_text(size = legend.text.size),  
       legend.title = element_text(size = legend.title.size),
       legend.background = element_rect(fill="transparent"),
+      legend.justification=legendPlace[1:2], legend.position=legendPlace[3:4],
       legend.text.align = 0 )
   # if(!bw){p = p + theme(legend.background = element_rect(fill="gray90", size=.5, linetype="dotted"))}
   if (is.null(title)){
