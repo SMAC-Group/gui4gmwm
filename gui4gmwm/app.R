@@ -120,6 +120,9 @@ ui <- shinyUI(fluidPage(
 
            br(),
            br(),
+           br(),
+           br(),
+           br(),
            
            actionButton("fit2", label = "Reduce Model Automatically")
 
@@ -660,6 +663,9 @@ server <- function(input, output, session) {
           }
         }
       }
+    } else{
+      filename <- normalizePath(file.path('./initial_6_pack_plots', paste('custom_dataset', '.png', sep='')))
+      model_data_height = const.FIGURE_PLOT_HEIGHT_REDUCED
     }
     
     list(src = filename, height = model_data_height)
