@@ -608,7 +608,7 @@ server <- function(input, output, session) {
                axis.label.size = 20, 
                axis.tick.size = 17, 
                legend.title.size = 19, 
-               legend.text.size = 19)
+               legend.text.size = 19) + theme(legend.position = c(0, 0))
         }
 
       }else{ # when doing the "gmwm modeling" plot
@@ -648,7 +648,7 @@ server <- function(input, output, session) {
                axis.label.size = 20, 
                axis.tick.size = 17, 
                legend.title.size = 19, 
-               legend.text.size = 19)
+               legend.text.size = 19) #+ theme(legend.position = c(0.1, 0.1))
         }
         
 
