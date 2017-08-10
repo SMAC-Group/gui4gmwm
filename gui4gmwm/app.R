@@ -107,9 +107,9 @@ ui <- shinyUI(fluidPage(
            checkboxGroupInput("model", "Select Model",
                               c("Quantization Noise" = "QN",
                                 "White Noise" = "WN",
-                                "Gauss-Markov" = "GM",
                                 "Random Walk" = "RW",
-                                "Drift" = "DR"),
+                                "Drift" = "DR",
+                                "Gauss-Markov" = "GM"),
                               selected = "WN"),
            conditionalPanel(
              condition = "input.model.indexOf('GM')>-1",
