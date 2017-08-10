@@ -143,7 +143,20 @@ ui <- shinyUI(fluidPage(
            conditionalPanel(
              condition = "input.overlay_datasheet",
              numericInput("dsv_wn", label = " WN", value = const.DEFAULT_WN),
-             numericInput("dsv_bi", label = " BIAS INSTABILITY", value = const.DEFAULT_WN)
+             numericInput("dsv_bi", label = " BIAS INSTABILITY", value = const.DEFAULT_WN),
+             
+             
+             conditionalPanel(
+               condition = "input.data_input_choice == 'custom'",
+               numericInput("dsv_qn", label = " QN", value = const.DEFAULT_WN),
+               numericInput("dsv_sigma2_gm", label = " sigma2 GM", value = const.DEFAULT_WN),
+               numericInput("dsv_beta_gm", label = " beta GM", value = const.DEFAULT_WN),
+               numericInput("dsv_rw", label = " RW", value = const.DEFAULT_WN),
+               numericInput("dsv_dr", label = " DR", value = const.DEFAULT_WN)
+               
+               
+             )
+             
            ), 
            
            checkboxGroupInput("summary_plot", label = "Summary options:",
