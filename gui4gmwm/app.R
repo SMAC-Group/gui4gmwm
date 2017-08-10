@@ -132,8 +132,9 @@ ui <- shinyUI(fluidPage(
   
            checkboxGroupInput("option_plot", label = "Plot options:",
                               c("Process Decomp." = "process_decomp",
-                                "Add Datasheet WV" = "datasheet",
-                                "Show CI of empirical WV" = "ci"),
+                                "Add Datasheet WV" = "datasheet"
+                                #"Show CI of empirical WV" = "ci"
+                                ),
                               selected = c("datasheet","ci")),
            
            checkboxInput("overlay_datasheet", label = "Show Datasheet Specifications", value = FALSE),
@@ -597,12 +598,12 @@ server <- function(input, output, session) {
                                 v$datasheet_noise_model, 
                                 v$actual_datasheet_BI_parameter,
                                 expression(paste("Scale ", tau, " [s]")),
-                                title)
+                                prov_title = title)
         } else {
           plot(a,
                axis.x.label = expression(paste("Scale ", tau, " [s]")),
                title = title,
-               CI = "ci" %in% input$option_plot,
+               CI = T, #"ci" %in% input$option_plot,
                title.size = 22, 
                axis.label.size = 20, 
                axis.tick.size = 17, 
@@ -636,12 +637,12 @@ server <- function(input, output, session) {
                                   datasheet = v$datasheet_noise_model, 
                                   v$actual_datasheet_BI_parameter,
                                   axis.x.label = expression(paste("Scale ", tau, " [s]")),
-                                  prov_tile = title)
+                                  prov_title = title)
         }else{
           plot(a,
                axis.x.label = expression(paste("Scale ", tau, " [s]")),
                process.decomp = "process_decomp" %in% input$option_plot,
-               CI = "ci" %in% input$option_plot,
+               CI = T, #"ci" %in% input$option_plot,
                title = title,
                title.size = 22, 
                axis.label.size = 20, 
