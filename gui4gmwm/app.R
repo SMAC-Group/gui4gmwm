@@ -135,7 +135,7 @@ ui <- shinyUI(fluidPage(
                                 "Add Datasheet WV" = "datasheet"
                                 #"Show CI of empirical WV" = "ci"
                                 ),
-                              selected = c("datasheet","ci")),
+                              selected = c("datasheet")),
            
            checkboxInput("overlay_datasheet", label = "Show Datasheet Specifications", value = FALSE),
            
@@ -574,16 +574,7 @@ server <- function(input, output, session) {
       a$scales = a$scales/freq_a
       duration_a = v$n/(freq_a*60*60)
 
-      # for the simualted data
-      # b = w$form
-      # freq_b = w$freq
-      # b$scales = b$scales/freq_b
-      # duration_b = w$n/(freq_b*60*60)
-
       if (v$plot){ # should i plot just the real data?
-        # if (w$plot && v$overlap_datasheet) { #should i plot the emulated data AND is the overlap-checkbox activated
-        # compare_wvar(a, b, split = FALSE, CI = FALSE, legend.label = c('dataset','datasheet'), auto.label.wvar = FALSE)
-        # } else{
           if (v$custom_data){ # is it custom data from a txt file?
             title = paste("Haar Wavelet Variance of TXT-FILE-DATA: ", v$custom_data_name, " (column number ", input$user_defined_txt_file_column, " out of ", v$custom_data_tot_colums,
                           ") - Filesize: ", round(v$custom_data_size/1024/1024,2), " [MB] - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
@@ -621,17 +612,6 @@ server <- function(input, output, session) {
                         ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
         }
 
-
-
-        #plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
-         #    process.decomp = "process_decomp" %in% input$option_plot,
-         #    CI = "ci" %in% input$option_plot, title = title, 
-         #    title.size = 22, 
-         #    axis.label.size = 20, 
-         #    axis.tick.size = 17, 
-         #    legend.title.size = 19, 
-         #    legend.text.size = 19)# + theme(legend.position = c(0.6, 0.9))
-
         if ("datasheet" %in% input$option_plot & !"process_decomp" %in% input$option_plot){
           plot_gmwm_and_datasheet(object = a, 
                                   datasheet = v$datasheet_noise_model, 
@@ -650,36 +630,17 @@ server <- function(input, output, session) {
                legend.title.size = 19, 
                legend.text.size = 19) #+ theme(legend.position = c(0.1, 0.1))
         }
-        
-
-        
-        # if (v$overlap_datasheet){
-        #   plot_wv_and_datasheet(a, v$datasheet_noise_model)
-        #   # plot(NA)
-        # } else {
-        #   plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
-        #        process.decomp = "process_decomp" %in% input$option_plot,
-        #        CI = "ci" %in% input$option_plot, title = title)
-        # }
-
-        # if(v$datasheet_values_make_sense){
-        #   v$datasheet_values_make_sense = v$datasheet_values_make_sense
-        # }
       }
     }else{
       plot(NA)
     }
-
   })
 
   # calc the 6 WV from the dataset and plot it in the tab "Model Data"
   output$plot <- renderImage({
   
-    # plot(wvar(get(input$imu_obj))) # original
-    
     width  <- session$clientData$output_plot2_width
     height <- session$clientData$output_plot2_height
-    
     
     if(input$data_input_choice == 'library'){
       if(input$imu_obj == 'imu6'){
