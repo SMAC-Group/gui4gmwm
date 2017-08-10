@@ -135,6 +135,7 @@ ui <- shinyUI(fluidPage(
                                 "Add Datasheet WV" = "datasheet",
                                 "Show CI of empirical WV" = "ci"),
                               selected = c("datasheet","ci")),
+           
            checkboxInput("overlay_datasheet", label = "Show Datasheet Specifications", value = FALSE),
            
            conditionalPanel(
@@ -446,7 +447,7 @@ server <- function(input, output, session) {
   # BUTTON REDUCE MODEL WHICH WILL USE THE AUTOIMU FUNCTION
   observeEvent(input$fit2, {
     
-    withProgress(message = 'FItting model automatically...', value = 0, {
+    withProgress(message = 'Reducing model automatically...', value = 0, {
 
     if (is.null(v$first_gmwm)){
       v$first_gmwm = TRUE
@@ -636,7 +637,12 @@ server <- function(input, output, session) {
         }else{
           plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
                process.decomp = "process_decomp" %in% input$option_plot,
-               CI = "ci" %in% input$option_plot, title = title)
+               CI = "ci" %in% input$option_plot, title = title,
+               title.size = 22, 
+               axis.label.size = 20, 
+               axis.tick.size = 17, 
+               legend.title.size = 19, 
+               legend.text.size = 19)
         }
         
 
