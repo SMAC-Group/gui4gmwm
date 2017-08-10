@@ -7,8 +7,6 @@ const.degps_2_radps = 1/360 * 2*pi
 
 const.DEFAULT_WN = 1
 
-
-
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
 # https://www.xsens.com/tags/accelerometers/
 # https://www.xsens.com/tags/gyroscopes/
