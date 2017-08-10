@@ -16,6 +16,7 @@
 #' @author Stephane Guerrier
 #' @param object       A \code{gmwm} object.
 #' @param datasheet    A \code{vector} with the implied WV of the datasheet.
+#' @param datasheet_bi A \code{value} with the bias-instabulity value.
 #' @param axis.x.label A \code{string} for the label of the "x-axis".
 #' @param prov_title    A \code{string} for the title of the graph.
 #' @export
@@ -191,6 +192,7 @@ plot_wv_and_datasheet <- function(wv,
 #' @author Stephane Guerrier
 #' @param object       A \code{gmwm} object.
 #' @param datasheet    A \code{vector} with the implied WV of the datasheet.
+#' @param datasheet_bi A \code{value} with the bias-instabulity value.
 #' @param axis.x.label A \code{string} for the label of the "x-axis".
 #' @param prov_title    A \code{string} for the title of the graph.
 #' @export
