@@ -17,7 +17,7 @@
 #' @param object       A \code{gmwm} object.
 #' @param datasheet    A \code{vector} with the implied WV of the datasheet.
 #' @param axis.x.label A \code{string} for the label of the "x-axis".
-#' @param prov_tile    A \code{string} for the title of the graph.
+#' @param prov_title    A \code{string} for the title of the graph.
 #' @export
 #' @examples
 #' Zt = rnorm(1000000)
@@ -28,7 +28,7 @@ plot_wv_and_datasheet <- function(wv,
                                   datasheet, 
                                   datasheet_bi,
                                   axis.x.label = expression(paste("Scale ", tau)),
-                                  prov_tile = NA){
+                                  prov_title = NA){
   object = wv
   CI = T
   transparence = 0.1
@@ -39,7 +39,7 @@ plot_wv_and_datasheet <- function(wv,
   line.color = NULL
   point.size = NULL
   point.shape = NULL
-  title = prov_tile#NA
+  title = prov_title#NA
   title.size = 22# 15
   axis.label.size = 20 #13
   axis.tick.size = 17 #11
@@ -192,7 +192,7 @@ plot_wv_and_datasheet <- function(wv,
 #' @param object       A \code{gmwm} object.
 #' @param datasheet    A \code{vector} with the implied WV of the datasheet.
 #' @param axis.x.label A \code{string} for the label of the "x-axis".
-#' @param prov_tile    A \code{string} for the title of the graph.
+#' @param prov_title    A \code{string} for the title of the graph.
 #' @export
 #' @examples
 #' Zt = rnorm(1000000)
@@ -203,7 +203,7 @@ plot_gmwm_and_datasheet <- function(object,
                                     datasheet, 
                                     datasheet_bi,
                                     axis.x.label = expression(paste("Scale ", tau)),
-                                    prov_tile = NULL){
+                                    prov_title = NULL){
   process.decomp = FALSE
   background = "white"
   CI = T
@@ -214,7 +214,7 @@ plot_gmwm_and_datasheet <- function(object,
   line.color = NULL
   point.size = NULL
   point.shape = NULL 
-  title = prov_tile 
+  title = prov_title 
   title.size = 22#15
   axis.label.size = 20#13
   axis.tick.size = 17#11 
