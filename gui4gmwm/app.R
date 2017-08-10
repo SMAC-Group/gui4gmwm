@@ -433,7 +433,7 @@ server <- function(input, output, session) {
     if (is.null(input$num)){
       input$num = 10^5
     }
-    v$gmwm = gmwm_imu(model, Xt, G = input$num, seed = input$seed, robust = (input$robust=="robust"))
+    v$gmwm = gmwm_imu(model, Xt, G = input$num, seed = input$seed, robust = (input$robust=="robust"), freq = v$freq)
     v$form = v$gmwm
     v$first_gmwm = FALSE
 

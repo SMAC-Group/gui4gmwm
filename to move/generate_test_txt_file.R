@@ -33,10 +33,8 @@ m1 = GM(beta = 3.526037e-01, sigma2_gm = 7.348293e-09) +
       RW(gamma2 = 1.268314e-12) + 
       DR(omega = 3.913529e-09)
 # accelerometer
-m2 = GM(beta = 2.162742e-02, sigma2_gm = 1.373440e-07) + 
-      GM(beta = 1.940672e+02, sigma2_gm = 7.501190e-05) + 
+m2 = GM(beta = 2.162742e+00, sigma2_gm = 1.373440e-07) + 
       WN(sigma2 = 7.838580e-06) + 
-      RW(gamma2 = 9.883209e-12) + 
       DR(omega = 7.234603e-09)
 
 
@@ -49,6 +47,7 @@ Yt = gen_gts(n = number_of_datapoints, model = m2, freq = my_freq)
 n = length(Xt)
 
 plot(wvar(Xt))
+plot(wvar(Yt))
 
 B = matrix( c(Xt, Yt), 
             nrow=length(Xt), 
@@ -60,6 +59,5 @@ write(format(t(B), nsmall = 19),
       append = FALSE,
       sep = ",")
 
-plot(wvar(Xt))
 
 
