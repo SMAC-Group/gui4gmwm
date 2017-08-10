@@ -599,7 +599,10 @@ server <- function(input, output, session) {
                                 expression(paste("Scale ", tau, " [s]")),
                                 title)
         } else {
-          plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")), title = title,
+          plot(a,
+               axis.x.label = expression(paste("Scale ", tau, " [s]")),
+               title = title,
+               CI = "ci" %in% input$option_plot,
                title.size = 22, 
                axis.label.size = 20, 
                axis.tick.size = 17, 
@@ -635,9 +638,11 @@ server <- function(input, output, session) {
                                   axis.x.label = expression(paste("Scale ", tau, " [s]")),
                                   prov_tile = title)
         }else{
-          plot(a, axis.x.label = expression(paste("Scale ", tau, " [s]")),
+          plot(a,
+               axis.x.label = expression(paste("Scale ", tau, " [s]")),
                process.decomp = "process_decomp" %in% input$option_plot,
-               CI = "ci" %in% input$option_plot, title = title,
+               CI = "ci" %in% input$option_plot,
+               title = title,
                title.size = 22, 
                axis.label.size = 20, 
                axis.tick.size = 17, 
