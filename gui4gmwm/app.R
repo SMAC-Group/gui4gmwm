@@ -158,8 +158,10 @@ ui <- shinyUI(fluidPage(
              conditionalPanel(
                condition = "input.data_input_choice == 'custom'",
                numericInput("dsv_qn", label = " QN", value = format(const.DEFAULT_QN, digits = const.nb_of_digits)),
+               
                numericInput("dsv_sigma2_gm", label = " sigma2 GM", value = format(const.DEFAULT_SIGMA2_GM, digits = const.nb_of_digits)),
                numericInput("dsv_beta_gm", label = " beta GM", value = format(const.DEFAULT_BETA_GM, digits = const.nb_of_digits)),
+ 
                numericInput("dsv_rw", label = " RW", value = format(const.DEFAULT_RW, digits = const.nb_of_digits)),
                numericInput("dsv_dr", label = " DR", value = format(const.DEFAULT_DR, digits = const.nb_of_digits))
                
