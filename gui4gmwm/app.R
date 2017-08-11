@@ -3,7 +3,7 @@ library(gui4gmwm)
 const.FIGURE_PLOT_HEIGHT = "600px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
 
-const.nb_of_digits = 5
+const.nb_of_digits = 7
 
 # convert degrees-per-second to radians-per-second
 const.degps_2_radps = 1/360 * 2*pi
@@ -331,32 +331,22 @@ server <- function(input, output, session) {
     
     if (v$overlap_datasheet == TRUE){
       v$datasheet_values_make_sense = TRUE
-      # if ("library" %in% input$data_input_choice){ #using library data there is only WN, the BI is plotted separately directly in the plot
-        # v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) 
-        # v$datasheet_noise_model = qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales)
-      # v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) +  
-      #                           qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales)
-      # v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) +  
-      #                           qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales) + 
-      #                           rw_to_wv(gamma2 = v$actual_datasheet_RW_parameter, tau = v$form$scales)
-      # v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) +  
-      #   qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales) + 
-      #   rw_to_wv(gamma2 = v$actual_datasheet_RW_parameter, tau = v$form$scales) + 
-      #   dr_to_wv(omega = v$actual_datasheet_DR_parameter,  tau = v$form$scales)
       
-      intermediate = gm_to_ar1(theta = c(v$actual_datasheet_BETA_GM_parameter,
-                                         v$actual_datasheet_SIGMA2_GM_parameter),
-                               freq = v$freq)
-      # v$datasheet_noise_model = 
-      
-      v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) +
-                                qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales) +
-                                rw_to_wv(gamma2 = v$actual_datasheet_RW_parameter, tau = v$form$scales) +
-                                dr_to_wv(omega = v$actual_datasheet_DR_parameter,  tau = v$form$scales) +
-                                ar1_to_wv(phi = intermediate[1], sigma2 = intermediate[2], tau = v$form$scales)
-      # }
-      
-      
+      if ("library" %in% input$data_input_choice){ #using library data there is only WN, the BI is plotted separately directly in the plot
+        v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales)
+        
+      } else{
+        intermediate = gm_to_ar1(theta = c(v$actual_datasheet_BETA_GM_parameter,
+                                           v$actual_datasheet_SIGMA2_GM_parameter),
+                                 freq = v$freq)
+        
+        v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) +
+                                  qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales) +
+                                  rw_to_wv(gamma2 = v$actual_datasheet_RW_parameter, tau = v$form$scales) +
+                                  dr_to_wv(omega = v$actual_datasheet_DR_parameter,  tau = v$form$scales) +
+                                  ar1_to_wv(phi = intermediate[1], sigma2 = intermediate[2], tau = v$form$scales)
+        
+      }
     } else{
       v$datasheet_values_make_sense = FALSE
     }
