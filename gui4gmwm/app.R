@@ -331,12 +331,59 @@ server <- function(input, output, session) {
     
     if (v$overlap_datasheet == TRUE){
       v$datasheet_values_make_sense = TRUE
+      # if ("library" %in% input$data_input_choice){ #using library data there is only WN, the BI is plotted separately directly in the plot
+        # v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) 
+        # v$datasheet_noise_model = qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales)
+      # v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) +  
+      #                           qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales)
+      # v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) +  
+      #                           qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales) + 
+      #                           rw_to_wv(gamma2 = v$actual_datasheet_RW_parameter, tau = v$form$scales)
+      # v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) +  
+      #   qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales) + 
+      #   rw_to_wv(gamma2 = v$actual_datasheet_RW_parameter, tau = v$form$scales) + 
+      #   dr_to_wv(omega = v$actual_datasheet_DR_parameter,  tau = v$form$scales)
       
-      v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) 
+      intermediate = gm_to_ar1(theta = c(v$actual_datasheet_BETA_GM_parameter,
+                                         v$actual_datasheet_SIGMA2_GM_parameter),
+                               freq = v$freq)
+      # v$datasheet_noise_model = 
+      
+      v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales) +
+                                qn_to_wv(q2 = v$actual_datasheet_QN_parameter, tau = v$form$scales) +
+                                rw_to_wv(gamma2 = v$actual_datasheet_RW_parameter, tau = v$form$scales) +
+                                dr_to_wv(omega = v$actual_datasheet_DR_parameter,  tau = v$form$scales) +
+                                ar1_to_wv(phi = intermediate[1], sigma2 = intermediate[2], tau = v$form$scales)
+      # }
+      
       
     } else{
       v$datasheet_values_make_sense = FALSE
     }
+    
+    
+    
+    # if ( is.na(v$actual_datasheet_WN_parameter) == FALSE ){
+    #   v$datasheet_noise_model = WN(sigma2 = v$actual_datasheet_WN_parameter)
+    # }
+    # 
+    # if ( is.na(v$actual_datasheet_QN_parameter) == FALSE ){
+    #   v$datasheet_noise_model = v$datasheet_noise_model + QN(q2 = v$actual_datasheet_QN_parameter)
+    # }
+    # 
+    # if ( is.na(v$actual_datasheet_SIGMA2_GM_parameter) == FALSE  & is.na(v$actual_datasheet_BETA_GM_parameter) == FALSE){
+    #   v$datasheet_noise_model = v$datasheet_noise_model + GM(sigma2 = v$actual_datasheet_SIGMA2_GM_parameter, beta = v$actual_datasheet_BETA_GM_parameter)
+    # }
+    # 
+    # if ( is.na(v$actual_datasheet_RW_parameter) == FALSE ){
+    #   v$datasheet_noise_model = v$datasheet_noise_model + RW(gamma2 = v$actual_datasheet_RW_parameter)
+    # }
+    # 
+    # if ( is.na(v$actual_datasheet_DR_parameter) == FALSE ){
+    #   v$datasheet_noise_model = v$datasheet_noise_model + DR(omega = v$actual_datasheet_DR_parameter)
+    # }
+    
+    
     
 
     # if the user checked the "overlay datasheet checkbox
@@ -627,7 +674,7 @@ server <- function(input, output, session) {
 
       if (v$plot){ # should i plot just the real data?
           if (v$custom_data){ # is it custom data from a txt file?
-            title = paste("Haar Wavelet Variance of TXT-FILE-DATA: ", v$custom_data_name, " (column number ", input$user_defined_txt_file_column, " out of ", v$custom_data_tot_colums,
+            title = paste("Haar Wavelet Variance of TXT-FILE: ", v$custom_data_name, " (column number ", input$user_defined_txt_file_column, " of ", v$custom_data_tot_colums,
                           ") - Filesize: ", round(v$custom_data_size/1024/1024,2), " [MB] - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
           }else{ # it is NOT custom data
             title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,

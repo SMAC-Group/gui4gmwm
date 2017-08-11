@@ -27,11 +27,18 @@ library(gmwm)
 # DR        7.234603e-09
 
 # gyroscope
-m1 = GM(beta = 3.526037e-01, sigma2_gm = 7.348293e-09) + 
-      WN(sigma2 = 5.304377e-07) + 
-      QN(q2 = 1.681227e-06) + 
-      RW(gamma2 = 1.268314e-12) + 
+m1 = GM(beta = 3.526037e-01, sigma2_gm = 7.348293e-09) +
+      WN(sigma2 = 5.304377e-07) +
+      QN(q2 = 1.681227e-06) +
+      RW(gamma2 = 1.268314e-12) +
       DR(omega = 3.913529e-09)
+# m1 = WN(sigma2 = 5.304377e-07)
+# m1 =  QN(q2 = 1.681227e-06)
+# m1  = WN(sigma2 = 5.304377e-07) + QN(q2 = 1.681227e-06)
+# m1  = WN(sigma2 = 5.304377e-07) + QN(q2 = 1.681227e-06) + RW(gamma2 = 1.268314e-12)
+# m1  = WN(sigma2 = 5.304377e-07) + QN(q2 = 1.681227e-06) + RW(gamma2 = 1.268314e-12) + DR(omega = 3.913529e-09)
+# m1 = GM(beta = 3.526037e-01, sigma2_gm = 7.348293e-09)
+  
 # accelerometer
 m2 = GM(beta = 2.162742e+00, sigma2_gm = 1.373440e-07) + 
       WN(sigma2 = 7.838580e-06) + 
