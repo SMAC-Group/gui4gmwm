@@ -194,8 +194,15 @@ server <- function(input, output, session) {
                       sensor_name = NULL,
                       sensor_column = NULL,
                       overlap_datasheet = FALSE,
+                      
                       actual_datasheet_WN_parameter = const.DEFAULT_WN, 
                       actual_datasheet_BI_parameter = NA,
+                      actual_datasheet_QN_parameter = NA,
+                      actual_datasheet_SIGMA2_GM_parameter = NA,
+                      actual_datasheet_BETA_GM_parameter = NA,
+                      actual_datasheet_RW_parameter = NA,
+                      actual_datasheet_DR_parameter = NA,
+                      
                       
                       first_time_plotting_6_pack = TRUE,
                       
@@ -264,6 +271,13 @@ server <- function(input, output, session) {
           }
         } 
       }
+      
+      # reset other noise values in case custom data was laoded previosuly
+      v$actual_datasheet_QN_parameter = const.DEFAULT_QN
+      v$actual_datasheet_SIGMA2_GM_parameter = const.DEFAULT_SIGMA2_GM
+      v$actual_datasheet_BETA_GM_parameter = const.DEFAULT_BETA_GM
+      v$actual_datasheet_RW_parameter = const.DEFAULT_RW
+      v$actual_datasheet_DR_parameter = const.DEFAULT_DR
 
     } else{ #using custom data
       inFile <- input$user_defined_txt_file
@@ -292,11 +306,25 @@ server <- function(input, output, session) {
       v$custom_data_tot_colums = ncol(my_data)
       
       v$actual_datasheet_WN_parameter = input$dsv_wn
+      v$actual_datasheet_BI_parameter = input$dsv_bi
+      
+      v$actual_datasheet_QN_parameter = input$dsv_qn
+      v$actual_datasheet_SIGMA2_GM_parameter = input$dsv_sigma2_gm
+      v$actual_datasheet_BETA_GM_parameter = input$dsv_beta_gm
+      v$actual_datasheet_RW_parameter = input$dsv_rw
+      v$actual_datasheet_DR_parameter = input$dsv_dr
+      
 
     }
     
     updateNumericInput(session, "dsv_wn", value = format(v$actual_datasheet_WN_parameter, digits = const.nb_of_digits))
     updateNumericInput(session, "dsv_bi", value = format(v$actual_datasheet_BI_parameter, digits = const.nb_of_digits))
+    
+    updateNumericInput(session, "dsv_qn", value = format(v$actual_datasheet_QN_parameter, digits = const.nb_of_digits))
+    updateNumericInput(session, "dsv_sigma2_gm", value = format(v$actual_datasheet_SIGMA2_GM_parameter, digits = const.nb_of_digits))
+    updateNumericInput(session, "dsv_beta_gm", value = format(v$actual_datasheet_BETA_GM_parameter, digits = const.nb_of_digits))
+    updateNumericInput(session, "dsv_rw", value = format(v$actual_datasheet_RW_parameter, digits = const.nb_of_digits))
+    updateNumericInput(session, "dsv_dr", value = format(v$actual_datasheet_DR_parameter, digits = const.nb_of_digits))
 
     v$n = length(Xt)
     v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust") )
