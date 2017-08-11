@@ -3,21 +3,28 @@ library(gui4gmwm)
 const.FIGURE_PLOT_HEIGHT = "600px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
 
+# convert degrees-per-second to radians-per-second
 const.degps_2_radps = 1/360 * 2*pi
 
 const.DEFAULT_WN = 1
+const.DEFAULT_QN = 0.1
+const.DEFAULT_SIGMA2_GM = 0.2
+const.DEFAULT_BETA_GM = 0.3
+const.DEFAULT_RW = 0.4
+const.DEFAULT_DR = 0.5
+
 
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
 # https://www.xsens.com/tags/accelerometers/
 # https://www.xsens.com/tags/gyroscopes/
 const.MTIG.GYRO_WN = (0.05 * const.degps_2_radps * sqrt(100))^2 
-const.MTIG.GYRO_BI = (20 /3600 * const.degps_2_radps )^2
+const.MTIG.GYRO_BI = (20 / 3600 * const.degps_2_radps )^2
 const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
 const.MTIG.ACC_BI = (30 * 1e-6 * 10)^2
 
 # source: http://cdn-docs.av-iq.com/dataSheet//NavChip_Product_Brief.pdf, 
 const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
-const.NAVCHIP.GYRO_BI = (10 /3600 * const.degps_2_radps)^2
+const.NAVCHIP.GYRO_BI = (10 / 3600 * const.degps_2_radps)^2
 const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
 const.NAVCHIP.ACC_BI = (0.05 * 1e-3 * 10)^2
 
@@ -148,11 +155,11 @@ ui <- shinyUI(fluidPage(
              
              conditionalPanel(
                condition = "input.data_input_choice == 'custom'",
-               numericInput("dsv_qn", label = " QN", value = const.DEFAULT_WN),
-               numericInput("dsv_sigma2_gm", label = " sigma2 GM", value = const.DEFAULT_WN),
-               numericInput("dsv_beta_gm", label = " beta GM", value = const.DEFAULT_WN),
-               numericInput("dsv_rw", label = " RW", value = const.DEFAULT_WN),
-               numericInput("dsv_dr", label = " DR", value = const.DEFAULT_WN)
+               numericInput("dsv_qn", label = " QN", value = const.DEFAULT_QN),
+               numericInput("dsv_sigma2_gm", label = " sigma2 GM", value = const.DEFAULT_SIGMA2_GM),
+               numericInput("dsv_beta_gm", label = " beta GM", value = const.DEFAULT_BETA_GM),
+               numericInput("dsv_rw", label = " RW", value = const.DEFAULT_RW),
+               numericInput("dsv_dr", label = " DR", value = const.DEFAULT_DR)
                
                
              )
