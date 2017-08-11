@@ -8,12 +8,12 @@ const.nb_of_digits = 7
 # convert degrees-per-second to radians-per-second
 const.degps_2_radps = 1/360 * 2*pi
 
-const.DEFAULT_WN = 1
-const.DEFAULT_QN = 0.1
-const.DEFAULT_SIGMA2_GM = 0.2
-const.DEFAULT_BETA_GM = 0.3
-const.DEFAULT_RW = 0.4
-const.DEFAULT_DR = 0.5
+const.DEFAULT_WN = 5.304377e-07
+const.DEFAULT_QN = 1.681227e-06
+const.DEFAULT_SIGMA2_GM = 7.348293e-09
+const.DEFAULT_BETA_GM = 3.526037e-01
+const.DEFAULT_RW = 1.268314e-12
+const.DEFAULT_DR = 3.913529e-09
 
 
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
