@@ -3,6 +3,8 @@ library(gui4gmwm)
 const.FIGURE_PLOT_HEIGHT = "600px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
 
+const.nb_of_digits = 5
+
 # convert degrees-per-second to radians-per-second
 const.degps_2_radps = 1/360 * 2*pi
 
@@ -293,8 +295,8 @@ server <- function(input, output, session) {
 
     }
     
-    updateNumericInput(session, "dsv_wn", value = v$actual_datasheet_WN_parameter)
-    updateNumericInput(session, "dsv_bi", value = v$actual_datasheet_BI_parameter)
+    updateNumericInput(session, "dsv_wn", value = format(v$actual_datasheet_WN_parameter, digits = const.nb_of_digits))
+    updateNumericInput(session, "dsv_bi", value = format(v$actual_datasheet_BI_parameter, digits = const.nb_of_digits))
 
     v$n = length(Xt)
     v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust") )
