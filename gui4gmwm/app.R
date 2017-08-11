@@ -151,17 +151,17 @@ ui <- shinyUI(fluidPage(
            
            conditionalPanel(
              condition = "input.overlay_datasheet",
-             numericInput("dsv_wn", label = " WN", value = const.DEFAULT_WN),
-             numericInput("dsv_bi", label = " BIAS INSTABILITY", value = const.DEFAULT_WN),
+             numericInput("dsv_wn", label = " WN", value = format(const.DEFAULT_WN, digits = const.nb_of_digits)),
+             numericInput("dsv_bi", label = " BIAS INSTABILITY", format(const.DEFAULT_WN, digits = const.nb_of_digits)),
              
              
              conditionalPanel(
                condition = "input.data_input_choice == 'custom'",
-               numericInput("dsv_qn", label = " QN", value = const.DEFAULT_QN),
-               numericInput("dsv_sigma2_gm", label = " sigma2 GM", value = const.DEFAULT_SIGMA2_GM),
-               numericInput("dsv_beta_gm", label = " beta GM", value = const.DEFAULT_BETA_GM),
-               numericInput("dsv_rw", label = " RW", value = const.DEFAULT_RW),
-               numericInput("dsv_dr", label = " DR", value = const.DEFAULT_DR)
+               numericInput("dsv_qn", label = " QN", value = format(const.DEFAULT_QN, digits = const.nb_of_digits)),
+               numericInput("dsv_sigma2_gm", label = " sigma2 GM", value = format(const.DEFAULT_SIGMA2_GM, digits = const.nb_of_digits)),
+               numericInput("dsv_beta_gm", label = " beta GM", value = format(const.DEFAULT_BETA_GM, digits = const.nb_of_digits)),
+               numericInput("dsv_rw", label = " RW", value = format(const.DEFAULT_RW, digits = const.nb_of_digits)),
+               numericInput("dsv_dr", label = " DR", value = format(const.DEFAULT_DR, digits = const.nb_of_digits))
                
                
              )
