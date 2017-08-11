@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# ignore the big data-example-txt-file for custom data
+to_move/*.txt
+
