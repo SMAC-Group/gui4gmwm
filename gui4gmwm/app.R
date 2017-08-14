@@ -64,7 +64,7 @@ ui <- shinyUI(fluidPage(
   hr(),
 
   fluidRow(
-    column(5,
+    column(4,
            #h4("Data" ),
 
            radioButtons("data_input_choice", "Select data input:", choices = c("from library" = "library", "custom" = "custom")),
@@ -137,7 +137,7 @@ ui <- shinyUI(fluidPage(
 
     ),
 
-    column(3,
+    column(4,
            # h4("Options"),
   
            checkboxGroupInput("option_plot", label = "Plot options:",
@@ -159,8 +159,13 @@ ui <- shinyUI(fluidPage(
                condition = "input.data_input_choice == 'custom'",
                numericInput("dsv_qn", label = " QN", value = format(const.DEFAULT_QN, digits = const.nb_of_digits)),
                
-               numericInput("dsv_sigma2_gm", label = " sigma2 GM", value = format(const.DEFAULT_SIGMA2_GM, digits = const.nb_of_digits)),
-               numericInput("dsv_beta_gm", label = " beta GM", value = format(const.DEFAULT_BETA_GM, digits = const.nb_of_digits)),
+               column(6,
+                      numericInput("dsv_sigma2_gm", label = " sigma2 GM", value = format(const.DEFAULT_SIGMA2_GM, digits = const.nb_of_digits))
+                      ),
+               column(5,
+                      numericInput("dsv_beta_gm", label = " beta GM", value = format(const.DEFAULT_BETA_GM, digits = const.nb_of_digits))
+               ),
+               
  
                numericInput("dsv_rw", label = " RW", value = format(const.DEFAULT_RW, digits = const.nb_of_digits)),
                numericInput("dsv_dr", label = " DR", value = format(const.DEFAULT_DR, digits = const.nb_of_digits))
