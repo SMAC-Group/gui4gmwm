@@ -85,11 +85,12 @@ ui <- shinyUI(fluidPage(
            conditionalPanel(
              condition = "input.data_input_choice == 'custom'",
 
-             fileInput("user_defined_txt_file", "Select TXT file:",
+             fileInput("user_defined_txt_file", "Select INPUT file:",
                        accept = c(
                          "text/txt",
                          "text/comma-separated-values,text/plain",
                          ".txt",
+                         ".imu",
                          placeholder = "No file selected")
              ),
              sliderInput("user_defined_txt_file_column", "Select column number:",
