@@ -573,6 +573,16 @@ server <- function(input, output, session) {
     })
   })
 
+  
+  # BUTTON RESET-NOISE-PARAMS
+  observeEvent(input$button_reset_noise_params, {
+    
+    withProgress(message = 'Resetting to default noise parameters...', value = 0, {
+      
+      
+    })
+  })
+  
 
   dsnames <- c()
 
