@@ -579,6 +579,13 @@ server <- function(input, output, session) {
     
     withProgress(message = 'Resetting to default noise parameters...', value = 0, {
       
+      updateNumericInput(session, "dsv_wn", value = format(const.DEFAULT_WN, digits = const.nb_of_digits))
+      updateNumericInput(session, "dsv_bi", value = format(const.DEFAULT_BI, digits = const.nb_of_digits))
+      updateNumericInput(session, "dsv_qn", value = format(const.DEFAULT_QN, digits = const.nb_of_digits))
+      updateNumericInput(session, "dsv_sigma2_gm", value = format(const.DEFAULT_SIGMA2_GM, digits = const.nb_of_digits))
+      updateNumericInput(session, "dsv_beta_gm", value = format(const.DEFAULT_BETA_GM, digits = const.nb_of_digits))
+      updateNumericInput(session, "dsv_rw", value = format(const.DEFAULT_RW, digits = const.nb_of_digits))
+      updateNumericInput(session, "dsv_dr", value = format(const.DEFAULT_DR, digits = const.nb_of_digits))
       
     })
   })
