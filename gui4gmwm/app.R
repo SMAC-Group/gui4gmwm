@@ -8,6 +8,9 @@ const.nb_of_digits = 7
 # convert degrees-per-second to radians-per-second
 const.degps_2_radps = 1/360 * 2*pi
 
+# constant default frequency for custom data
+const.DEFAULT_FREQ = 250 # [Hz]
+
 # constants for the custom datasheet
 const.DEFAULT_WN = 5.304377e-07
 const.DEFAULT_QN = 1.681227e-06
@@ -97,7 +100,7 @@ ui <- shinyUI(fluidPage(
              ),
              sliderInput("user_defined_txt_file_column", "Select column number:",
                          min=1, max=6, value=1),
-             numericInput("user_defined_txt_frequency", label = "Set frequency of dataset", value = 250) # frequency defined by the user
+             numericInput("user_defined_txt_frequency", label = "Set frequency of dataset", value = const.DEFAULT_FREQ) # frequency defined by the user
 
            ),
 
