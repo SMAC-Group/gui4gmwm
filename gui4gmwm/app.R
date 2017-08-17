@@ -15,6 +15,7 @@ const.DEFAULT_SIGMA2_GM = 7.348293e-09
 const.DEFAULT_BETA_GM = 3.526037e-01
 const.DEFAULT_RW = 1.268314e-12
 const.DEFAULT_DR = 3.913529e-09
+const.DEFAULT_BI = const.DEFAULT_WN
 
 
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
@@ -154,7 +155,7 @@ ui <- shinyUI(fluidPage(
            conditionalPanel(
              condition = "input.overlay_datasheet",
              numericInput("dsv_wn", label = " WN", value = format(const.DEFAULT_WN, digits = const.nb_of_digits)),
-             numericInput("dsv_bi", label = " BIAS INSTABILITY", format(const.DEFAULT_WN, digits = const.nb_of_digits)),
+             numericInput("dsv_bi", label = " BIAS INSTABILITY", format(const.DEFAULT_BI, digits = const.nb_of_digits)),
              
              
              conditionalPanel(
