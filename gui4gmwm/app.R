@@ -172,11 +172,13 @@ ui <- shinyUI(fluidPage(
  
                numericInput("dsv_rw", label = " RW", value = format(const.DEFAULT_RW, digits = const.nb_of_digits)),
                numericInput("dsv_dr", label = " DR", value = format(const.DEFAULT_DR, digits = const.nb_of_digits))
-               
-               
-             )
-             
+             ),
+             column(2),
+             column(10,
+                    actionButton("button_reset_noise_params", label = "Reset Noise Params")
+                    )
            ), 
+           br(),
            
            checkboxGroupInput("summary_plot", label = "Summary options:",
                               c("Show CI of parameters" = "ci"),
