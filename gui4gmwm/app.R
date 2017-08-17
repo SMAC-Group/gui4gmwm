@@ -8,6 +8,7 @@ const.nb_of_digits = 7
 # convert degrees-per-second to radians-per-second
 const.degps_2_radps = 1/360 * 2*pi
 
+# constants for the custom datasheet
 const.DEFAULT_WN = 5.304377e-07
 const.DEFAULT_QN = 1.681227e-06
 const.DEFAULT_SIGMA2_GM = 7.348293e-09
@@ -291,8 +292,14 @@ server <- function(input, output, session) {
       inFile <- input$user_defined_txt_file
       if (is.null(inFile))
         return(NULL)
-
-      my_data = read.csv(inFile$datapath, header = FALSE, sep = ",")
+      
+      # if (inFile$type == '.txt'){
+        my_data = read.csv(inFile$datapath, header = FALSE, sep = ",")
+      # } else{
+        # my_data = read.csv(inFile$datapathas, header = FALSE, sep = ",")
+      # }
+        
+      
 
       if(input$user_defined_txt_file_column > ncol(my_data)){
         updateSliderInput(session, "user_defined_txt_file_column", value = ncol(my_data))
