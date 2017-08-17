@@ -24,24 +24,28 @@ const.DEFAULT_BI = const.DEFAULT_WN
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
 # https://www.xsens.com/tags/accelerometers/
 # https://www.xsens.com/tags/gyroscopes/
+# the frequency here is 100, because the dataset was acquired at this rate
 const.MTIG.GYRO_WN = (0.05 * const.degps_2_radps * sqrt(100))^2 
 const.MTIG.GYRO_BI = (20 / 3600 * const.degps_2_radps )^2
 const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
 const.MTIG.ACC_BI = (30 * 1e-6 * 10)^2
 
 # source: http://cdn-docs.av-iq.com/dataSheet//NavChip_Product_Brief.pdf, 
+# the frequency here is 250, because the dataset was acquired at this rate
 const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
 const.NAVCHIP.GYRO_BI = (10 / 3600 * const.degps_2_radps)^2
 const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
 const.NAVCHIP.ACC_BI = (0.05 * 1e-3 * 10)^2
 
 # source: http://www.northropgrumman.com/Capabilities/LN200FOG/Documents/ln200.pdf
+# the frequency here is 400, because the dataset was acquired at this rate
 const.LN200.GYRO_WN = (0.05 / 60 * sqrt(400) * const.degps_2_radps)^2
 const.LN200.GYRO_BI = NA
 const.LN200.ACC_WN = const.DEFAULT_WN
 const.LN200.ACC_BI = NA
 
 # source: http://www.imar-navigation.de/downloads/IMU_FSAS.pdf
+# the frequency here is 400, because the dataset was acquired at this rate
 const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
 const.IMAR.GYRO_BI = (0.1 /3600 * const.degps_2_radps)^2
 const.IMAR.ACC_WN = const.DEFAULT_WN
