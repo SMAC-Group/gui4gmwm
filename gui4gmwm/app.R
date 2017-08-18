@@ -290,12 +290,19 @@ server <- function(input, output, session) {
           } 
         }
         
-        # reset other noise values in case custom data was laoded previosuly
+        # reset other noise values in case custom data was loaded previosuly
         v$actual_datasheet_QN_parameter = const.DEFAULT_QN
         v$actual_datasheet_SIGMA2_GM_parameter = const.DEFAULT_SIGMA2_GM
         v$actual_datasheet_BETA_GM_parameter = const.DEFAULT_BETA_GM
         v$actual_datasheet_RW_parameter = const.DEFAULT_RW
         v$actual_datasheet_DR_parameter = const.DEFAULT_DR
+        
+        v$custom_data_name = NULL
+        v$custom_data_type = NULL
+        v$custom_data_size = NULL
+        v$custom_data_tot_colums = NULL
+        
+        
         
       } else{ #using custom data
         inFile <- input$user_defined_txt_file
