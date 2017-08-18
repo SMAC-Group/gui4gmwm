@@ -57,7 +57,8 @@ imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis = c('X', 'Y', 'Z', 'X', 'Y', 'Z
 data("imar.gyro") #IMAR
 data("ln200.gyro") #LN200
 
-options(shiny.maxRequestSize=100*1024^2) # increses file limit from default-5MB to 100MB
+# increses file limit from default-5MB to 100MB
+options(shiny.maxRequestSize=100*1024^2) 
 
 ui <- shinyUI(fluidPage(
 
@@ -92,7 +93,7 @@ ui <- shinyUI(fluidPage(
            conditionalPanel(
              condition = "input.data_input_choice == 'custom'",
 
-             fileInput("user_defined_txt_file", "Select INPUT file:",
+             fileInput("user_defined_txt_file", "Select INPUT file (max 100MB):",
                        accept = c(
                          "text/txt",
                          "text/comma-separated-values,text/plain",
