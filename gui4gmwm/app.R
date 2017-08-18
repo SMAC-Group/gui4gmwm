@@ -730,10 +730,18 @@ server <- function(input, output, session) {
   # print the summary in the summary-tab
   output$summ <- renderPrint({
     if (v$fit){
-      summary(v$form, inference = "ci" %in% input$summary_plot)
+      
+      if("ci" %in% input$summary_plot){
+        summary_message = 'Generating summary with Confidence Intervals...'
+      } else {
+        summary_message = 'Generating summary...'
+      }
+      
+      withProgress(message = summary_message, value = 0, {
+        summary(v$form, inference = "ci" %in% input$summary_plot)
+      })
     }
   })
-
 }
 
 shinyApp(ui, server)
