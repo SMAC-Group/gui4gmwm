@@ -51,13 +51,11 @@ const.IMAR.GYRO_BI = (0.1 /3600 * const.degps_2_radps)^2
 const.IMAR.ACC_WN = const.DEFAULT_WN
 const.IMAR.ACC_BI = NA
 
-data("navchip")
-
-imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis =
-             c('X', 'Y', 'Z', 'X', 'Y', 'Z'), freq = 100)
-
-data("imar.gyro")
-data("ln200.gyro")
+# loading the four internal datasets
+data("navchip") # NAVCHIP
+imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis = c('X', 'Y', 'Z', 'X', 'Y', 'Z'), freq = 100) #MTIG
+data("imar.gyro") #IMAR
+data("ln200.gyro") #LN200
 
 options(shiny.maxRequestSize=100*1024^2) # increses file limit from default-5MB to 100MB
 
@@ -633,7 +631,7 @@ server <- function(input, output, session) {
 
       if (v$plot){ # should i plot just the real data?
           if (v$custom_data){ # is it custom data from a txt file?
-            title = paste("Haar Wavelet Variance of TXT-FILE: ", v$custom_data_name, " (column number ", input$user_defined_txt_file_column, " of ", v$custom_data_tot_colums,
+            title = paste("Haar Wavelet Variance of TXT-FILE: ", v$custom_data_name, " (column # ", input$user_defined_txt_file_column, " / ", v$custom_data_tot_colums,
                           ") - Filesize: ", round(v$custom_data_size/1024/1024,2), " [MB] - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
           }else{ # it is NOT custom data
             title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,
@@ -686,6 +684,7 @@ server <- function(input, output, session) {
                axis.tick.size = 17, 
                legend.title.size = 19, 
                legend.text.size = 19) #+ theme(legend.position = c(0.1, 0.1))
+          
         }
       }
     }else{
