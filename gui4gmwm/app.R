@@ -62,6 +62,9 @@ options(shiny.maxRequestSize=100*1024^2)
 
 ui <- shinyUI(fluidPage(
   
+  tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: red}")),
+  tags$style(HTML(".js-irs-1 .irs-single, .js-irs-1 .irs-bar-edge, .js-irs-1 .irs-bar {background: green}")),
+  
   title = "GMWM GUI",
   tabsetPanel(id = "tabs",
               tabPanel("Model Data", plotOutput(outputId = "plot", height = const.FIGURE_PLOT_HEIGHT)),
