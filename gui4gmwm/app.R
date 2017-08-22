@@ -732,11 +732,17 @@ server <- function(input, output, session) {
           }
         }
       }
+      
+      # disable numericinput whne using library data
       shinyjs::disable("dsv_wn")
       shinyjs::disable("dsv_bi")
     } else{
       filename <- normalizePath(file.path('./initial_6_pack_plots', paste('custom_dataset', '.png', sep='')))
       model_data_height = const.FIGURE_PLOT_HEIGHT_REDUCED
+      
+      # enable numericinput whne using custom data
+      shinyjs::enable("dsv_wn")
+      shinyjs::enable("dsv_bi")
     }
     
     list(src = filename, height = model_data_height)
