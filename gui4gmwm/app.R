@@ -640,6 +640,56 @@ server <- function(input, output, session) {
                       label = "Selected sensor",
                       choices = cb_options,
                       selected = "")
+  })
+  
+  # NOISE VALUES UPDATE AUTOMATICALLY IN GUI ACCORDING TO THE SELECTED SENSOR
+  observeEvent(input$sensors, {
+    
+    actual_datasheet_WN_parameter <- NA
+    actual_datasheet_BI_parameter <- NA
+    
+    if( input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z"){
+      if (input$imu_obj == "navchip"){
+        actual_datasheet_WN_parameter = const.NAVCHIP.GYRO_WN
+        actual_datasheet_BI_parameter = const.NAVCHIP.GYRO_BI
+      } else {
+        if(input$imu_obj == "imu6"){
+          actual_datasheet_WN_parameter = const.MTIG.GYRO_WN
+          actual_datasheet_BI_parameter = const.MTIG.GYRO_BI
+        } else {
+          if(input$imu_obj == "imar.gyro"){
+            actual_datasheet_WN_parameter = const.IMAR.GYRO_WN
+            actual_datasheet_BI_parameter = const.IMAR.GYRO_BI
+          } else{
+            if(input$imu_obj == "ln200.gyro"){
+              actual_datasheet_WN_parameter = const.LN200.GYRO_WN
+              actual_datasheet_BI_parameter = const.LN200.GYRO_BI
+            } else{
+              actual_datasheet_WN_parameter = const.DEFAULT_WN
+              actual_datasheet_BI_parameter = NA
+            }
+          }
+        }
+      } 
+    }
+    
+    if( input$sensors == "Accel. X" || input$sensors == "Accel. Y" || input$sensors == "Accel. Z"){
+      if (input$imu_obj == "navchip"){
+        actual_datasheet_WN_parameter = const.NAVCHIP.ACC_WN
+        actual_datasheet_BI_parameter = const.NAVCHIP.ACC_BI
+      } else {
+        if(input$imu_obj == "imu6"){
+          actual_datasheet_WN_parameter = const.MTIG.ACC_WN
+          actual_datasheet_BI_parameter = const.MTIG.ACC_BI
+        } else {
+          actual_datasheet_WN_parameter = const.DEFAULT_WN
+          actual_datasheet_BI_parameter = NA
+        }
+      } 
+    }
+    
+    updateNumericInput(session, "dsv_wn", value = format(actual_datasheet_WN_parameter, digits = const.nb_of_digits))
+    updateNumericInput(session, "dsv_bi", value = format(actual_datasheet_BI_parameter, digits = const.nb_of_digits))
     
   })
   
