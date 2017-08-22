@@ -300,6 +300,7 @@ server <- function(input, output, session) {
         v$actual_datasheet_RW_parameter = const.DEFAULT_RW
         v$actual_datasheet_DR_parameter = const.DEFAULT_DR
         
+        # reset other variables in case custom data was loaded previously
         v$custom_data_name = NULL
         v$custom_data_type = NULL
         v$custom_data_size = NULL
