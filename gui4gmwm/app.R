@@ -255,45 +255,8 @@ server <- function(input, output, session) {
         v$freq = attr(my_data, 'freq')
         v$custom_data = FALSE
         
-        if( v$sensor_column == "Gyro. X" || v$sensor_column == "Gyro. Y" || v$sensor_column == "Gyro. Z"){
-          if (v$sensor_name == "navchip"){
-            v$actual_datasheet_WN_parameter = const.NAVCHIP.GYRO_WN
-            v$actual_datasheet_BI_parameter = const.NAVCHIP.GYRO_BI
-          } else {
-            if(v$sensor_name == "imu6"){
-              v$actual_datasheet_WN_parameter = const.MTIG.GYRO_WN
-              v$actual_datasheet_BI_parameter = const.MTIG.GYRO_BI
-            } else {
-              if(v$sensor_name == "imar.gyro"){
-                v$actual_datasheet_WN_parameter = const.IMAR.GYRO_WN
-                v$actual_datasheet_BI_parameter = const.IMAR.GYRO_BI
-              } else{
-                if(v$sensor_name == "ln200.gyro"){
-                  v$actual_datasheet_WN_parameter = const.LN200.GYRO_WN
-                  v$actual_datasheet_BI_parameter = const.LN200.GYRO_BI
-                } else{
-                  v$actual_datasheet_WN_parameter = const.DEFAULT_WN
-                  v$actual_datasheet_BI_parameter = NA
-                }
-              }
-            }
-          } 
-        }
-        
-        if( v$sensor_column == "Accel. X" || v$sensor_column == "Accel. Y" || v$sensor_column == "Accel. Z"){
-          if (v$sensor_name == "navchip"){
-            v$actual_datasheet_WN_parameter = const.NAVCHIP.ACC_WN
-            v$actual_datasheet_BI_parameter = const.NAVCHIP.ACC_BI
-          } else {
-            if(v$sensor_name == "imu6"){
-              v$actual_datasheet_WN_parameter = const.MTIG.ACC_WN
-              v$actual_datasheet_BI_parameter = const.MTIG.ACC_BI
-            } else {
-              v$actual_datasheet_WN_parameter = const.DEFAULT_WN
-              v$actual_datasheet_BI_parameter = NA
-            }
-          } 
-        }
+        v$actual_datasheet_WN_parameter = input$dsv_wn
+        v$actual_datasheet_BI_parameter = input$dsv_bi
         
         # reset other noise values in case custom data was loaded previosuly
         v$actual_datasheet_QN_parameter = const.DEFAULT_QN
