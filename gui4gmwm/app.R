@@ -62,6 +62,8 @@ options(shiny.maxRequestSize=100*1024^2)
 
 ui <- shinyUI(fluidPage(
   
+  shinyjs::useShinyjs(),
+  
   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: red}")),
   tags$style(HTML(".js-irs-1 .irs-single, .js-irs-1 .irs-bar-edge, .js-irs-1 .irs-bar {background: green}")),
   
@@ -730,12 +732,15 @@ server <- function(input, output, session) {
           }
         }
       }
+      shinyjs::disable("dsv_wn")
+      shinyjs::disable("dsv_bi")
     } else{
       filename <- normalizePath(file.path('./initial_6_pack_plots', paste('custom_dataset', '.png', sep='')))
       model_data_height = const.FIGURE_PLOT_HEIGHT_REDUCED
     }
     
     list(src = filename, height = model_data_height)
+
   }, deleteFile = FALSE)
   
   # print the summary in the summary-tab
