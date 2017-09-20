@@ -4,17 +4,19 @@
 \alias{plot_gmwm_and_datasheet}
 \title{Plot GMWM with datasheet characteristics}
 \usage{
-plot_gmwm_and_datasheet(object, datasheet,
-  axis.x.label = expression(paste("Scale ", tau)), prov_tile = NULL)
+plot_gmwm_and_datasheet(object, datasheet, datasheet_bi,
+  axis.x.label = expression(paste("Scale ", tau)), prov_title = NULL)
 }
 \arguments{
 \item{object}{A \code{gmwm} object.}
 
 \item{datasheet}{A \code{vector} with the implied WV of the datasheet.}
 
+\item{datasheet_bi}{A \code{value} with the bias-instabulity value.}
+
 \item{axis.x.label}{A \code{string} for the label of the "x-axis".}
 
-\item{prov_tile}{A \code{string} for the title of the graph.}
+\item{prov_title}{A \code{string} for the title of the graph.}
 }
 \description{
 Plot empirical WV of a sensors together the empirical WV implied by

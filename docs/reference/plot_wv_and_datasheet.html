@@ -110,7 +110,7 @@ the datasheet of the manufacture</p>
     <pre class="examples"><div class='input'><span class='no'>Zt</span> <span class='kw'>=</span> <span class='fu'>rnorm</span>(<span class='fl'>1000000</span>)
 <span class='no'>wv</span> <span class='kw'>=</span> <span class='fu'>wvar</span>(<span class='no'>Zt</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>500</span>)
 <span class='no'>datasheet</span> <span class='kw'>=</span> <span class='fu'>wn_to_wv</span>(<span class='kw'>sigma2</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>tau</span> <span class='kw'>=</span> <span class='no'>wv</span>$<span class='no'>scales</span>)
-<span class='fu'>plot_wv_and_datasheet</span>(<span class='no'>wv</span>, <span class='no'>datasheet</span>/<span class='fl'>500</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Ignoring unknown aesthetics: y</span></div><div class='output co'>#&gt; <span class='error'>Error in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,     resolveHJust(x$just, x$hjust), resolveVJust(x$just, x$vjust),     x$rot, 0): polygon edge not found</span></div><img src='plot_wv_and_datasheet-4.png' alt='' width='540' height='400' /></pre>
+<span class='fu'>plot_wv_and_datasheet</span>(<span class='no'>wv</span>, <span class='no'>datasheet</span>/<span class='fl'>500</span>)</div><div class='output co'>#&gt; <span class='error'>Error in rep.int(datasheet_bi, length(datasheet)): argument "datasheet_bi" is missing, with no default</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

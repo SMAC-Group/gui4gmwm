@@ -4,15 +4,17 @@
 \alias{plot_wv_and_datasheet}
 \title{Plot WV with datasheet characteristics}
 \usage{
-plot_wv_and_datasheet(wv, datasheet, axis.x.label = expression(paste("Scale ",
-  tau)), prov_tile = NA)
+plot_wv_and_datasheet(wv, datasheet, datasheet_bi,
+  axis.x.label = expression(paste("Scale ", tau)), prov_title = NA)
 }
 \arguments{
 \item{datasheet}{A \code{vector} with the implied WV of the datasheet.}
 
+\item{datasheet_bi}{A \code{value} with the bias-instabulity value.}
+
 \item{axis.x.label}{A \code{string} for the label of the "x-axis".}
 
-\item{prov_tile}{A \code{string} for the title of the graph.}
+\item{prov_title}{A \code{string} for the title of the graph.}
 
 \item{object}{A \code{gmwm} object.}
 }
