@@ -9,7 +9,7 @@ const.nb_of_digits = 7
 const.degps_2_radps = 1/360 * 2*pi
 
 # constant default frequency for custom data
-const.DEFAULT_FREQ = 250 # [Hz]
+const.DEFAULT_FREQ = 1 # [Hz]
 
 # constants for the custom datasheet
 const.DEFAULT_WN = 5.304377e-07
