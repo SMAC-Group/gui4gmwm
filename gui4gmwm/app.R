@@ -1,7 +1,7 @@
 library(gui4gmwm)
 
 const.FIGURE_PLOT_HEIGHT = "600px"
-const.FIGURE_PLOT_HEIGHT_REDUCED = "333px"
+const.FIGURE_PLOT_HEIGHT_REDUCED = "400px"
 
 const.nb_of_digits = 7
 
@@ -757,8 +757,8 @@ server <- function(input, output, session) {
           model_data_height = const.FIGURE_PLOT_HEIGHT
         } else{
           if(input$imu_obj == 'ln200.gyro'){
-            filename <- normalizePath(file.path('./initial_6_pack_plots', paste('ln200_gyro', '.png', sep='')))
-            model_data_height = const.FIGURE_PLOT_HEIGHT_REDUCED
+            filename <- normalizePath(file.path('./initial_6_pack_plots', paste('ln200', '.png', sep='')))
+            model_data_height = const.FIGURE_PLOT_HEIGHT
           } else{
             if(input$imu_obj == 'imar.gyro'){
               filename <- normalizePath(file.path('./initial_6_pack_plots', paste('imar_gyro', '.png', sep='')))
