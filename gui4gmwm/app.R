@@ -2,7 +2,7 @@ library(gui4gmwm)
 
 const.RENDER_PLOT_WIDTH = 1000
 const.RENDER_PLOT_HEIGHT = 600
-const.RENDER_PLOT_RES = 80 # defautl is 72
+const.RENDER_PLOT_RES = 80 # default is 72
 
 const.FIGURE_PLOT_HEIGHT = "600px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "400px"
@@ -73,12 +73,14 @@ ui <- shinyUI(fluidPage(
   
   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: red}")),
   tags$style(HTML(".js-irs-1 .irs-single, .js-irs-1 .irs-bar-edge, .js-irs-1 .irs-bar {background: green}")),
+  tags$style(type='text/css', '#summ {background-color: rgba(0,0,200,0.02); color: black; width: 500px; font-size: 14px;}'), 
+  
   
   title = "GMWM GUI",
   tabsetPanel(id = "tabs",
               tabPanel("Model Data", plotOutput(outputId = "plot", height = const.FIGURE_PLOT_HEIGHT)),
               tabPanel("Selected Sensor", plotOutput(outputId = "plot2", height = const.FIGURE_PLOT_HEIGHT)),
-              tabPanel("Summary", verbatimTextOutput(outputId = "summ", placeholder = TRUE)),
+              tabPanel("Summary", verbatimTextOutput(outputId = "summ", placeholder = FALSE)),
               tabPanel("Help",
                        # fluidPage("cluster"),
                        # h4("test" ),
@@ -791,7 +793,20 @@ server <- function(input, output, session) {
       }
       
       withProgress(message = summary_message, value = 0, {
-        summary(v$form, inference = "ci" %in% input$summary_plot)
+        summmary_of_gmwm = summary(v$form, inference = "ci" %in% input$summary_plot)
+        
+        if("ci" %in% input$summary_plot){
+          summmary_of_gmwm
+        } else {
+          summmary_of_gmwm$estimate <- rbind(summmary_of_gmwm$estimate, summmary_of_gmwm$obj.fun)
+          rownames(summmary_of_gmwm$estimate)[nrow(summmary_of_gmwm$estimate)] <- "Objective Function:"
+          
+          summmary_of_gmwm$estimate <- rbind(summmary_of_gmwm$estimate, summmary_of_gmwm$seed)
+          rownames(summmary_of_gmwm$estimate)[nrow(summmary_of_gmwm$estimate)] <- "Seed Number:"
+          
+          cat("Model Information:\n\n")
+          summmary_of_gmwm$estimate;
+        }
       })
     }
   })
