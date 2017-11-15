@@ -684,10 +684,10 @@ server <- function(input, output, session) {
       
       if (v$plot){ # should i plot just the real data?
         if (v$custom_data){ # is it custom data from a txt file?
-          title = paste("Haar Wavelet Variance of TXT-FILE: ", v$custom_data_name, " (column # ", input$user_defined_txt_file_column, " / ", v$custom_data_tot_colums,
+          title = paste("Haar Wavelet Variance of TXT-FILE:\n", v$custom_data_name, " (column # ", input$user_defined_txt_file_column, " / ", v$custom_data_tot_colums,
                         ") - Filesize: ", round(v$custom_data_size/1024/1024,2), " [MB] - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
         }else{ # it is NOT custom data
-          title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,
+          title = paste("Haar Wavelet Variance of DATASET:\n", input$imu_obj, " (", input$sensors,
                         ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
         }
         
@@ -713,10 +713,10 @@ server <- function(input, output, session) {
       }else{ # when doing the "gmwm modeling" plot
         
         if (v$custom_data){ # is it custom data from a txt file?
-          title = paste("Haar Wavelet Variance of TXT-FILE-DATA: ", v$custom_data_name, " (column number ", input$user_defined_txt_file_column,
+          title = paste("Haar Wavelet Variance of TXT-FILE-DATA:\n", v$custom_data_name, " (column number ", input$user_defined_txt_file_column,
                         ") - Filesize: ", round(v$custom_data_size/1024/1024,2), " [MB] - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
         }else{ # it is NOT custom data
-          title = paste("Haar Wavelet Variance of DATASET: ", input$imu_obj, " (", input$sensors,
+          title = paste("Haar Wavelet Variance of DATASET:\n", input$imu_obj, " (", input$sensors,
                         ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
         }
         
