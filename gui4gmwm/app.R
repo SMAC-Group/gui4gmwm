@@ -1,5 +1,9 @@
 library(gui4gmwm)
 
+const.RENDER_PLOT_WIDTH = 1000
+const.RENDER_PLOT_HEIGHT = 600
+const.RENDER_PLOT_RES = 80 # defautl is 72
+
 const.FIGURE_PLOT_HEIGHT = "600px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "400px"
 
@@ -739,7 +743,7 @@ server <- function(input, output, session) {
     }else{
       plot(NA)
     }
-  })
+  }, height = const.RENDER_PLOT_HEIGHT, width = const.RENDER_PLOT_WIDTH, res = const.RENDER_PLOT_RES)
   
   # calc the 6 WV from the dataset and plot it in the tab "Model Data"
   output$plot <- renderImage({
