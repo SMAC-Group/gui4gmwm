@@ -263,7 +263,7 @@ server <- function(input, output, session) {
                       datasheet_noise_model = NULL,
                       datasheet_values_make_sense = FALSE)
   
-    # PUSHING ON BUTTON "Plot WV"
+  # PUSHING ON BUTTON "Plot WV"
   observeEvent(input$fit1, {
     
     withProgress(message = 'Calculating empirical WV...', value = 0, {
@@ -353,7 +353,7 @@ server <- function(input, output, session) {
       updateNumericInput(session, "dsv_dr", value = format(v$actual_datasheet_DR_parameter, digits = const.nb_of_digits))
       
       v$n = length(Xt)
-      v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust") )
+      v$form = wvar(as.numeric(Xt), robust = (input$robust=="robust") , freq = v$freq)
       
       if (v$overlap_datasheet == TRUE){
         v$datasheet_values_make_sense = TRUE
@@ -689,7 +689,7 @@ server <- function(input, output, session) {
       # for the real data
       a = v$form
       freq_a = v$freq
-      a$scales = a$scales/freq_a
+      a$scales = a$scales#/freq_a
       duration_a = v$n/(freq_a*60*60)
       
       if (v$plot){ # should i plot just the real data?
