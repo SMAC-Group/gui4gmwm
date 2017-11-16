@@ -25,6 +25,23 @@ const.DEFAULT_DR = 3.913529e-09
 const.DEFAULT_BI = const.DEFAULT_WN
 const.DEFAULT_BIF0 = NA
 
+# f0 <- 1/2 # cutoff frequency
+# B <- 1 # bias instability coeficien
+
+cos_function <- function(t){
+  cos(t)/t
+}
+
+Ci <- function(x){
+  -integrate(f = cos_function, lower = x, upper = 2e3, subdivisions=10000)$value
+}
+
+VCi <- Vectorize(Ci, c("x"))
+
+sigma2_T <- function(T, f0, B){
+  2*B*B/pi * ( log(2) - ( (sin(pi*f0*T))^3 ) / (2*(pi*f0*T)^2) * ( sin(pi*f0*T)+4*pi*f0*T*cos(pi*f0*T) ) + VCi(2*pi*f0*T) - VCi(4*pi*f0*T) )
+}
+
 
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
 # https://www.xsens.com/tags/accelerometers/
@@ -35,16 +52,16 @@ const.MTIG.GYRO_BI = (20 / 3600 * const.degps_2_radps )^2
 const.MTIG.GYRO_BIF0 = 1/40 #Hz
 const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
 const.MTIG.ACC_BI = (30 * 1e-6 * 10)^2
-const.MTIG.ACC_BIF0 = 1/40 #Hz
+const.MTIG.ACC_BIF0 = 1/0.5 #Hz
 
 # source: http://cdn-docs.av-iq.com/dataSheet//NavChip_Product_Brief.pdf, 
 # the frequency here is 250, because the dataset was acquired at this rate
 const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
 const.NAVCHIP.GYRO_BI = (10 / 3600 * const.degps_2_radps)^2
-const.NAVCHIP.GYRO_BIF0 = 1/1 #Hz
+const.NAVCHIP.GYRO_BIF0 = 1/2 #Hz
 const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
 const.NAVCHIP.ACC_BI = (0.05 * 1e-3 * 10)^2
-const.NAVCHIP.ACC_BIF0 = 1/1 #Hz
+const.NAVCHIP.ACC_BIF0 = 1/5 #Hz
 
 # source: http://www.northropgrumman.com/Capabilities/LN200FOG/Documents/ln200.pdf
 # the frequency here is 400, because the dataset was acquired at this rate
@@ -59,14 +76,14 @@ const.LN200.ACC_BIF0 = NA #Hz
 # the frequency here is 400, because the dataset was acquired at this rate
 const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
 const.IMAR.GYRO_BI = (0.1 /3600 * const.degps_2_radps)^2
-const.IMAR.GYRO_BIF0 = 1000 #Hz
+const.IMAR.GYRO_BIF0 = 1/100 #Hz
 const.IMAR.ACC_WN = const.DEFAULT_WN
 const.IMAR.ACC_BI = NA
 const.IMAR.ACC_BIF0 = NA #Hz
 
 # loading the four internal datasets
 data("navchip") # NAVCHIP
-imu6 = imu(imu6[seq(from=1, to=5000),], gyros = 1:3, accels = 4:6, axis = c('X', 'Y', 'Z', 'X', 'Y', 'Z'), freq = 100) #MTIG
+imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis = c('X', 'Y', 'Z', 'X', 'Y', 'Z'), freq = 100) #MTIG
 data("imar.gyro") #IMAR
 data("ln200.gyro") #LN200
 
@@ -365,8 +382,14 @@ server <- function(input, output, session) {
         v$datasheet_values_make_sense = TRUE
         
         if ("library" %in% input$data_input_choice){ #using library data there is only WN, the BI is plotted separately directly in the plot
-          v$datasheet_noise_model = wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales)
+          extranoise <- wn_to_wv(sigma2 = v$actual_datasheet_WN_parameter, tau = v$form$scales*v$freq)
           
+          if (!is.na(v$actual_datasheet_BI_parameter)){
+          extranoise <- extranoise + abs(sigma2_T(v$form$scales, v$actual_datasheet_BIF0_parameter, sqrt(v$actual_datasheet_BI_parameter)/0.664))
+          }
+
+          v$datasheet_noise_model = extranoise
+
         } else{
           intermediate = gm_to_ar1(theta = c(v$actual_datasheet_BETA_GM_parameter,
                                              v$actual_datasheet_SIGMA2_GM_parameter),
@@ -724,7 +747,7 @@ server <- function(input, output, session) {
         if ("datasheet" %in% input$option_plot){
           plot_wv_and_datasheet(a,
                                 v$datasheet_noise_model, 
-                                v$actual_datasheet_BI_parameter,
+                                # v$actual_datasheet_BI_parameter,
                                 expression(paste("Scale ", tau, " [s]")),
                                 prov_title = title)
         } else {
@@ -752,7 +775,7 @@ server <- function(input, output, session) {
         if ("datasheet" %in% input$option_plot & !"process_decomp" %in% input$option_plot){
           plot_gmwm_and_datasheet(object = a, 
                                   datasheet = v$datasheet_noise_model, 
-                                  v$actual_datasheet_BI_parameter,
+                                  # v$actual_datasheet_BI_parameter,
                                   axis.x.label = expression(paste("Scale ", tau, " [s]")),
                                   prov_title = title)
         }else{

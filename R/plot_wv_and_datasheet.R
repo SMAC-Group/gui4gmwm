@@ -27,7 +27,7 @@
 #' plot_wv_and_datasheet(wv, datasheet/500)
 plot_wv_and_datasheet <- function(wv,
                                   datasheet, 
-                                  datasheet_bi,
+                                  # datasheet_bi,
                                   axis.x.label = expression(paste("Scale ", tau)),
                                   prov_title = NA){
   object = wv
@@ -96,8 +96,8 @@ plot_wv_and_datasheet <- function(wv,
   WV = data.frame(var = object$variance, dat = datasheet, low = object$ci_low, high = object$ci_high,
                   scale = object$scales)
   # bias instability
-  WV2 = data.frame(var = object$variance, dat = rep.int(datasheet_bi, length(datasheet)), low = object$ci_low, high = object$ci_high,
-                   scale = object$scales)
+  # WV2 = data.frame(var = object$variance, dat = rep.int(datasheet_bi, length(datasheet)), low = object$ci_low, high = object$ci_high,
+  #                  scale = object$scales)
 
   if(CI){
     #process parameter (insert some values)
@@ -119,7 +119,7 @@ plot_wv_and_datasheet <- function(wv,
 
     # put data in the desired format
     melt.wv = melt(WV, id.vars = 'scale')
-    melt.wv2 = melt(WV2, id.vars = 'scale')
+    # melt.wv2 = melt(WV2, id.vars = 'scale')
 
   }else{
     #other parameter
@@ -127,7 +127,7 @@ plot_wv_and_datasheet <- function(wv,
 
     # put data in the desired format
     melt.wv = melt(WV, id.vars = 'scale', measure.vars = 'var')
-    melt.wv2 = melt(WV2, id.vars = 'scale', measure.vars = 'var')
+    # melt.wv2 = melt(WV2, id.vars = 'scale', measure.vars = 'var')
   }
 
   p = ggplot()+
@@ -135,8 +135,8 @@ plot_wv_and_datasheet <- function(wv,
     geom_line(data = melt.wv, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
     geom_point(data = melt.wv, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
     
-    geom_line(data = melt.wv2, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
-    geom_point(data = melt.wv2, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
+    # geom_line(data = melt.wv2, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
+    # geom_point(data = melt.wv2, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
 
     scale_linetype_manual(name = legend.title, values = c(line.type), breaks = breaks, labels = legend.label ) +
     scale_shape_manual(name = legend.title, values = c(point.shape), breaks = breaks, labels = legend.label)+
@@ -203,7 +203,7 @@ plot_wv_and_datasheet <- function(wv,
 #' plot_gmwm_and_datasheet(wv, datasheet/500)
 plot_gmwm_and_datasheet <- function(object,
                                     datasheet, 
-                                    datasheet_bi,
+                                    # datasheet_bi,
                                     axis.x.label = expression(paste("Scale ", tau)),
                                     prov_title = NULL){
   process.decomp = FALSE
@@ -237,13 +237,13 @@ plot_gmwm_and_datasheet <- function(object,
                      high = object$ci.high,
                      theo = object$theo,
                      scale = object$scales)
-  
-  temp2 = data.frame( emp = object$wv.empir,
-                     dat = rep.int(datasheet_bi, length(datasheet)),
-                     low = object$ci.low,
-                     high = object$ci.high,
-                     theo = object$theo,
-                     scale = object$scales)
+  # 
+  # temp2 = data.frame( emp = object$wv.empir,
+  #                    dat = rep.int(datasheet_bi, length(datasheet)),
+  #                    low = object$ci.low,
+  #                    high = object$ci.high,
+  #                    theo = object$theo,
+  #                    scale = object$scales)
   
   
   if(CI == T){
@@ -279,7 +279,7 @@ plot_gmwm_and_datasheet <- function(object,
     }
     
     WV = melt(temp, id.vars = 'scale')
-    WV2 = melt(temp2, id.vars = 'scale')
+    # WV2 = melt(temp2, id.vars = 'scale')
     breaks = c('emp','low','theo','dat')
     legend.fill = c(NA, CI.color, NA, NA)
     legend.linetype = c(line.type[1],'blank', "solid", 'solid')
@@ -296,7 +296,7 @@ plot_gmwm_and_datasheet <- function(object,
                                                expression(paste("Implied WV ", nu,"(",hat(theta),")"))    )}
     
     WV = melt(temp, id.vars = 'scale', measure.vars = c('emp', 'theo'))
-    WV2 = melt(temp2, id.vars = 'scale', measure.vars = c('emp', 'theo'))
+    # WV2 = melt(temp2, id.vars = 'scale', measure.vars = c('emp', 'theo'))
     breaks = c('emp','theo')
     #legend.color = c(NA,NA)
   }
@@ -304,8 +304,8 @@ plot_gmwm_and_datasheet <- function(object,
   p = ggplot(data = WV, mapping = aes(x = scale)) +
       geom_line(aes(y = value, color = variable, linetype = variable)) +
     
-      geom_line(data = WV2, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
-      geom_point(data = WV2, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
+      # geom_line(data = WV2, mapping = aes(x = scale, y = value, color = variable, linetype = variable)) +
+      # geom_point(data = WV2, mapping =aes(x = scale, y = value, color = variable, size = variable, shape = variable)) +
     
       geom_point(aes(y = value, shape = variable, size = variable, color = variable)) + 
       scale_linetype_manual(name = legend.title, values = c(line.type), breaks = breaks, labels = legend.label) +
@@ -359,6 +359,8 @@ plot_gmwm_and_datasheet <- function(object,
   }
   p
 }
+
+
 
 
 
