@@ -23,6 +23,7 @@ const.DEFAULT_BETA_GM = 3.526037e-01
 const.DEFAULT_RW = 1.268314e-12
 const.DEFAULT_DR = 3.913529e-09
 const.DEFAULT_BI = const.DEFAULT_WN
+const.DEFAULT_BIF0 = NA
 
 
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
@@ -31,41 +32,41 @@ const.DEFAULT_BI = const.DEFAULT_WN
 # the frequency here is 100, because the dataset was acquired at this rate
 const.MTIG.GYRO_WN = (0.05 * const.degps_2_radps * sqrt(100))^2 
 const.MTIG.GYRO_BI = (20 / 3600 * const.degps_2_radps )^2
-const.MTIG.GYRO_BI_F0 = 1/40 #Hz
+const.MTIG.GYRO_BIF0 = 1/40 #Hz
 const.MTIG.ACC_WN = (0.002 * sqrt(100))^2
 const.MTIG.ACC_BI = (30 * 1e-6 * 10)^2
-const.MTIG.ACC_BI_F0 = 1/40 #Hz
+const.MTIG.ACC_BIF0 = 1/40 #Hz
 
 # source: http://cdn-docs.av-iq.com/dataSheet//NavChip_Product_Brief.pdf, 
 # the frequency here is 250, because the dataset was acquired at this rate
 const.NAVCHIP.GYRO_WN = (0.003 * const.degps_2_radps * sqrt(250))^2 # [(rad/s)^2]
 const.NAVCHIP.GYRO_BI = (10 / 3600 * const.degps_2_radps)^2
-const.NAVCHIP.GYRO_BI_F0 = 1/1 #Hz
+const.NAVCHIP.GYRO_BIF0 = 1/1 #Hz
 const.NAVCHIP.ACC_WN = (50 * 1e-6 * 10 * sqrt(250))^2 # [(m/s^2)^2]
 const.NAVCHIP.ACC_BI = (0.05 * 1e-3 * 10)^2
-const.NAVCHIP.ACC_BI_F0 = 1/1 #Hz
+const.NAVCHIP.ACC_BIF0 = 1/1 #Hz
 
 # source: http://www.northropgrumman.com/Capabilities/LN200FOG/Documents/ln200.pdf
 # the frequency here is 400, because the dataset was acquired at this rate
 const.LN200.GYRO_WN = (0.05 / 60 * sqrt(400) * const.degps_2_radps)^2
 const.LN200.GYRO_BI = NA
-const.LN200.GYRO_BI_F0 = NA #Hz
+const.LN200.GYRO_BIF0 = NA #Hz
 const.LN200.ACC_WN = const.DEFAULT_WN
 const.LN200.ACC_BI = NA
-const.LN200.ACC_BI_F0 = NA #Hz
+const.LN200.ACC_BIF0 = NA #Hz
 
 # source: http://www.imar-navigation.de/downloads/IMU_FSAS.pdf
 # the frequency here is 400, because the dataset was acquired at this rate
 const.IMAR.GYRO_WN = (0.15 / 60 * sqrt(400) * const.degps_2_radps)^2
 const.IMAR.GYRO_BI = (0.1 /3600 * const.degps_2_radps)^2
-const.IMAR.GYRO_BI_F0 = NA #Hz
+const.IMAR.GYRO_BIF0 = 1000 #Hz
 const.IMAR.ACC_WN = const.DEFAULT_WN
 const.IMAR.ACC_BI = NA
-const.IMAR.ACC_BI_F0 = NA #Hz
+const.IMAR.ACC_BIF0 = NA #Hz
 
 # loading the four internal datasets
 data("navchip") # NAVCHIP
-imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis = c('X', 'Y', 'Z', 'X', 'Y', 'Z'), freq = 100) #MTIG
+imu6 = imu(imu6[seq(from=1, to=5000),], gyros = 1:3, accels = 4:6, axis = c('X', 'Y', 'Z', 'X', 'Y', 'Z'), freq = 100) #MTIG
 data("imar.gyro") #IMAR
 data("ln200.gyro") #LN200
 
@@ -193,6 +194,7 @@ ui <- shinyUI(fluidPage(
              condition = "input.overlay_datasheet",
              numericInput("dsv_wn", label = " WN", value = format(const.DEFAULT_WN, digits = const.nb_of_digits)),
              numericInput("dsv_bi", label = " BIAS INSTABILITY", format(const.DEFAULT_BI, digits = const.nb_of_digits)),
+             numericInput("dsv_bif0", label = " BIAS INSTABILITY CUTOFF FREQUENCY", format(const.DEFAULT_BIF0, digits = const.nb_of_digits)),
              
              
              conditionalPanel(
@@ -246,6 +248,7 @@ server <- function(input, output, session) {
                       
                       actual_datasheet_WN_parameter = const.DEFAULT_WN, 
                       actual_datasheet_BI_parameter = NA,
+                      actual_datasheet_BIF0_parameter = NA,
                       actual_datasheet_QN_parameter = NA,
                       actual_datasheet_SIGMA2_GM_parameter = NA,
                       actual_datasheet_BETA_GM_parameter = NA,
@@ -283,6 +286,7 @@ server <- function(input, output, session) {
         
         v$actual_datasheet_WN_parameter = input$dsv_wn
         v$actual_datasheet_BI_parameter = input$dsv_bi
+        v$actual_datasheet_BIF0_parameter = input$dsv_bif0
         
         # reset other noise values in case custom data was loaded previosuly
         v$actual_datasheet_QN_parameter = const.DEFAULT_QN
@@ -333,6 +337,7 @@ server <- function(input, output, session) {
         
         v$actual_datasheet_WN_parameter = input$dsv_wn
         v$actual_datasheet_BI_parameter = input$dsv_bi
+        v$actual_datasheet_BIF0_parameter = input$dsv_bif0
         
         v$actual_datasheet_QN_parameter = input$dsv_qn
         v$actual_datasheet_SIGMA2_GM_parameter = input$dsv_sigma2_gm
@@ -345,6 +350,7 @@ server <- function(input, output, session) {
       
       updateNumericInput(session, "dsv_wn", value = format(v$actual_datasheet_WN_parameter, digits = const.nb_of_digits))
       updateNumericInput(session, "dsv_bi", value = format(v$actual_datasheet_BI_parameter, digits = const.nb_of_digits))
+      updateNumericInput(session, "dsv_bif0", value = format(v$actual_datasheet_BIF0_parameter, digits = const.nb_of_digits))
       
       updateNumericInput(session, "dsv_qn", value = format(v$actual_datasheet_QN_parameter, digits = const.nb_of_digits))
       updateNumericInput(session, "dsv_sigma2_gm", value = format(v$actual_datasheet_SIGMA2_GM_parameter, digits = const.nb_of_digits))
@@ -589,6 +595,7 @@ server <- function(input, output, session) {
       
       updateNumericInput(session, "dsv_wn", value = format(const.DEFAULT_WN, digits = const.nb_of_digits))
       updateNumericInput(session, "dsv_bi", value = format(const.DEFAULT_BI, digits = const.nb_of_digits))
+      updateNumericInput(session, "dsv_bif0", value = format(const.DEFAULT_BIF0, digits = const.nb_of_digits))
       updateNumericInput(session, "dsv_qn", value = format(const.DEFAULT_QN, digits = const.nb_of_digits))
       updateNumericInput(session, "dsv_sigma2_gm", value = format(const.DEFAULT_SIGMA2_GM, digits = const.nb_of_digits))
       updateNumericInput(session, "dsv_beta_gm", value = format(const.DEFAULT_BETA_GM, digits = const.nb_of_digits))
@@ -603,9 +610,11 @@ server <- function(input, output, session) {
     if ("library" %in% input$data_input_choice){
       shinyjs::disable("dsv_wn")
       shinyjs::disable("dsv_bi")
+      shinyjs::disable("dsv_bif0")
     } else {
       shinyjs::enable("dsv_wn")
       shinyjs::enable("dsv_bi")
+      shinyjs::enable("dsv_bif0")
     }
   })
   
@@ -636,26 +645,32 @@ server <- function(input, output, session) {
     
     actual_datasheet_WN_parameter <- NA
     actual_datasheet_BI_parameter <- NA
+    actual_datasheet_BIF0_parameter <- NA
     
     if( input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z"){
       if (input$imu_obj == "navchip"){
         actual_datasheet_WN_parameter = const.NAVCHIP.GYRO_WN
         actual_datasheet_BI_parameter = const.NAVCHIP.GYRO_BI
+        actual_datasheet_BIF0_parameter = const.NAVCHIP.GYRO_BIF0
       } else {
         if(input$imu_obj == "imu6"){
           actual_datasheet_WN_parameter = const.MTIG.GYRO_WN
           actual_datasheet_BI_parameter = const.MTIG.GYRO_BI
+          actual_datasheet_BIF0_parameter = const.MTIG.GYRO_BIF0
         } else {
           if(input$imu_obj == "imar.gyro"){
             actual_datasheet_WN_parameter = const.IMAR.GYRO_WN
             actual_datasheet_BI_parameter = const.IMAR.GYRO_BI
+            actual_datasheet_BIF0_parameter = const.IMAR.GYRO_BIF0
           } else{
             if(input$imu_obj == "ln200.gyro"){
               actual_datasheet_WN_parameter = const.LN200.GYRO_WN
               actual_datasheet_BI_parameter = const.LN200.GYRO_BI
+              actual_datasheet_BIF0_parameter = const.LN200.GYRO_BIF0
             } else{
               actual_datasheet_WN_parameter = const.DEFAULT_WN
               actual_datasheet_BI_parameter = NA
+              actual_datasheet_BIF0_parameter = NA
             }
           }
         }
@@ -666,19 +681,23 @@ server <- function(input, output, session) {
       if (input$imu_obj == "navchip"){
         actual_datasheet_WN_parameter = const.NAVCHIP.ACC_WN
         actual_datasheet_BI_parameter = const.NAVCHIP.ACC_BI
+        actual_datasheet_BIF0_parameter = const.NAVCHIP.ACC_BIF0
       } else {
         if(input$imu_obj == "imu6"){
           actual_datasheet_WN_parameter = const.MTIG.ACC_WN
           actual_datasheet_BI_parameter = const.MTIG.ACC_BI
+          actual_datasheet_BIF0_parameter = const.MTIG.ACC_BIF0
         } else {
           actual_datasheet_WN_parameter = const.DEFAULT_WN
           actual_datasheet_BI_parameter = NA
+          actual_datasheet_BIF0_parameter = NA
         }
       } 
     }
     
     updateNumericInput(session, "dsv_wn", value = format(actual_datasheet_WN_parameter, digits = const.nb_of_digits))
     updateNumericInput(session, "dsv_bi", value = format(actual_datasheet_BI_parameter, digits = const.nb_of_digits))
+    updateNumericInput(session, "dsv_bif0", value = format(actual_datasheet_BIF0_parameter, digits = const.nb_of_digits))
     
   })
   
