@@ -28,7 +28,7 @@
 plot_wv_and_datasheet <- function(wv,
                                   datasheet, 
                                   # datasheet_bi,
-                                  axis.x.label = expression(paste("Scale ", tau)),
+                                  axis.x.label,# = expression(paste("Scale ", tau)),
                                   prov_title = NA){
   object = wv
   CI = T
@@ -44,7 +44,7 @@ plot_wv_and_datasheet <- function(wv,
   title.size = 22# 15
   axis.label.size = 20 #13
   axis.tick.size = 17 #11
-  axis.x.label = expression(paste("Scale ", tau))
+  # axis.x.label = expression(paste("Scale ", tau))
   #title.size = 20# 15
   #axis.label.size = 18 #13
   #axis.tick.size = 15 #11

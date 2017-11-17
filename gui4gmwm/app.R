@@ -865,6 +865,7 @@ server <- function(input, output, session) {
   output$tabs <- renderUI({
     tagList(smac_url_description, smac_url)
   })
+
   
   
 }
