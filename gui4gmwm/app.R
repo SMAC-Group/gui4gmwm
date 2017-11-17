@@ -2,7 +2,7 @@ library(gui4gmwm)
 
 const.RENDER_PLOT_WIDTH = 1000
 const.RENDER_PLOT_HEIGHT = 600
-const.RENDER_PLOT_RES = 80 # default is 72
+const.RENDER_PLOT_RES = 100 # default is 72
 
 const.FIGURE_PLOT_HEIGHT = "600px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "400px"
