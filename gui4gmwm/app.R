@@ -751,9 +751,10 @@ server <- function(input, output, session) {
         
         if ("datasheet" %in% input$option_plot){
           plot_wv_and_datasheet(a,
-                                v$datasheet_noise_model, 
+                                v$datasheet_noise_model,
                                 # v$actual_datasheet_BI_parameter,
                                 expression(paste("Scale ", tau, " [s]")),
+                                my_y_label,
                                 prov_title = title)
         } else {
           plot(a,

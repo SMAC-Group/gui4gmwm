@@ -29,6 +29,7 @@ plot_wv_and_datasheet <- function(wv,
                                   datasheet, 
                                   # datasheet_bi,
                                   axis.x.label,# = expression(paste("Scale ", tau)),
+                                  axis.y.label,
                                   prov_title = NA){
   object = wv
   CI = T
@@ -49,7 +50,7 @@ plot_wv_and_datasheet <- function(wv,
   #axis.label.size = 18 #13
   #axis.tick.size = 15 #11
   #axis.x.label = expression(paste("Scale ", tau))
-  axis.y.label = expression(paste("Wavelet Variance ", nu))
+  # axis.y.label = expression(paste("Wavelet Variance ", nu))
   legend.title.size = 19#13
   legend.text.size = 19#13
   legend.label = NULL
