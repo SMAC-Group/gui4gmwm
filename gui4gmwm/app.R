@@ -741,6 +741,11 @@ server <- function(input, output, session) {
         }else{ # it is NOT custom data
           title = paste("Haar Wavelet Variance of DATASET:\n", input$imu_obj, " (", input$sensors,
                         ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
+          if( input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z"){
+            my_y_label = expression(paste("Wavelet Variance ", nu, " [", rad^2/s^2, "]"))
+          } else{
+            my_y_label = expression(paste("Wavelet Variance ", nu, " [", m^2/s^4, "]"))
+          }
         }
         
         
@@ -753,6 +758,7 @@ server <- function(input, output, session) {
         } else {
           plot(a,
                axis.x.label = expression(paste("Scale ", tau, " [s]")),
+               axis.y.label = my_y_label,
                title = title,
                CI = T, #"ci" %in% input$option_plot,
                title.size = 22, 
@@ -770,6 +776,11 @@ server <- function(input, output, session) {
         }else{ # it is NOT custom data
           title = paste("Haar Wavelet Variance of DATASET:\n", input$imu_obj, " (", input$sensors,
                         ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
+          if( input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z"){
+            my_y_label = expression(paste("Wavelet Variance ", nu, " [", rad^2/s^2, "]"))
+          } else{
+            my_y_label = expression(paste("Wavelet Variance ", nu, " [", m^2/s^4, "]"))
+          }
         }
         
         if ("datasheet" %in% input$option_plot & !"process_decomp" %in% input$option_plot){
@@ -781,6 +792,7 @@ server <- function(input, output, session) {
         }else{
           plot(a,
                axis.x.label = expression(paste("Scale ", tau, " [s]")),
+               axis.y.label = my_y_label,
                process.decomp = "process_decomp" %in% input$option_plot,
                CI = T, #"ci" %in% input$option_plot,
                title = title,
