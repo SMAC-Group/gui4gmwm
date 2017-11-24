@@ -152,7 +152,8 @@ ui <- shinyUI(fluidPage(
              ),
              sliderInput("user_defined_txt_file_column", "Select column number:",
                          min=1, max=6, value=1),
-             numericInput("user_defined_txt_frequency", label = "Set frequency of dataset", value = const.DEFAULT_FREQ) # frequency defined by the user
+             numericInput("user_defined_txt_frequency", label = "Set frequency of dataset", value = const.DEFAULT_FREQ), # frequency defined by the user
+             textInput("user_defined_units", "Define units of active dataset", "rad/s")
              
            ),
            
@@ -262,6 +263,7 @@ server <- function(input, output, session) {
                       sensor_name = NULL,
                       sensor_column = NULL,
                       overlap_datasheet = FALSE,
+                      y_label_with_dataunits = NA,
                       
                       actual_datasheet_WN_parameter = const.DEFAULT_WN, 
                       actual_datasheet_BI_parameter = NA,
@@ -296,11 +298,18 @@ server <- function(input, output, session) {
         my_data = get(input$imu_obj)
         Xt = my_data[, input$sensors]
         
+        # input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z")
+        
         v$sensor_name = input$imu_obj
         v$sensor_column = input$sensors
         v$freq = attr(my_data, 'freq')
         v$custom_data = FALSE
-        
+        if (input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z"){
+          v$y_label_with_dataunits = expression(paste("Wavelet Variance ", nu, " [", rad^2/s^2, "]"))
+        } else if (input$sensors == "Accel. X" || input$sensors == "Accel. Y" || input$sensors == "Accel. Z"){
+          v$y_label_with_dataunits = expression(paste("Wavelet Variance ", nu, " [", m^2/s^4, "]"))
+        }
+      
         v$actual_datasheet_WN_parameter = input$dsv_wn
         v$actual_datasheet_BI_parameter = input$dsv_bi
         v$actual_datasheet_BIF0_parameter = input$dsv_bif0
@@ -346,6 +355,10 @@ server <- function(input, output, session) {
         v$sensor_column = the_column_number
         Xt = my_data[, the_column_number]
         v$freq = input$user_defined_txt_frequency
+        v$y_label_with_dataunits = bquote(paste("Wavelet Variance ", nu, " [(", .(input$user_defined_units[1]), ")^2]"))
+        
+        # print(v$y_label_with_dataunits)
+        
         v$custom_data = TRUE
         v$custom_data_name = inFile$name
         v$custom_data_type = inFile$type
@@ -741,13 +754,14 @@ server <- function(input, output, session) {
         }else{ # it is NOT custom data
           title = paste("Haar Wavelet Variance of DATASET:\n", input$imu_obj, " (", input$sensors,
                         ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
-          if( input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z"){
-            my_y_label = expression(paste("Wavelet Variance ", nu, " [", rad^2/s^2, "]"))
-          } else{
-            my_y_label = expression(paste("Wavelet Variance ", nu, " [", m^2/s^4, "]"))
-          }
+          # if( input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z"){
+          #   my_y_label = expression(paste("Wavelet Variance ", nu, " [", rad^2/s^2, "]"))
+          # } else{
+          #   my_y_label = expression(paste("Wavelet Variance ", nu, " [", m^2/s^4, "]"))
+          # }
         }
         
+        my_y_label = v$y_label_with_dataunits
         
         if ("datasheet" %in% input$option_plot){
           plot_wv_and_datasheet(a,
@@ -783,6 +797,8 @@ server <- function(input, output, session) {
             my_y_label = expression(paste("Wavelet Variance ", nu, " [", m^2/s^4, "]"))
           }
         }
+        
+        # my_y_label = v$y_label_with_dataunits
         
         if ("datasheet" %in% input$option_plot & !"process_decomp" %in% input$option_plot){
           plot_gmwm_and_datasheet(object = a, 
