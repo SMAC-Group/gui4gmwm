@@ -875,16 +875,16 @@ server <- function(input, output, session) {
         summmary_of_gmwm = summary(v$form, inference = "ci" %in% input$summary_plot)
         
         if("ci" %in% input$summary_plot){
-          summmary_of_gmwm
+          # summmary_of_gmwm
+          cat("Objective Function: ", summmary_of_gmwm$obj.fun, "\n" )
+          cat("Seed Number: ", summmary_of_gmwm$seed, "\n\n")
+          summmary_of_gmwm$estimate[,cbind(1,2,3)]
         } else {
-          summmary_of_gmwm$estimate <- rbind(summmary_of_gmwm$estimate, summmary_of_gmwm$obj.fun)
-          rownames(summmary_of_gmwm$estimate)[nrow(summmary_of_gmwm$estimate)] <- "Objective Function:"
+
+          cat("Objective Function: ", summmary_of_gmwm$obj.fun, "\n" )
+          cat("Seed Number: ", summmary_of_gmwm$seed, "\n\n")
+          summmary_of_gmwm$estimate
           
-          summmary_of_gmwm$estimate <- rbind(summmary_of_gmwm$estimate, summmary_of_gmwm$seed)
-          rownames(summmary_of_gmwm$estimate)[nrow(summmary_of_gmwm$estimate)] <- "Seed Number:"
-          
-          cat("Model Information:\n\n")
-          summmary_of_gmwm$estimate;
         }
       })
     }
