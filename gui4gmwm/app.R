@@ -6,6 +6,7 @@ const.RENDER_PLOT_RES = 100 # default is 72
 
 const.FIGURE_PLOT_HEIGHT = "600px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "400px"
+const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED = "100px"
 
 const.nb_of_digits = 7
 
@@ -109,12 +110,20 @@ ui <- shinyUI(fluidPage(
               tabPanel("Summary", verbatimTextOutput(outputId = "summ", placeholder = FALSE)),
               tabPanel("Help",
                        # fluidPage("cluster"),
-                       # h4("test" ),
+                       h4("Help Tab" ),
+                       br(),
                        # actionButton("subClust", label = "Create Subcluster"),
-                       uiOutput("tabs"),
-                       br(),br(),br(),br(),br(),
-                       br(),br(),br(),br(),br(),
-                       br(),br(),br(),br(),br()
+                       # 
+                      uiOutput(outputId = "tabhelpurl"),
+                      br(),br(),
+                      fluidRow(
+                        column(5,
+                               plotOutput(outputId = "tabhelpplotlogo_pennstate", height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
+                        ),
+                        column(5,
+                               plotOutput(outputId = "tabhelpplotlogo_epfl", height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
+                        )
+                      )
               )
   ),
   
@@ -890,10 +899,23 @@ server <- function(input, output, session) {
     }
   })
   
-  # print info in the help tab
-  output$tabs <- renderUI({
+  # print info URL in the help tab
+  output$tabhelpurl <- renderUI({
     tagList(smac_url_description, smac_url)
   })
+  
+  # print info logos in the help tab
+  output$tabhelpplotlogo_pennstate <- renderImage({
+    filename <- normalizePath(file.path('./logo', paste('logo_penn_state', '.png', sep='')))
+    # list(src = bind(filename, filename), height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
+    list(src = filename, height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
+  }, deleteFile = FALSE)
+  
+  # print info logos in the help tab
+  output$tabhelpplotlogo_epfl <- renderImage({
+    filename <- normalizePath(file.path('./logo', paste('logo_epfl', '.jpg', sep='')))
+    list(src = filename, height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
+  }, deleteFile = FALSE)
 
   
   
