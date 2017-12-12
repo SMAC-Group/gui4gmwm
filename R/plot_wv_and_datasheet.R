@@ -206,6 +206,7 @@ plot_gmwm_and_datasheet <- function(object,
                                     datasheet, 
                                     # datasheet_bi,
                                     axis.x.label = expression(paste("Scale ", tau)),
+                                    axis.y.label,
                                     prov_title = NULL){
   process.decomp = FALSE
   background = "white"
@@ -222,7 +223,7 @@ plot_gmwm_and_datasheet <- function(object,
   axis.label.size = 20#13
   axis.tick.size = 17#11 
   #axis.x.label = expression(paste("Scale ", tau))
-  axis.y.label = expression(paste("Wavelet Variance ",nu))
+  # axis.y.label = expression(paste("Wavelet Variance ",nu))
   legend.title = ""
   legend.label = NULL
   legend.key.size = 1

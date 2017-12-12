@@ -1,12 +1,15 @@
 library(gui4gmwm)
 
+################
+# CONSTANTS
+################
 const.RENDER_PLOT_WIDTH = 1000
 const.RENDER_PLOT_HEIGHT = 600
 const.RENDER_PLOT_RES = 100 # default is 72
 
 const.FIGURE_PLOT_HEIGHT = "600px"
 const.FIGURE_PLOT_HEIGHT_REDUCED = "400px"
-const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED = "100px"
+const.FIGURE_PLOT_HEIGHT_LOGO = "100px"
 
 const.nb_of_digits = 7
 
@@ -25,24 +28,6 @@ const.DEFAULT_RW = 1.268314e-12
 const.DEFAULT_DR = 3.913529e-09
 const.DEFAULT_BI = const.DEFAULT_WN
 const.DEFAULT_BIF0 = NA
-
-# f0 <- 1/2 # cutoff frequency
-# B <- 1 # bias instability coeficien
-
-cos_function <- function(t){
-  cos(t)/t
-}
-
-Ci <- function(x){
-  -integrate(f = cos_function, lower = x, upper = 2e3, subdivisions=10000)$value
-}
-
-VCi <- Vectorize(Ci, c("x"))
-
-sigma2_T <- function(T, f0, B){
-  2*B*B/pi * ( log(2) - ( (sin(pi*f0*T))^3 ) / (2*(pi*f0*T)^2) * ( sin(pi*f0*T)+4*pi*f0*T*cos(pi*f0*T) ) + VCi(2*pi*f0*T) - VCi(4*pi*f0*T) )
-}
-
 
 # source: https://www.xsens.com/wp-content/uploads/2013/11/MTi-G_User_Manual_and_Technical_Documentation.pdf
 # https://www.xsens.com/tags/accelerometers/
@@ -82,6 +67,26 @@ const.IMAR.ACC_WN = const.DEFAULT_WN
 const.IMAR.ACC_BI = NA
 const.IMAR.ACC_BIF0 = NA #Hz
 
+################
+# FUNCTIONS for COSINE INTEGRAL calculations
+################
+cos_function <- function(t){
+  cos(t)/t
+}
+
+Ci <- function(x){
+  -integrate(f = cos_function, lower = x, upper = 2e3, subdivisions=10000)$value
+}
+
+VCi <- Vectorize(Ci, c("x"))
+
+sigma2_T <- function(T, f0, B){
+  2*B*B/pi * ( log(2) - ( (sin(pi*f0*T))^3 ) / (2*(pi*f0*T)^2) * ( sin(pi*f0*T)+4*pi*f0*T*cos(pi*f0*T) ) + VCi(2*pi*f0*T) - VCi(4*pi*f0*T) )
+}
+
+
+
+
 # loading the four internal datasets
 data("navchip") # NAVCHIP
 imu6 = imu(imu6, gyros = 1:3, accels = 4:6, axis = c('X', 'Y', 'Z', 'X', 'Y', 'Z'), freq = 100) #MTIG
@@ -118,10 +123,10 @@ ui <- shinyUI(fluidPage(
                       br(),br(),
                       fluidRow(
                         column(5,
-                               plotOutput(outputId = "tabhelpplotlogo_pennstate", height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
+                               plotOutput(outputId = "tabhelpplotlogo_pennstate", height = const.FIGURE_PLOT_HEIGHT_LOGO)
                         ),
                         column(5,
-                               plotOutput(outputId = "tabhelpplotlogo_epfl", height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
+                               plotOutput(outputId = "tabhelpplotlogo_epfl", height = const.FIGURE_PLOT_HEIGHT_LOGO)
                         )
                       )
               )
@@ -131,8 +136,6 @@ ui <- shinyUI(fluidPage(
   
   fluidRow(
     column(4,
-           #h4("Data" ),
-           
            radioButtons("data_input_choice", "Select data input:", choices = c("from library" = "library", "custom" = "custom")),
            
            conditionalPanel(
@@ -179,8 +182,6 @@ ui <- shinyUI(fluidPage(
     
     
     column(4,
-           # h4("GMWM Modelling"),
-           
            checkboxGroupInput("model", "Select Model",
                               c("Quantization Noise" = "QN",
                                 "White Noise" = "WN",
@@ -199,15 +200,12 @@ ui <- shinyUI(fluidPage(
            br(),
            br(),
            br(),
-           br(),
            
            actionButton("fit2", label = "Reduce Model Automatically")
            
     ),
     
     column(4,
-           # h4("Options"),
-           
            checkboxGroupInput("option_plot", label = "Plot options:",
                               c("Process Decomp." = "process_decomp",
                                 "Add Datasheet WV" = "datasheet"
@@ -306,9 +304,7 @@ server <- function(input, output, session) {
       if ("library" %in% input$data_input_choice){ #using library data
         my_data = get(input$imu_obj)
         Xt = my_data[, input$sensors]
-        
-        # input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z")
-        
+      
         v$sensor_name = input$imu_obj
         v$sensor_column = input$sensors
         v$freq = attr(my_data, 'freq')
@@ -336,20 +332,12 @@ server <- function(input, output, session) {
         v$custom_data_size = NULL
         v$custom_data_tot_colums = NULL
         
-        
-        
       } else{ #using custom data
         inFile <- input$user_defined_txt_file
         if (is.null(inFile))
           return(NULL)
         
-        # if (inFile$type == '.txt'){
         my_data = read.csv(inFile$datapath, header = FALSE, sep = ",")
-        # } else{
-        # my_data = read.csv(inFile$datapathas, header = FALSE, sep = ",")
-        # }
-        
-        
         
         if(input$user_defined_txt_file_column > ncol(my_data)){
           updateSliderInput(session, "user_defined_txt_file_column", value = ncol(my_data))
@@ -366,8 +354,6 @@ server <- function(input, output, session) {
         v$freq = input$user_defined_txt_frequency
         v$y_label_with_dataunits = bquote(paste("Wavelet Variance ", nu, " [(", .(input$user_defined_units[1]), ")^2]"))
         
-        # print(v$y_label_with_dataunits)
-        
         v$custom_data = TRUE
         v$custom_data_name = inFile$name
         v$custom_data_type = inFile$type
@@ -383,7 +369,6 @@ server <- function(input, output, session) {
         v$actual_datasheet_BETA_GM_parameter = input$dsv_beta_gm
         v$actual_datasheet_RW_parameter = input$dsv_rw
         v$actual_datasheet_DR_parameter = input$dsv_dr
-        
         
       }
       
@@ -763,26 +748,19 @@ server <- function(input, output, session) {
         }else{ # it is NOT custom data
           title = paste("Haar Wavelet Variance of DATASET:\n", input$imu_obj, " (", input$sensors,
                         ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
-          # if( input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z"){
-          #   my_y_label = expression(paste("Wavelet Variance ", nu, " [", rad^2/s^2, "]"))
-          # } else{
-          #   my_y_label = expression(paste("Wavelet Variance ", nu, " [", m^2/s^4, "]"))
-          # }
         }
-        
-        my_y_label = v$y_label_with_dataunits
         
         if ("datasheet" %in% input$option_plot){
           plot_wv_and_datasheet(a,
                                 v$datasheet_noise_model,
                                 # v$actual_datasheet_BI_parameter,
                                 expression(paste("Scale ", tau, " [s]")),
-                                my_y_label,
+                                v$y_label_with_dataunits,
                                 prov_title = title)
         } else {
           plot(a,
                axis.x.label = expression(paste("Scale ", tau, " [s]")),
-               axis.y.label = my_y_label,
+               axis.y.label = v$y_label_with_dataunits,
                title = title,
                CI = T, #"ci" %in% input$option_plot,
                title.size = 22, 
@@ -800,25 +778,19 @@ server <- function(input, output, session) {
         }else{ # it is NOT custom data
           title = paste("Haar Wavelet Variance of DATASET:\n", input$imu_obj, " (", input$sensors,
                         ") - Duration: ", round(duration_a,1), "(h) @", freq_a, "(Hz)", sep = "")
-          if( input$sensors == "Gyro. X" || input$sensors == "Gyro. Y" || input$sensors == "Gyro. Z"){
-            my_y_label = expression(paste("Wavelet Variance ", nu, " [", rad^2/s^2, "]"))
-          } else{
-            my_y_label = expression(paste("Wavelet Variance ", nu, " [", m^2/s^4, "]"))
-          }
         }
-        
-        # my_y_label = v$y_label_with_dataunits
         
         if ("datasheet" %in% input$option_plot & !"process_decomp" %in% input$option_plot){
           plot_gmwm_and_datasheet(object = a, 
                                   datasheet = v$datasheet_noise_model, 
                                   # v$actual_datasheet_BI_parameter,
                                   axis.x.label = expression(paste("Scale ", tau, " [s]")),
+                                  v$y_label_with_dataunits,
                                   prov_title = title)
         }else{
           plot(a,
                axis.x.label = expression(paste("Scale ", tau, " [s]")),
-               axis.y.label = my_y_label,
+               axis.y.label = v$y_label_with_dataunits,
                process.decomp = "process_decomp" %in% input$option_plot,
                CI = T, #"ci" %in% input$option_plot,
                title = title,
@@ -908,17 +880,14 @@ server <- function(input, output, session) {
   output$tabhelpplotlogo_pennstate <- renderImage({
     filename <- normalizePath(file.path('./logo', paste('logo_penn_state', '.png', sep='')))
     # list(src = bind(filename, filename), height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
-    list(src = filename, height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
+    list(src = filename, height = const.FIGURE_PLOT_HEIGHT_LOGO)
   }, deleteFile = FALSE)
   
   # print info logos in the help tab
   output$tabhelpplotlogo_epfl <- renderImage({
     filename <- normalizePath(file.path('./logo', paste('logo_epfl', '.jpg', sep='')))
-    list(src = filename, height = const.FIGURE_PLOT_HEIGHT_SUPER_REDUCED)
+    list(src = filename, height = const.FIGURE_PLOT_HEIGHT_LOGO)
   }, deleteFile = FALSE)
-
-  
-  
 }
 
 shinyApp(ui, server)
