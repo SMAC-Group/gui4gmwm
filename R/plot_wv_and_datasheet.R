@@ -362,8 +362,8 @@ plot_gmwm_and_datasheet <- function(object,
   p
 }
 
-
-
+#' @export
+is.whole = function(x){ is.numeric(x) && all(floor(x)==x) }
 
 
 
